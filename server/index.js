@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //api routes
-// app.use("/", require("./api"));
+app.use("/", require("./api"));
 
 // static file-serving middleware
 app.use(express.static(path.join(__dirname, "..", "public")));

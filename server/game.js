@@ -37,3 +37,25 @@ function assignRoles(shuffled) {
 }
 
 //roles.mafia = []
+
+function hasGameEnded(mafias, villagers){
+  if (mafias === 0 || mafias === villagers){
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+function didMafiaWin(mafias){
+  if(mafias === 0){
+    return false;
+  }
+  else {
+    return true;
+  }
+}
+
+function whoDies(killed, saved){
+  killed === saved ? 'none' : killed;
+}

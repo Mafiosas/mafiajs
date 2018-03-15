@@ -77,11 +77,16 @@ Router.get('/whoWon', (req, res, next) => {
   .then(players => alivePlayers = players.length)
 
 
-  if(aliveMafias === alivePlayers){
-    //mafias win
+  if(hasGameEnded(aliveMafias, alivePlayers)){
+    if(didMafiaWin(aliveMafias)){
+      res.json('Mafia won')
+    }
+    else{
+      res.json('Villagers won')
+    }
   }
-  if (aliveMafias === 0){
-    //mafias lose
+  else {
+    //game continues, emit socket
   }
 })
 
@@ -97,24 +102,92 @@ Router.put('/newRound', (req, res, next) => {
   let killed = req.body.killed || null;
   //if check to see if it's a doctor making the request, if so:
   let saved = req.body.saved || null;
-  if (killed === saved){
-    let died = 'none';
-  }
-  else {
-    let died = killed;
-  }
+  let died;
   const gameId = req.params.gameId
-
-  Round.findOne({
-    where: {
-      gameId: gameId,
-      isCurrent: true
-    }
+    Round.findOne({
+      where: {
+        gameId: gameId,
+        isCurrent: true
+      }
+    })
+    .then(round => {
+      if(killed && !round.saved){
+        round.update({killed: killed})
+      }
+      else if (saved && !round.killed){
+        round.update({saved: saved})
+      }
+      else if (saved && round.killed) {
+        died = whoDies(round.killed, saved)
+        round.update({
+          saved: saved,
+          died: died
+        })
+        .then(round => {
+          if (round.died !== 'none'){
+            Player.update({
+              isAlive: false
+            },
+            {
+              where: {
+                gameId: gameId,
+                name: round.died
+              }
+            })
+          }
+        })
+        .then(() => {
+//          socket.emit('updateData')
+        })
+      }
+      else if (killed && round.saved){
+        died = whoDies(killed, round.saved)
+        round.update({
+          killed: killed,
+          died: died
+        })
+        .then(() => {
+//        socket.emit('updateData')
+        })
+      }
+    })
   })
-  .then(round => round.update({
-    killed,
-    saved,
-    died
-  }))
 
-})
+  // else if (saved){
+  //   Round.findOne({
+  //     // attributes: ['saved'],
+  //     where: {
+  //       gameId: gameId,
+  //       isCurrent: true
+  //     }
+  //   })
+  //   .then(round => {
+  //     if(!round.killed){
+  //       round.update({saved: saved})
+  //     }
+  //     else {
+  //       //calculate stuff and emit the update data socket
+  //     }
+  //   })
+  // }
+
+
+  // if (killed === saved){
+  //   let died = 'none';
+  // }
+  // else {
+  //   let died = killed;
+  // }
+  // const gameId = req.params.gameId
+
+  // Round.findOne({
+  //   where: {
+  //     gameId: gameId,
+  //     isCurrent: true
+  //   }
+  // })
+  // .then(round => round.update({
+  //   killed,
+  //   saved,
+  //   died
+  // }))
