@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../db');
 
-const Game = db.define('game',{
+const Game = db.define('game', {
   roomName: {
     type: Sequelize.STRING
   },
@@ -11,5 +11,14 @@ const Game = db.define('game',{
   numPlayers: {
     type: Sequelize.INTEGER,
     defaultValue: 6,
+  },
+  winner: {
+    type: Sequelize.STRING,
+    defaultValue: null
   }
 })
+
+
+Game.prototype.hasEnded = () => {
+  return !!this.winner;
+}
