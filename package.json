@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Mafiosas/mafiajs/issues"
   },
-  "homepage": "https://github.com/Mafiosas/mafiajs#readme"
+  "homepage": "https://github.com/Mafiosas/mafiajs#readme",
+  "dependencies": {
+    "sequelize": "^4.37.0"
+  }
 }
