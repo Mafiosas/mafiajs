@@ -26,6 +26,7 @@ Player.prototype.isMafia = function() {
 };
 
 Player.hook("afterUpdate", async player => {
+  //const gameId = player.gameId;
   const aliveMafia = await Player.findAll({
     where: {
       gameId: gameId,
@@ -44,13 +45,11 @@ Player.hook("afterUpdate", async player => {
     }
   });
 
-  const gameId = player.gameId;
-
   if (hasGameEnded(aliveMafias, aliveVillagers)) {
     if (didMafiaWin(aliveMafias)) {
       Game.update(
         {
-          winner: "Mafia"
+          winner: didMafiaWin(aliveMafias) ? "Mafia" : "Villagers"
         },
         {
           where: {
@@ -58,17 +57,17 @@ Player.hook("afterUpdate", async player => {
           }
         }
       );
-    } else {
-      Game.update(
-        {
-          winner: "Villagers"
-        },
-        {
-          where: {
-            gameId: gameId
-          }
-        }
-      );
+      // } else {
+      // Game.update(
+      //   {
+      //     winner: "Villagers"
+      //   },
+      //   {
+      //     where: {
+      //       gameId: gameId
+      //     }
+      //   }
+      // );
     }
   }
 });

@@ -91,11 +91,30 @@ Router.post("/newRound", (req, res, next) => {
 });
 
 Router.put("/newRound", (req, res, next) => {
+  // backend sends socket about newRound starting with time, send roundId
+  // frontend gets it and starts a countdown
+  // backend sends socket about round ending
+  // frontend gets it and emits a new event with info (saved, killed, null)
+  // info might want to include gameId for ease (or send roundId back)
+  // backend receives event and starts determining if it has all the info to let everyone know if round has ended
+
   //if check to see if it's a mafia making the request, if so:
   let killed = req.body.killed || null;
   //if check to see if it's a doctor making the request, if so:
   let saved = req.body.saved || null;
   let died;
+
+  // {roundId, saved}
+  // delete obj.roundId
+
+  // we could theoretically have an object that has just {saved} or just {killed}, so that will be the ONLY thing Sequelize tries to update
+  // then we can get rid of the first 2 updates and combine the elseIf
+  // Round.update({
+  //   where: {
+  //     gameId: gameId,
+  //     isCurrent: true
+  //   }
+  // }, req.body)
 
   const gameId = req.params.gameId;
   Round.findOne({
@@ -105,15 +124,40 @@ Router.put("/newRound", (req, res, next) => {
     }
   }).then(round => {
     if (killed && !round.saved) {
-      round.update({ killed: killed });
+      return round.update({ killed: killed });
     } else if (saved && !round.killed) {
-      round.update({ saved: saved });
+      return round.update({ saved: saved });
     } else if (saved && round.killed) {
       died = whoDies(round.killed, saved);
+      // let proms = [
+      //   round
+      //   .update({
+      //     saved: saved,
+      //     died: died,
+      //     isCurrent: false
+      //   })
+      // ]
+      // if (died !== "none") {
+      //   proms.push(Player.update(
+      //     {
+      //       isAlive: false
+      //     },
+      //     {
+      //       where: {
+      //         gameId: gameId,
+      //         name: died
+      //       }
+      //     }
+      //   ))
+      // }
+      // Promise.all(proms)
+      //   .then(([round]) => {
+      //   })
       round
         .update({
           saved: saved,
-          died: died
+          died: died,
+          isCurrent: false
         })
         .then(round => {
           if (round.died !== "none") {
@@ -136,6 +180,7 @@ Router.put("/newRound", (req, res, next) => {
             if (game.hasEnded()) {
               res.json(game.Winner);
             } else {
+              // create new round + vvvv
               //socket.emit('updateData') and if someone died (if round.died is truthy), send back round.died bc it's their name; else return round.saved and that's the name of who was saved
             }
           });
