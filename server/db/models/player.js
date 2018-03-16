@@ -1,21 +1,16 @@
-const Sequelize, {
-  Op
-} = require('sequelize');
-const db = require('../db');
-const Game = require('./game');
-const {
-  hasGameEnded,
-  didMafiaWin,
-  whoToSendBack
-} = require('../../game.js');
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
+const db = require("../db");
+const Game = require("./game");
+const { hasGameEnded, didMafiaWin, whoToSendBack } = require("../../game.js");
 
-const Player = db.define('player', {
+const Player = db.define("player", {
   cookieId: {
     type: Sequelize.STRING
   },
   role: {
     type: Sequelize.ENUM,
-    values: ['Mafia', 'Doctor', 'Detective', 'Civilian']
+    values: ["Mafia", "Doctor", "Detective", "Civilian"]
   },
   name: {
     type: Sequelize.STRING
@@ -24,52 +19,58 @@ const Player = db.define('player', {
     type: Sequelize.BOOLEAN,
     defaultValue: true
   }
-})
+});
 
-Player.prototype.isMafia = function () {
-  return this.role === 'Mafia'
-}
+Player.prototype.isMafia = function() {
+  return this.role === "Mafia";
+};
 
-Player.hook('afterUpdate', async (player) => {
+Player.hook("afterUpdate", async player => {
   const aliveMafia = await Player.findAll({
     where: {
       gameId: gameId,
-      role: 'Mafia',
+      role: "Mafia",
       isAlive: true
     }
-  })
+  });
 
   const aliveVillagers = await Player.findAll({
     where: {
       gameId: gameId,
       isAlive: true,
       role: {
-        [Op.ne]: 'Mafia'
+        [Op.ne]: "Mafia"
       }
     }
-  })
+  });
 
   const gameId = player.gameId;
 
   if (hasGameEnded(aliveMafias, aliveVillagers)) {
     if (didMafiaWin(aliveMafias)) {
-      Game.update({
-        winner: 'Mafia'
-      }, {
-        where: {
-          gameId: gameId
+      Game.update(
+        {
+          winner: "Mafia"
+        },
+        {
+          where: {
+            gameId: gameId
+          }
         }
-      })
+      );
     } else {
-      Game.update({
-        winner: 'Villagers'
-      }, {
-        where: {
-          gameId: gameId
+      Game.update(
+        {
+          winner: "Villagers"
+        },
+        {
+          where: {
+            gameId: gameId
+          }
         }
-      })
+      );
     }
   }
-})
+});
 
 module.exports = Player;
