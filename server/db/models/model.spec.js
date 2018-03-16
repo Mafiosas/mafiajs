@@ -58,6 +58,7 @@ describe("Player model", () => {
       });
   });
   describe("Player attributes", () => {
+    console.log(allUsers);
     it("defaults to is Alive is true", () => {
       expect(allUsers[0].isAlive).to.be.equal(true);
     });
