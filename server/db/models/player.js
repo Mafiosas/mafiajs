@@ -21,7 +21,8 @@ const Player = db.define('player', {
     type: Sequelize.STRING
   },
   isAlive: {
-    type: Sequelize.BOOLEAN
+    type: Sequelize.BOOLEAN,
+    defaultValue: true
   }
 })
 
@@ -70,3 +71,5 @@ Player.hook('afterUpdate', async (player) => {
     }
   }
 })
+
+module.exports = Player;

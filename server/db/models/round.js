@@ -1,7 +1,7 @@
-const Sequelize = require('sequelize');
-const db = require('../db');
+const Sequelize = require("sequelize");
+const db = require("../db");
 
-const Round = db.define('round', {
+const Round = db.define("round", {
   number: {
     type: Sequelize.INTEGER
   },
@@ -17,4 +17,6 @@ const Round = db.define('round', {
   died: {
     type: Sequelize.STRING
   }
-})
+});
+
+module.exports = Round;
