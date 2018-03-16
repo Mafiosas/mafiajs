@@ -2,7 +2,7 @@ const path = require("path");
 const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
-// const db = require("./db/db");
+const db = require("./db");
 const PORT = process.env.PORT || 8080;
 const app = express();
 const socketio = require("socket.io");
@@ -35,4 +35,4 @@ const server = app.listen(PORT, () =>
 const io = socketio(server);
 require("./socket")(io);
 
-// const syncDb = () => db.sync();
+const syncDb = () => db.sync();
