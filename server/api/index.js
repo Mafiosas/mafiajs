@@ -3,6 +3,8 @@ const Player = require("../db/models");
 const Round = require("../db/models");
 const { Op } = require("sequelize");
 
+module.exports = Router;
+
 Router.get("/getInitialData", (req, res, next) => {
   const gameId = req.params.gameId;
   Player.findOne({
