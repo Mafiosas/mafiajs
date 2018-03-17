@@ -37,7 +37,7 @@ Player.afterUpdate(player => {
     }
   })
     .then(mafias => {
-      console.log("Where my mafias at", mafia);
+      console.log("Where my mafias at", mafias);
       aliveMafias = mafias;
     })
     .then(() => {
@@ -53,67 +53,20 @@ Player.afterUpdate(player => {
     })
     .then(players => (alivePlayers = players))
     .then(() => {
-      console.log("Alive mafia and players", aliveMafias, aliveVillagers);
-      if (hasGameEnded(aliveMafias, aliveVillagers)) {
-        if (didMafiaWin(aliveMafias)) {
-          Game.update(
-            {
-              winner: didMafiaWin(aliveMafias) ? "Mafia" : "Villagers"
-            },
-            {
-              where: {
-                gameId: gameId
-              }
+      if (hasGameEnded(aliveMafias, alivePlayers)) {
+        console.log("did game end");
+        Game.update(
+          {
+            winner: didMafiaWin(aliveMafias) ? "Mafia" : "Villagers"
+          },
+          {
+            where: {
+              id: gameId
             }
-          );
-        }
+          }
+        );
       }
     });
 });
-
-function gameOver(gameId) {
-  let aliveMafias, alivePlayers;
-  console.log("we here?!");
-  // return Player.findAll({
-  //   where: {
-  //     gameId: gameId,
-  //     role: "Mafia",
-  //     isAlive: true
-  //   }
-  // })
-  //   .then(mafias => {
-  //     console.log("Where my mafias at", mafia);
-  //     aliveMafias = mafias;
-  //   })
-  //   .then(() => {
-  //     return Player.findAll({
-  //       where: {
-  //         gameId: gameId,
-  //         isAlive: true,
-  //         role: {
-  //           [Op.ne]: "Mafia"
-  //         }
-  //       }
-  //     });
-  //   })
-  //   .then(players => (alivePlayers = players))
-  //   .then(() => {
-  //     console.log("Alive mafia and players", aliveMafias, aliveVillagers);
-  //     if (hasGameEnded(aliveMafias, aliveVillagers)) {
-  //       if (didMafiaWin(aliveMafias)) {
-  //         Game.update(
-  //           {
-  //             winner: didMafiaWin(aliveMafias) ? "Mafia" : "Villagers"
-  //           },
-  //           {
-  //             where: {
-  //               gameId: gameId
-  //             }
-  //           }
-  //         );
-  //       }
-  //     }
-  //   });
-}
 
 module.exports = Player;

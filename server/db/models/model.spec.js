@@ -83,8 +83,6 @@ describe("Player model", () => {
       });
     });
     it("Ensures after update hook runs and ends game properly", () => {
-      //console.log("current game is this:", currentGame);
-
       expect(currentGame.hasEnded()).to.be.equal(true);
     });
     it("Winner should be villagers", () => {
