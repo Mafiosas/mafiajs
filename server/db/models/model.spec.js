@@ -15,7 +15,7 @@ describe("Player model", () => {
           });
         })
         .then(game => {
-          currentGame = game;
+          currentGame = game.dataValues;
           return Player.bulkCreate([
             {
               cookieId: 1,
@@ -61,7 +61,7 @@ describe("Player model", () => {
         });
     });
     it("defaults to is Alive is true", () => {
-      expect(allUsers[0].dataValues.isAlive).to.be.equal(true);
+      expect(allUsers[0].isAlive).to.be.equal(true);
     });
 
     it("isMafia hook returns true when mafia", () => {
@@ -70,7 +70,6 @@ describe("Player model", () => {
   });
   describe("game defaults to in progress/not over", () => {
     it("Game hasEnded returns false by default", () => {
-      console.log(currentGame);
       expect(currentGame.hasEnded()).to.be.equal(false);
     });
   });
@@ -88,6 +87,8 @@ describe("Player model", () => {
       );
     });
     it("Ensures after update hook runs and ends game properly", () => {
+      console.log("GAME HERE:", currentGame);
+
       expect(currentGame.hasEnded()).to.be.equal(true);
     });
     it("Winner should be villagers", () => {

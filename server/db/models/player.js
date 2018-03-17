@@ -25,51 +25,45 @@ Player.prototype.isMafia = function() {
   return this.role === "Mafia";
 };
 
-Player.hook("afterUpdate", async player => {
-  //const gameId = player.gameId;
-  const aliveMafia = await Player.findAll({
+Player.hook("afterUpdate", player => {
+  const gameId = player.gameId;
+  let aliveMafias, aliveVillagers;
+  return Player.findAll({
     where: {
       gameId: gameId,
       role: "Mafia",
       isAlive: true
     }
-  });
-
-  const aliveVillagers = await Player.findAll({
-    where: {
-      gameId: gameId,
-      isAlive: true,
-      role: {
-        [Op.ne]: "Mafia"
-      }
-    }
-  });
-
-  if (hasGameEnded(aliveMafias, aliveVillagers)) {
-    if (didMafiaWin(aliveMafias)) {
-      Game.update(
-        {
-          winner: didMafiaWin(aliveMafias) ? "Mafia" : "Villagers"
-        },
-        {
-          where: {
-            gameId: gameId
+  })
+    .then(mafias => (aliveMafias = mafias))
+    .then(() => {
+      return Player.findAll({
+        where: {
+          gameId: gameId,
+          isAlive: true,
+          role: {
+            [Op.ne]: "Mafia"
           }
         }
-      );
-      // } else {
-      // Game.update(
-      //   {
-      //     winner: "Villagers"
-      //   },
-      //   {
-      //     where: {
-      //       gameId: gameId
-      //     }
-      //   }
-      // );
-    }
-  }
+      });
+    })
+    .then(players => (alivePlayers = players))
+    .then(() => {
+      if (hasGameEnded(aliveMafias, aliveVillagers)) {
+        if (didMafiaWin(aliveMafias)) {
+          Game.update(
+            {
+              winner: didMafiaWin(aliveMafias) ? "Mafia" : "Villagers"
+            },
+            {
+              where: {
+                gameId: gameId
+              }
+            }
+          );
+        }
+      }
+    });
 });
 
 module.exports = Player;
