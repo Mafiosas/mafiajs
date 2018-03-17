@@ -1,8 +1,61 @@
 const Router = require("express").Router();
 const Player = require("../db/models");
 const Round = require("../db/models");
+const { Game } = require("../db/models");
 const { Op } = require("sequelize");
 const { hasGameEnded, didMafiaWin, whoToSendBack } = require("../game.js");
+const OpenTok = require("opentok");
+
+module.exports = Router;
+
+Router.post("/", (req, res, next) => {
+  let opentok = new OpenTok(
+    "46081452",
+    "3d9f569b114ccfa5ae1e545230656c6adb5465d3"
+  );
+
+  console.log("opentok", opentok);
+
+  opentok.createSession({ mediaMode: "routed" }, function(err, session) {
+    if (err) {
+      console.log(err);
+      res.status(500).send({ error: "createSession error: ", err });
+      return;
+    }
+
+    let sessionId = session.sessionId;
+
+    Game.create({ ...req.body, sessionId, opentok })
+      .then(() => {
+        token = opentok.generateToken(sessionId);
+        res.setHeader("Content-Type", "application/json");
+        res.send({
+          apiKey: "46081452",
+          sessionId: sessionId,
+          token: token
+        });
+      })
+      .catch(next);
+  });
+});
+
+Router.get("/:gameId", (req, res, next) => {
+  let opentok = new OpenTok(
+    "46081452",
+    "3d9f569b114ccfa5ae1e545230656c6adb5465d3"
+  );
+  Game.findById(req.params.gameId)
+    .then(game => {
+      token = opentok.generateToken(game.sessionId);
+      res.setHeader("Content-Type", "application/json");
+      res.send({
+        apiKey: "46081452",
+        sessionId: game.sessionId,
+        token: token
+      });
+    })
+    .catch(next);
+});
 
 Router.post("/newRound/:gameId", (req, res, next) => {
   Round.create()

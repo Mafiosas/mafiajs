@@ -15,6 +15,9 @@ const Game = db.define("game", {
   winner: {
     type: Sequelize.STRING,
     defaultValue: null
+  },
+  sessionId: {
+    type: Sequelize.STRING
   }
 });
 
