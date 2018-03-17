@@ -18,6 +18,9 @@ const Player = db.define("player", {
   isAlive: {
     type: Sequelize.BOOLEAN,
     defaultValue: true
+  },
+  token: {
+    type: Sequelize.TEXT
   }
 });
 
