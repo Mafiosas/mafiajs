@@ -39,7 +39,7 @@ function assignRoles(shuffled) {
 //roles.mafia = []
 
 function hasGameEnded(mafias, villagers) {
-  if (mafias === 0 || mafias === villagers) {
+  if (mafias.length === 0 || mafias.length === villagers.length) {
     return true;
   } else {
     return false;
@@ -47,7 +47,7 @@ function hasGameEnded(mafias, villagers) {
 }
 
 function didMafiaWin(mafias) {
-  if (mafias === 0) {
+  if (mafias.length === 0) {
     return false;
   } else {
     return true;
@@ -55,9 +55,17 @@ function didMafiaWin(mafias) {
 }
 
 function whoToSendBack(killed, saved) {
-  return killed === saved ? {
-    saved: saved
-  } : {
-    killed: killed
-  };
+  return killed === saved
+    ? {
+        saved: saved
+      }
+    : {
+        killed: killed
+      };
 }
+
+module.exports = {
+  hasGameEnded,
+  didMafiaWin,
+  whoToSendBack
+};

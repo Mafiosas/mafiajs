@@ -25,9 +25,10 @@ Player.prototype.isMafia = function() {
   return this.role === "Mafia";
 };
 
-Player.hook("afterUpdate", player => {
+Player.afterUpdate(player => {
   const gameId = player.gameId;
   let aliveMafias, aliveVillagers;
+  console.log("hello!!");
   return Player.findAll({
     where: {
       gameId: gameId,
@@ -35,7 +36,10 @@ Player.hook("afterUpdate", player => {
       isAlive: true
     }
   })
-    .then(mafias => (aliveMafias = mafias))
+    .then(mafias => {
+      console.log("Where my mafias at", mafias);
+      aliveMafias = mafias;
+    })
     .then(() => {
       return Player.findAll({
         where: {
@@ -49,19 +53,18 @@ Player.hook("afterUpdate", player => {
     })
     .then(players => (alivePlayers = players))
     .then(() => {
-      if (hasGameEnded(aliveMafias, aliveVillagers)) {
-        if (didMafiaWin(aliveMafias)) {
-          Game.update(
-            {
-              winner: didMafiaWin(aliveMafias) ? "Mafia" : "Villagers"
-            },
-            {
-              where: {
-                gameId: gameId
-              }
+      if (hasGameEnded(aliveMafias, alivePlayers)) {
+        console.log("did game end");
+        Game.update(
+          {
+            winner: didMafiaWin(aliveMafias) ? "Mafia" : "Villagers"
+          },
+          {
+            where: {
+              id: gameId
             }
-          );
-        }
+          }
+        );
       }
     });
 });
