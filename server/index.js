@@ -45,15 +45,15 @@ const createApp = () => {
     });
   }
 
-  const opentok = new OpenTok(
-    "46081452",
-    "3d9f569b114ccfa5ae1e545230656c6adb5465d3"
-  );
-  opentok.createSession(function(err, session) {
-    if (err) return console.log(err);
+  // const opentok = new OpenTok(
+  //   "46081452",
+  //   "3d9f569b114ccfa5ae1e545230656c6adb5465d3"
+  // );
+  // opentok.createSession(function(err, session) {
+  //   if (err) return console.log(err);
 
-    app.set("sessionId", session.sessionId);
-  });
+  //   app.set("sessionId", session.sessionId);
+  // });
 };
 
 const startListening = () => {
@@ -65,7 +65,7 @@ const startListening = () => {
   require("./socket")(io);
 };
 
-const syncDb = () => db.sync();
+const syncDb = () => db.sync({ force: true });
 
 if (require.main === module) {
   syncDb()

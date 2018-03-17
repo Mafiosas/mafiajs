@@ -1,8 +1,49 @@
 const Router = require("express").Router();
 const Player = require("../db/models");
 const Round = require("../db/models");
+const Game = require("../db/models/");
 const { Op } = require("sequelize");
 const { hasGameEnded, didMafiaWin, whoToSendBack } = require("../game.js");
+const OpenTok = require("opentok");
+
+Router.post("/", (req, res, next) => {
+  let opentok = new OpenTok(
+    "46081452",
+    "3d9f569b114ccfa5ae1e545230656c6adb5465d3"
+  );
+  openTok.createSession({ mediaMode: "routed" }, function(err, session) {
+    if (err) {
+      console.log(err);
+      res.status(500).send({ error: "createSession error: ", err });
+      return;
+    }
+
+    let sessionId = session.sessionId;
+
+    token = opentok.generateToken(sessionId);
+    res.setHeader("Content-Type", "application/json");
+    res.send({
+      apiKey: "46081452",
+      sessionId: sessionId,
+      token: token
+    });
+  });
+
+  Game.create({ ...req.body, sessionId }).catch(next);
+});
+
+Router.get("/:gameId", (req, res, next) => {
+  Game.findById(req.params.gameId).then(game => {
+    // generate token
+    token = opentok.generateToken(game.id);
+    res.setHeader("Content-Type", "application/json");
+    res.send({
+      apiKey: "46081452",
+      sessionId: game.id,
+      token: token
+    });
+  });
+});
 
 Router.post("/newRound/:gameId", (req, res, next) => {
   Round.create()
