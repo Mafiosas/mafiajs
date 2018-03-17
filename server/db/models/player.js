@@ -25,9 +25,10 @@ Player.prototype.isMafia = function() {
   return this.role === "Mafia";
 };
 
-Player.hook("afterUpdate", player => {
+Player.afterUpdate(player => {
   const gameId = player.gameId;
   let aliveMafias, aliveVillagers;
+  console.log("hello!!");
   return Player.findAll({
     where: {
       gameId: gameId,
@@ -35,7 +36,10 @@ Player.hook("afterUpdate", player => {
       isAlive: true
     }
   })
-    .then(mafias => (aliveMafias = mafias))
+    .then(mafias => {
+      console.log("Where my mafias at", mafia);
+      aliveMafias = mafias;
+    })
     .then(() => {
       return Player.findAll({
         where: {
@@ -49,6 +53,7 @@ Player.hook("afterUpdate", player => {
     })
     .then(players => (alivePlayers = players))
     .then(() => {
+      console.log("Alive mafia and players", aliveMafias, aliveVillagers);
       if (hasGameEnded(aliveMafias, aliveVillagers)) {
         if (didMafiaWin(aliveMafias)) {
           Game.update(
@@ -65,5 +70,50 @@ Player.hook("afterUpdate", player => {
       }
     });
 });
+
+function gameOver(gameId) {
+  let aliveMafias, alivePlayers;
+  console.log("we here?!");
+  // return Player.findAll({
+  //   where: {
+  //     gameId: gameId,
+  //     role: "Mafia",
+  //     isAlive: true
+  //   }
+  // })
+  //   .then(mafias => {
+  //     console.log("Where my mafias at", mafia);
+  //     aliveMafias = mafias;
+  //   })
+  //   .then(() => {
+  //     return Player.findAll({
+  //       where: {
+  //         gameId: gameId,
+  //         isAlive: true,
+  //         role: {
+  //           [Op.ne]: "Mafia"
+  //         }
+  //       }
+  //     });
+  //   })
+  //   .then(players => (alivePlayers = players))
+  //   .then(() => {
+  //     console.log("Alive mafia and players", aliveMafias, aliveVillagers);
+  //     if (hasGameEnded(aliveMafias, aliveVillagers)) {
+  //       if (didMafiaWin(aliveMafias)) {
+  //         Game.update(
+  //           {
+  //             winner: didMafiaWin(aliveMafias) ? "Mafia" : "Villagers"
+  //           },
+  //           {
+  //             where: {
+  //               gameId: gameId
+  //             }
+  //           }
+  //         );
+  //       }
+  //     }
+  //   });
+}
 
 module.exports = Player;

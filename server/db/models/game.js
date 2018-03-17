@@ -18,7 +18,7 @@ const Game = db.define("game", {
   }
 });
 
-Game.prototype.hasEnded = () => {
+Game.prototype.hasEnded = function() {
   return !!this.winner;
 };
 
