@@ -20,3 +20,23 @@ router.post("/", (req, res, next) => {
         .catch(next);
     });
 });
+
+router.put("/dead/:playerId", (req, res, next) => {
+  Player.findById(req.params.playerId).then(player => {
+    return player
+      .update({
+        isAlive: false
+      })
+      .then(person => res.json(person));
+  });
+});
+
+router.put("/alive/:playerId", (req, res, next) => {
+  Player.findById(req.params.playerId).then(player => {
+    return player
+      .update({
+        isAlive: true
+      })
+      .then(person => res.json(person));
+  });
+});
