@@ -17,7 +17,7 @@ const Game = db.define("game", {
     defaultValue: null
   },
   sessionId: {
-    type: Sequelize.STRING
+    type: Sequelize.TEXT
   }
 });
 
