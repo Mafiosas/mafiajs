@@ -1,5 +1,6 @@
 const Sequelize = require("sequelize");
 const db = require("../db");
+const Player = require("./player");
 
 const Game = db.define("game", {
   roomName: {
@@ -16,8 +17,14 @@ const Game = db.define("game", {
     type: Sequelize.STRING,
     defaultValue: null
   },
+<<<<<<< HEAD
+  inProgress: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
+=======
   sessionId: {
     type: Sequelize.TEXT
+>>>>>>> master
   }
 });
 
