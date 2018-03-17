@@ -7,6 +7,9 @@ const PORT = process.env.PORT || 8080;
 const app = express();
 const socketio = require("socket.io");
 const routes = require("./api");
+const OpenTok = require("opentok");
+const Game = require("./db/models/game");
+
 module.exports = app;
 
 // logging middleware
@@ -61,3 +64,8 @@ if (require.main === module) {
 } else {
   createApp();
 }
+
+// //to disconnect participant from OpenTok session
+// opentok.forceDisconnect(sessionId, connectionId, function(error) {
+//   if (error) return console.log("error:", error);
+// });

@@ -1,7 +1,33 @@
 const router = require("express").Router();
-const { Player, Round, Game } = require("../db/models");
+const { Game, Round, Player } = require("../db/models");
 const { Op } = require("sequelize");
 const { hasGameEnded, didMafiaWin, whoToSendBack } = require("../game.js");
+const OpenTok = require("opentok");
+
+module.exports = router;
+
+router.post("/", (req, res, next) => {
+  let opentok = new OpenTok(
+    "46081452",
+    "3d9f569b114ccfa5ae1e545230656c6adb5465d3"
+  );
+
+  opentok.createSession({ mediaMode: "routed" }, function(err, session) {
+    if (err) {
+      console.log(err);
+      res.status(500).send({ error: "createSession error: ", err });
+      return;
+    }
+
+    let sessionId = session.sessionId;
+
+    Game.create({ ...req.body, sessionId })
+      .then(created => {
+        res.json(created);
+      })
+      .catch(next);
+  });
+});
 
 module.exports = router;
 

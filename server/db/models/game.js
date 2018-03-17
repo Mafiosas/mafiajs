@@ -17,13 +17,18 @@ const Game = db.define("game", {
     type: Sequelize.STRING,
     defaultValue: null
   },
+<<<<<<< HEAD
   inProgress: {
     type: Sequelize.BOOLEAN,
     defaultValue: false
+=======
+  sessionId: {
+    type: Sequelize.TEXT
+>>>>>>> master
   }
 });
 
-Game.prototype.hasEnded = () => {
+Game.prototype.hasEnded = function() {
   return !!this.winner;
 };
 
