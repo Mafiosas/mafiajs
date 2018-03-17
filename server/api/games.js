@@ -1,16 +1,25 @@
-const Router = require("express").Router();
-const Player = require("../db/models");
-const Round = require("../db/models");
+const router = require("express").Router();
+const { Player, Round, Game } = require("../db/models");
 const { Op } = require("sequelize");
 const { hasGameEnded, didMafiaWin, whoToSendBack } = require("../game.js");
 
-Router.post("/newRound/:gameId", (req, res, next) => {
+module.exports = router;
+
+router.get("/", (req, res, next) => {
+  Game.findAll({
+    where: {
+      inProgress: false
+    }
+  }).then(activeGames => res.json(activeGames));
+});
+
+router.post("/newRound/:gameId", (req, res, next) => {
   Round.create()
     .then(round => round.setGame(req.params.gameId))
     .then(currentRound => res.json(currentRound));
 });
 
-Router.put("/newRound/:gameId", (req, res, next) => {
+router.put("/newRound/:gameId", (req, res, next) => {
   //if check to see if it's a mafia making the request, if so:
   let killed = req.body.killed || null;
   //if check to see if it's a doctor making the request, if so:

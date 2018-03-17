@@ -4,14 +4,26 @@ import PropTypes from "prop-types";
 import { addNewGame, joinExistingGame } from "../store";
 
 const RoomForm = props => {
-  const { name, displayName, handleSubmit, error } = props;
+  const { name, displayName, handleSubmit, error, allGames } = props;
   return (
     <div>
       <form onSubmit={handleSubmit} name={name}>
-        <div>
-          <label>Room Name:</label>
-          <input name="roomName" type="text" />
-        </div>
+        {name === "join-game" ? (
+          <div>
+            <label>Room Name:</label>
+            <select id="roomName">
+              {" "}
+              {allGames.map(game => {
+                return <option key={game.id}> {game.name} </option>;
+              })}
+            </select>
+          </div>
+        ) : (
+          <div>
+            <label>Room Name:</label>
+            <input name="roomName" type="text" />
+          </div>
+        )}
         <div>
           <label>Password:</label>
           <input name="password" type="text" />
@@ -29,7 +41,8 @@ const mapJoin = state => {
   return {
     name: "join-game",
     displayName: "Join Game",
-    error: state.player.error
+    error: state.player.error,
+    allGames: state.allGames
   };
 };
 
@@ -46,7 +59,7 @@ const mapJoinDispatch = dispatch => {
     handleSubmit(evt) {
       evt.preventDefault();
       const formName = evt.target.name;
-      const roomName = evt.target.roomName.value;
+      const roomName = document.getElementById("roomName").value;
       const password = evt.target.password.value;
       dispatch(joinExistingGame(roomName, password));
     }

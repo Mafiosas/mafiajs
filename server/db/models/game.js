@@ -1,5 +1,6 @@
 const Sequelize = require("sequelize");
 const db = require("../db");
+const Player = require("./player");
 
 const Game = db.define("game", {
   roomName: {
@@ -15,6 +16,10 @@ const Game = db.define("game", {
   winner: {
     type: Sequelize.STRING,
     defaultValue: null
+  },
+  inProgress: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
 });
 

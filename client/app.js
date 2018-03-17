@@ -1,11 +1,13 @@
-import React from "react";
+import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import Home from "./components/Home.jsx";
 
-const App = () => {
-  return (
-    <div>
-      <h1>HIII</h1>
-    </div>
-  );
-};
-
-export default App;
+export default class App extends Component {
+  render() {
+    return (
+      <Router>
+        <Route component={Home} />
+      </Router>
+    );
+  }
+}

@@ -6,6 +6,8 @@ const { hasGameEnded, didMafiaWin, whoToSendBack } = require("../game.js");
 
 module.exports = Router;
 
+Router.use("/game", require("./games"));
+
 Router.get("/getInitialData", (req, res, next) => {
   const gameId = req.params.gameId;
   Player.findOne({
