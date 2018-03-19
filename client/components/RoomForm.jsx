@@ -25,13 +25,13 @@ const RoomForm = props => {
   );
 };
 
-const mapCreateDispatch = dispatch => {
+const mapCreateDispatch = (dispatch, ownProps) => {
   return {
     handleSubmit(evt) {
       evt.preventDefault();
       const roomName = evt.target.roomName.value;
       const password = evt.target.password.value;
-      dispatch(addNewGame(roomName, password));
+      dispatch(addNewGame(roomName, password, ownProps.history));
     }
   };
 };

@@ -19,8 +19,10 @@ module.exports = io => {
     });
 
     socket.on("gameStart", async gameId => {
-      const players = await Player.getAll({
-        gameId: gameId
+      const players = await Player.findAll({
+        where: {
+          gameId: gameId
+        }
       });
       let shuffledPlayers = shuffle(players);
 
