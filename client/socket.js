@@ -9,10 +9,11 @@ socket.on("connect", () => {
 
   //on game start submit:
   //change peoples state/page to role assignment - back end request to players DB ...how do we stagger the getData and the gameStart?
-  socket.emit("gameStart");
+  socket.emit("gameStart", gameId);
 
   socket.on("getRoles", () => {
     //trigger function in store to get specific user's role from database and set it on state
+    socket.emit("rolesAssigned");
   });
 
   socket.on("darkOver", () => {
@@ -24,12 +25,12 @@ socket.on("connect", () => {
     //change state/view to daytime view;
     //data we get back will look like { killed: Name } or { saved: Name }
     //share the data
-    socket.broadcast.emit("startDayTimerPreVotes");
+    socket.emit("startDayTimerPreVotes");
   });
 
   socket.on("dark", () => {
     //change state/view to dark view
-    socket.broadcast.emit("startDarkTimer");
+    socket.emit("startDarkTimer");
   });
 
   socket.on("getVotes", () => {
