@@ -26,7 +26,9 @@
   "dependencies": {
     "axios": "^0.18.0",
     "body-parser": "^1.18.2",
+    "connect-session-sequelize": "^5.2.1",
     "express": "^4.16.3",
+    "express-session": "^1.15.6",
     "morgan": "^1.9.0",
     "opentok": "^2.6.2",
     "pg": "^7.4.1",

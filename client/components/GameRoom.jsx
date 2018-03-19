@@ -2,8 +2,10 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import tokboxApiKey from "../../secrets";
-import { fetchGame, user, joinExistingGame } from "../store";
+import { fetchGame, user, joinExistingGame, getMe } from "../store";
+
+const tokboxApiKey = "46081452";
+const tokboxSecret = "3d9f569b114ccfa5ae1e545230656c6adb5465d3";
 
 class GameRoom extends Component {
   constructor(props) {
@@ -13,17 +15,19 @@ class GameRoom extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchGame(this.props.match.params.gameId);
+    this.props.fetchCurrentGame();
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!this.props.user && nextProps.user) {
+    if (!this.props.user.id && nextProps.user.id) {
+      this.props.findMe();
       this.tokboxSession();
     }
   }
 
   tokboxSession() {
     const sessionId = this.props.game.sessionId;
+
     const playerToken = this.props.user.token;
 
     initializeSession();
@@ -76,18 +80,21 @@ class GameRoom extends Component {
   }
 
   render() {
-    const { user, game, handleSubmit } = props;
+    const { user, game, handleSubmit } = this.props;
     return (
       <div>
-        {user ? (
+        {user.id ? (
           <div id="videos">
+            <h1>afterUser</h1>
             <div id="subscriber" />
             <div id="publisher" />
           </div>
         ) : (
           <div>
+            <h1>beforeUser</h1>
             <form onSubmit={handleSubmit}>
               <input name="name" placeholder="enter your first name" />
+              <button>Go!</button>
             </form>
           </div>
         )}
@@ -98,19 +105,18 @@ class GameRoom extends Component {
 
 const mapState = ({ user, game }) => ({ user, game });
 
-const mapDispatch = dispatch => {
+const mapDispatch = (dispatch, ownProps) => {
   return {
-    fetchGame(id) {
-      fetchGame(id);
+    fetchCurrentGame() {
+      dispatch(fetchGame(+ownProps.match.params.gameId));
     },
-    handleSubmit(evt, ownProps) {
+    handleSubmit(evt) {
       evt.preventDefault();
       const name = evt.target.name.value;
-      dispatch(joinExistingGame(ownProps.match.params.gameId, name)).then(
-        () => {
-          tokboxSession();
-        }
-      );
+      dispatch(joinExistingGame(ownProps.match.params.gameId, name));
+    },
+    findMe() {
+      dispatch(getMe());
     }
   };
 };

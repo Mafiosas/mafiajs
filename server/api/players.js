@@ -5,6 +5,12 @@ const OpenTok = require("opentok");
 module.exports = router;
 
 //api/players
+router.get("/me", (req, res, next) => {
+  console.log("useeeer", req.session.user);
+  Player.findById(req.session.user)
+    .then(player => res.json(player))
+    .catch(next);
+});
 
 router.get("/:gameId", (req, res, next) => {
   const gameId = req.params.gameId;
@@ -18,12 +24,6 @@ router.get("/:gameId", (req, res, next) => {
     .catch(next);
 });
 
-router.get("/:playerId", (req, res, next) => {
-  Player.findbyId(req.params.playerId)
-    .then(player => res.json(player))
-    .catch(next);
-});
-
 router.post("/", (req, res, next) => {
   Game.findById(req.body.gameId) //make sure to include gameId in the req.body!
     .then(game => {
@@ -32,8 +32,10 @@ router.post("/", (req, res, next) => {
         "3d9f569b114ccfa5ae1e545230656c6adb5465d3"
       );
       let token = opentok.generateToken(game.sessionId);
+
       Player.create({ ...req.body, token })
         .then(player => {
+          req.session.user = player.id;
           res.json(player);
         })
         .catch(next);

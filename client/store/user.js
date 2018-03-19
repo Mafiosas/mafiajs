@@ -10,18 +10,23 @@ const defaultUser = {};
 const getUser = user => ({ type: GET_USER, user });
 
 //THUNK CREATORS
-export const user = playerId => {
-  dispatch =>
+export const getMe = () => {
+  return dispatch => {
     axios
-      .get(`api/players/${playerId}`)
-      .then(res => dispatch(getUser(res.data)))
+      .get("/api/players/me")
+      .then(res => {
+        dispatch(getUser(res.data));
+      })
       .catch(err => console);
+  };
 };
 
 export const joinExistingGame = (gameId, name) => dispatch => {
   axios
     .post(`/api/players`, { gameId, name }) // back route needs to post to Player and associate the gameId
-    .then(res => dispatch(getUser(res.data)))
+    .then(res => {
+      dispatch(getUser(res.data));
+    })
     .catch(err => console.log(err));
 };
 
