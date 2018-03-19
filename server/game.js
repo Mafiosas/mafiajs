@@ -17,7 +17,7 @@ function shuffle(playersArray) {
   return playersArray;
 }
 
-export function assignRoles(shuffled) {
+function assignRoles(shuffled) {
   let result = {};
 
   const totalMafia = Math.floor(shuffled.length / 2 - 1);
@@ -67,5 +67,7 @@ function whoToSendBack(killed, saved) {
 module.exports = {
   hasGameEnded,
   didMafiaWin,
-  whoToSendBack
+  whoToSendBack,
+  shuffle,
+  assignRoles
 };

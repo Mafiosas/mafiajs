@@ -10,7 +10,6 @@ const defaultGame = {};
 
 /* ACTION CREATORS */
 const getGame = game => ({ type: GET_GAME, game });
-const joinGame = game => ({ type: JOIN_GAME, game });
 const createGame = game => ({ type: CREATE_GAME, game });
 
 /* THUNK CREATORS */
@@ -20,16 +19,23 @@ export const fetchGame = id => dispatch =>
     .then(res => dispatch(getGame(res.data)))
     .catch(err => console.log(err));
 
-export const addNewGame = (roomName, password) => dispatch =>
+export const addNewGame = (roomName, password, history) => dispatch =>
   axios
     .post("/api/game/new", { roomName, password })
-    .then(res => dispatch(createGame(res.data)))
+    .then(res => res.data)
+    .then(game => {
+      dispatch(createGame(game));
+      history.push(`/game/${game.id}`);
+    })
+
     .catch(err => console.log(err));
 
 /* REDUCER */
 export default function(state = defaultGame, action) {
   switch (action.type) {
     case GET_GAME:
+      return action.game;
+    case CREATE_GAME:
       return action.game;
     default:
       return state;

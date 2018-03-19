@@ -26,6 +26,10 @@ const createApp = () => {
   //api routes
   app.use("/api", routes);
 
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/index.html"));
+  }); // Send index.html for any other requests
+
   // error handling
   app.use((err, req, res, next) => {
     console.error(err);
