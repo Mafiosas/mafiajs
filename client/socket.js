@@ -24,12 +24,12 @@ socket.on("connect", () => {
     //change state/view to daytime view;
     //data we get back will look like { killed: Name } or { saved: Name }
     //share the data
-    socket.emit("startDayTimerPreVotes");
+    socket.broadcast.emit("startDayTimerPreVotes");
   });
 
   socket.on("dark", () => {
     //change state/view to dark view
-    socket.emit("startDarkTimer");
+    socket.broadcast.emit("startDarkTimer");
   });
 
   socket.on("getVotes", () => {

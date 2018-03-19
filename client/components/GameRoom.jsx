@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import tokboxApiKey from "../../secrets";
 import { fetchGame, user, joinExistingGame } from "../store";
-import CreateUser from "./UserCreateForm";
 
 class GameRoom extends Component {
   constructor(props) {
@@ -119,7 +118,7 @@ const mapDispatch = dispatch => {
 export default withRouter(connect(mapState, mapDispatch)(GameRoom));
 
 /* PROP TYPES */
-AuthForm.propTypes = {
+GameRoom.propTypes = {
   user: PropTypes.object,
   game: PropTypes.object,
   fetchGame: PropTypes.func,
