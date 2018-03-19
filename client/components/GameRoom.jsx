@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { fetchGame, user, joinExistingGame } from "../store";
+import { fetchGame, user, joinExistingGame, getMe } from "../store";
 
 const tokboxApiKey = "46081452";
 const tokboxSecret = "3d9f569b114ccfa5ae1e545230656c6adb5465d3";
@@ -20,13 +20,14 @@ class GameRoom extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!this.props.user.id && nextProps.user.id) {
+      this.props.findMe();
       this.tokboxSession();
     }
   }
 
   tokboxSession() {
     const sessionId = this.props.game.sessionId;
-    console.log("sessionId", this.props.game.sessionId);
+
     const playerToken = this.props.user.token;
 
     initializeSession();
@@ -107,12 +108,15 @@ const mapState = ({ user, game }) => ({ user, game });
 const mapDispatch = (dispatch, ownProps) => {
   return {
     fetchCurrentGame() {
-      fetchGame(ownProps.match.params.gameId);
+      dispatch(fetchGame(+ownProps.match.params.gameId));
     },
     handleSubmit(evt) {
       evt.preventDefault();
       const name = evt.target.name.value;
       dispatch(joinExistingGame(ownProps.match.params.gameId, name));
+    },
+    findMe() {
+      dispatch(getMe());
     }
   };
 };

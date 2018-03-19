@@ -13,13 +13,14 @@ const getGame = game => ({ type: GET_GAME, game });
 const createGame = game => ({ type: CREATE_GAME, game });
 
 /* THUNK CREATORS */
-export const fetchGame = id => dispatch =>
+export const fetchGame = id => dispatch => {
   axios
     .get(`/api/game/${id}`)
     .then(res => dispatch(getGame(res.data)))
     .catch(err => console.log(err));
+};
 
-export const addNewGame = (roomName, password, history) => dispatch =>
+export const addNewGame = (roomName, password, history) => dispatch => {
   axios
     .post("/api/game/new", { roomName, password })
     .then(res => res.data)
@@ -29,6 +30,7 @@ export const addNewGame = (roomName, password, history) => dispatch =>
     })
 
     .catch(err => console.log(err));
+};
 
 /* REDUCER */
 export default function(state = defaultGame, action) {
