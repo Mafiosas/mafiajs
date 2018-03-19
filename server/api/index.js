@@ -9,14 +9,8 @@ const { hasGameEnded, didMafiaWin, whoToSendBack } = require("../game.js");
 
 module.exports = Router;
 
-<<<<<<< HEAD
-Router.use("/game", require("./games"));
-=======
-
 Router.use("/game", game);
 Router.use("/players", player);
-
->>>>>>> master
 
 Router.get("/getInitialData", (req, res, next) => {
   const gameId = req.params.gameId;
@@ -50,16 +44,6 @@ Router.get("/getRoundData", (req, res, next) => {
       isCurrent: true
     }
   }).then(round => res.json(round));
-});
-
-Router.get("/getAllPlayers", (req, res, next) => {
-  const gameId = req.params.gameId;
-  Player.findAll({
-    attributes: ["name"],
-    where: {
-      gameId: gameId
-    }
-  }).then(users => res.json(users));
 });
 
 Router.get("/whoWon", (req, res, next) => {

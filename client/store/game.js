@@ -26,9 +26,9 @@ export const addNewGame = (roomName, password) => dispatch =>
     .then(res => dispatch(createGame(res.data)))
     .catch(err => console.log(err));
 
-export const joinExistingGame = (id, roomName, password) => dispatch =>
+export const joinExistingGame = (gameId, name) => dispatch =>
   axios
-    .post(`/api/game/${id}/join`, { roomName, password }) // back route needs to post to Player and associate the gameId
+    .post(`/api/players`, { gameId }) // back route needs to post to Player and associate the gameId
     .then(res => dispatch(joinGame(res.data)))
     .catch(err => console.log(err));
 

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Home from "./components/Home.jsx";
+import RoomForm from "./components/RoomForm";
 
 export default class App extends Component {
   constructor(props) {
@@ -78,7 +79,9 @@ export default class App extends Component {
           <div id="publisher" />
         </div>
         <Router>
-          <Route component={Home} />
+          <Route exact path="/" component={Home} />
+          <Route path="/createGame" component={RoomForm} />
+          <Route path="game/:roomName" />
         </Router>
       </div>
     );
