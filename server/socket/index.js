@@ -6,8 +6,8 @@ module.exports = io => {
 
     let game;
 
-    socket.on("joinGame", gameName => {
-      game = gameName;
+    socket.on("joinGame", gameId => {
+      game = gameId;
       socket.join(game);
     });
 

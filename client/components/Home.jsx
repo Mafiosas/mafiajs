@@ -23,7 +23,7 @@ class Home extends Component {
               );
             })
           ) : (
-            <div> No actives games </div>
+            <div> No active games </div>
           )}
         </div>
         <Link to={"/createGame"}>

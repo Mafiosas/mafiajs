@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { addNewGame, joinExistingGame } from "../store";
+import { addNewGame } from "../store";
 
 const RoomForm = props => {
   const { handleSubmit } = props;
@@ -20,7 +20,6 @@ const RoomForm = props => {
         <div>
           <button type="submit">Create Game</button>
         </div>
-        {error && error.response && <div> {error.response.data} </div>}
       </form>
     </div>
   );
@@ -37,12 +36,4 @@ const mapCreateDispatch = dispatch => {
   };
 };
 
-export const CreateAGame = connect(mapCreate, mapCreateDispatch)(RoomForm);
-
-/* PROP TYPES */
-AuthForm.propTypes = {
-  name: PropTypes.string.isRequired,
-  displayName: PropTypes.string.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  error: PropTypes.object
-};
+export default connect(null, mapCreateDispatch)(RoomForm);
