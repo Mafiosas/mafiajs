@@ -1,3 +1,6 @@
+const { Game, Round, Player } = require("../db/models");
+const { whoToSendBack, shuffle, assignRoles } = require("../game.js");
+
 module.exports = io => {
   io.on("connection", socket => {
     console.log(
@@ -6,8 +9,8 @@ module.exports = io => {
 
     let game;
 
-    socket.on("joinGame", gameName => {
-      game = gameName;
+    socket.on("joinGame", gameId => {
+      game = gameId;
       socket.join(game);
     });
 
@@ -15,7 +18,16 @@ module.exports = io => {
       console.log(`Connection ${socket.id} is no longer connected!`);
     });
 
-    socket.on("gameStart", () => {
+    socket.on("gameStart", async gameId => {
+      const players = await Player.getAll({
+        gameId: gameId
+      });
+      let shuffledPlayers = shuffle(players);
+
+      socket.broadcast.to(game).emit("getRoles");
+    });
+
+    socket.on("rolesAssigned", () => {
       socket.broadcast.to(game).emit("dark", () => {
         setTimeout(() => {
           socket.broadcast.to(game).emit("darkOver");
@@ -24,12 +36,59 @@ module.exports = io => {
     });
 
     socket.on("darkData", darkData => {
-      //do the things with the data
-      //check is the game still going?
-      //if yes then...
-      socket.broadcast.to(game).emit("daytime", dataFromDark);
-      //if no then..
-      socket.broadcast.to(game).emit("gameOver");
+      let killed = darkData.killed || null;
+      let saved = darkData.saved || null;
+
+      const gameId = darkData.gameId;
+      Round.findOne({
+        where: {
+          gameId: gameId,
+          isCurrent: true
+        }
+      }).then(round => {
+        if (killed && !round.saved) {
+          return round.update({ killed: killed });
+        } else if (saved && !round.killed) {
+          return round.update({ saved: saved });
+        } else {
+          let actualKilled = killed || round.killed;
+          let actualSaved = saved || round.saved;
+          let person = whoToSendBack(actualKilled, actualSaved);
+          const whoDied = person.saved ? null : person.killed;
+          roundUpdate = {
+            died: whoDied,
+            killed: actualKilled,
+            saved: actualSaved,
+            isCurrent: false
+          };
+
+          let proms = [round.update(roundUpdate)];
+          if (whoDied) {
+            proms.push(
+              Player.update(
+                {
+                  isAlive: false
+                },
+                {
+                  where: {
+                    gameId: gameId,
+                    name: whoDied
+                  }
+                }
+              )
+            );
+          }
+          Promise.all(proms).then(() => {
+            Game.findById(gameId).then(game => {
+              if (game.hasEnded()) {
+                socket.broadcast.to(game).emit("gameOver", game.winner);
+              } else {
+                socket.broadcast.to(game).emit("daytime", person);
+              }
+            });
+          });
+        }
+      });
     });
 
     socket.on("startDayTimerPreVotes", () => {
@@ -45,12 +104,25 @@ module.exports = io => {
     });
 
     socket.on("voteData", voteData => {
-      //do the things with the vote data
-      //check is the game still going?
-      //if yes then...
-      socket.broadcast.to(game).emit("dayVoteResults", dayVoteResults);
-      //if no then..
-      socket.broadcast.to(game).emit("gameOver");
+      const gameId = voteData.gameId;
+      let voteTable;
+      if (voteTable[voteData.name]) {
+        voteTable[voteData.name]++;
+      } else {
+        voteTable[voteData.name] = 1;
+      }
+
+      const votedOut = Object.keys(voteData).reduce(
+        (a, b) => (obj[a] > obj[b] ? a : b)
+      );
+
+      Game.findById(gameId).then(currentGame => {
+        if (currentGame.hasEnded()) {
+          socket.broadcast.to(currentGame).emit("gameOver");
+        } else {
+          socket.broadcast.to(currentGame).emit("daytime", votedOut);
+        }
+      });
     });
 
     socket.on("startDarkTimer", () => {

@@ -30,4 +30,15 @@ Game.prototype.hasEnded = function() {
   return !!this.winner;
 };
 
+Game.prototype.alivePlayers = async function() {
+  const players = await Player.findAll({
+    where: {
+      gameId: this.id,
+      isAlive: true
+    }
+  });
+  console.log("these my players", players.length);
+  return players.length;
+};
+
 module.exports = Game;
