@@ -6,7 +6,6 @@ module.exports = router;
 
 //api/players
 router.get("/me", (req, res, next) => {
-  console.log("useeeer", req.session.user);
   Player.findById(req.session.user)
     .then(player => res.json(player))
     .catch(next);

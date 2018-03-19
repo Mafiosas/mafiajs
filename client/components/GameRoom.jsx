@@ -16,13 +16,7 @@ class GameRoom extends Component {
 
   componentDidMount() {
     this.props.fetchCurrentGame();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.user.id && nextProps.user.id) {
-      this.props.findMe();
-      this.tokboxSession();
-    }
+    this.props.findMe();
   }
 
   tokboxSession() {
@@ -40,7 +34,9 @@ class GameRoom extends Component {
     }
 
     function initializeSession() {
-      var session = OT.initSession(tokboxApiKey, sessionId);
+      console.log("tokbox", tokboxApiKey);
+      console.log("sessionId", sessionId);
+      var session = OT.initSession("46081452");
 
       // Subscribe to a newly created stream
       session.on("streamCreated", function(event) {
@@ -80,24 +76,16 @@ class GameRoom extends Component {
   }
 
   render() {
-    const { user, game, handleSubmit } = this.props;
+    const { user, game } = this.props;
     return (
       <div>
-        {user.id ? (
-          <div id="videos">
-            <h1>afterUser</h1>
-            <div id="subscriber" />
-            <div id="publisher" />
-          </div>
-        ) : (
-          <div>
-            <h1>beforeUser</h1>
-            <form onSubmit={handleSubmit}>
-              <input name="name" placeholder="enter your first name" />
-              <button>Go!</button>
-            </form>
-          </div>
-        )}
+        {" "}
+        {game.id && this.tokboxSession()}
+        <div id="videos">
+          <h1>afterUser</h1>
+          <div id="subscriber" />
+          <div id="publisher" />
+        </div>
       </div>
     );
   }
@@ -110,11 +98,7 @@ const mapDispatch = (dispatch, ownProps) => {
     fetchCurrentGame() {
       dispatch(fetchGame(+ownProps.match.params.gameId));
     },
-    handleSubmit(evt) {
-      evt.preventDefault();
-      const name = evt.target.name.value;
-      dispatch(joinExistingGame(ownProps.match.params.gameId, name));
-    },
+
     findMe() {
       dispatch(getMe());
     }

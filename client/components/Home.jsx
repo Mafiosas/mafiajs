@@ -2,14 +2,14 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { fetchGames } from "../store";
+import { fetchGames, joinExistingGame } from "../store";
 
 class Home extends Component {
   componentDidMount() {
     this.props.getGames();
   }
   render() {
-    const { games } = this.props;
+    const { games, handleSubmit } = this.props;
     return (
       <div>
         <h1> Join if you dare. </h1>
@@ -19,9 +19,10 @@ class Home extends Component {
               return (
                 <div className="rooms" key={game.id}>
                   <h3>{game.roomName}</h3>
-                  <Link to={`/game/${game.id}`}>
-                    <button>Join game</button>
-                  </Link>
+                  <form onSubmit={event => handleSubmit(event, game.id)}>
+                    <input name="name" placeholder="enter your first name" />
+                    <button>Join Game</button>
+                  </form>
                 </div>
               );
             })
@@ -43,10 +44,15 @@ const mapState = (state, ownProps) => {
   };
 };
 
-const mapDispatch = dispatch => {
+const mapDispatch = (dispatch, ownProps) => {
   return {
     getGames: () => {
       dispatch(fetchGames());
+    },
+    handleSubmit(evt, gameId) {
+      evt.preventDefault();
+      const name = evt.target.name.value;
+      dispatch(joinExistingGame(gameId, name, ownProps.history));
     }
   };
 };

@@ -20,9 +20,9 @@ export const fetchGame = id => dispatch => {
     .catch(err => console.log(err));
 };
 
-export const addNewGame = (roomName, password, history) => dispatch => {
+export const addNewGame = (roomName, password, name, history) => dispatch => {
   axios
-    .post("/api/game/new", { roomName, password })
+    .post("/api/game/new", { roomName, password, name })
     .then(res => res.data)
     .then(game => {
       dispatch(createGame(game));

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { addNewGame } from "../store";
+import { addNewGame, joinExistingGame } from "../store";
 
 const RoomForm = props => {
   const { handleSubmit } = props;
@@ -18,6 +18,8 @@ const RoomForm = props => {
           <input name="password" type="text" />
         </div>
         <div>
+          <label>Player Name:</label>
+          <input name="name" placeholder="enter your first name" />
           <button type="submit">Create Game</button>
         </div>
       </form>
@@ -31,7 +33,8 @@ const mapCreateDispatch = (dispatch, ownProps) => {
       evt.preventDefault();
       const roomName = evt.target.roomName.value;
       const password = evt.target.password.value;
-      dispatch(addNewGame(roomName, password, ownProps.history));
+      const name = evt.target.name.value;
+      dispatch(addNewGame(roomName, password, name, ownProps.history));
     }
   };
 };

@@ -21,11 +21,12 @@ export const getMe = () => {
   };
 };
 
-export const joinExistingGame = (gameId, name) => dispatch => {
+export const joinExistingGame = (gameId, name, history) => dispatch => {
   axios
     .post(`/api/players`, { gameId, name }) // back route needs to post to Player and associate the gameId
     .then(res => {
       dispatch(getUser(res.data));
+      history.push(`/game/${gameId}`);
     })
     .catch(err => console.log(err));
 };
