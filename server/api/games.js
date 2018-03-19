@@ -39,7 +39,16 @@ router.post("/new", (req, res, next) => {
 
     Game.create({ ...req.body, sessionId })
       .then(created => {
-        res.json(created);
+        let token = opentok.generateToken(created.sessionId);
+
+        Player.create({ ...req.body, token })
+          .then(player => {
+            req.session.user = player.id;
+          })
+          .then(() => {
+            console.log("created", created);
+            res.json(created);
+          });
       })
       .catch(next);
   });
