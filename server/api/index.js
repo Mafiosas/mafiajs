@@ -46,16 +46,6 @@ Router.get("/getRoundData", (req, res, next) => {
   }).then(round => res.json(round));
 });
 
-Router.get("/getAllPlayers", (req, res, next) => {
-  const gameId = req.params.gameId;
-  Player.findAll({
-    attributes: ["name"],
-    where: {
-      gameId: gameId
-    }
-  }).then(users => res.json(users));
-});
-
 Router.get("/whoWon", (req, res, next) => {
   let alivePlayers, aliveMafias;
   const gameId = req.params.gameId;

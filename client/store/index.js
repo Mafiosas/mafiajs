@@ -5,8 +5,9 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import players from "./players";
 import game from "./game";
 import games from "./games";
+import user from "./user";
 
-const reducer = combineReducers({ players, game, games });
+const reducer = combineReducers({ players, game, games, user });
 
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({ collapsed: true }))
@@ -17,3 +18,4 @@ export default store;
 export * from "./players";
 export * from "./game";
 export * from "./games";
+export * from "./user";

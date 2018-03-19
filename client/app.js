@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Home from "./components/Home.jsx";
-import GameRoom from "./components/GameRoom.jsx";
+import RoomForm from "./components/RoomForm";
+import GameRoom from "./components/GameRoom";
 
 export default class App extends Component {
   render() {
@@ -9,7 +10,8 @@ export default class App extends Component {
       <div>
         <Router>
           <Route exact path="/" component={Home} />
-          <Route path="/game/:roomName" component={GameRoom} />
+          <Route path="/createGame" component={RoomForm} />
+          <Route path="/game/:gameId" component={GameRoom} />
         </Router>
       </div>
     );

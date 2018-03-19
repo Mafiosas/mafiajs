@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import { joinExistingGame } from "../store";
 
 class Home extends Component {
   render() {
@@ -24,6 +26,9 @@ class Home extends Component {
             <div> No actives games </div>
           )}
         </div>
+        <Link to={"/createGame"}>
+          <button>Create A New Game</button>
+        </Link>
       </div>
     );
   }

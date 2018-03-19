@@ -4,32 +4,21 @@ import PropTypes from "prop-types";
 import { addNewGame, joinExistingGame } from "../store";
 
 const RoomForm = props => {
-  const { name, displayName, handleSubmit, error, allGames } = props;
+  const { handleSubmit } = props;
   return (
     <div>
-      <form onSubmit={handleSubmit} name={name}>
-        {name === "join-game" ? (
-          <div>
-            <label>Room Name:</label>
-            <select id="roomName">
-              {" "}
-              {allGames.map(game => {
-                return <option key={game.id}> {game.name} </option>;
-              })}
-            </select>
-          </div>
-        ) : (
-          <div>
-            <label>Room Name:</label>
-            <input name="roomName" type="text" />
-          </div>
-        )}
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Room Name:</label>
+          <input name="roomName" type="text" />
+        </div>
+
         <div>
           <label>Password:</label>
           <input name="password" type="text" />
         </div>
         <div>
-          <button type="submit">{displayName}</button>
+          <button type="submit">Create Game</button>
         </div>
         {error && error.response && <div> {error.response.data} </div>}
       </form>
@@ -37,40 +26,10 @@ const RoomForm = props => {
   );
 };
 
-const mapJoin = state => {
-  return {
-    name: "join-game",
-    displayName: "Join Game",
-    error: state.player.error,
-    allGames: state.allGames
-  };
-};
-
-const mapCreate = state => {
-  return {
-    name: "create-game",
-    displayName: "Create Game",
-    error: state.player.error
-  };
-};
-
-const mapJoinDispatch = dispatch => {
-  return {
-    handleSubmit(evt) {
-      evt.preventDefault();
-      const formName = evt.target.name;
-      const roomName = document.getElementById("roomName").value;
-      const password = evt.target.password.value;
-      dispatch(joinExistingGame(roomName, password));
-    }
-  };
-};
-
 const mapCreateDispatch = dispatch => {
   return {
     handleSubmit(evt) {
       evt.preventDefault();
-      const formName = evt.target.name;
       const roomName = evt.target.roomName.value;
       const password = evt.target.password.value;
       dispatch(addNewGame(roomName, password));
@@ -78,7 +37,6 @@ const mapCreateDispatch = dispatch => {
   };
 };
 
-export const JoinAGame = connect(mapJoin, mapJoinDispatch)(RoomForm);
 export const CreateAGame = connect(mapCreate, mapCreateDispatch)(RoomForm);
 
 /* PROP TYPES */

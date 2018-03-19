@@ -1,8 +1,10 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import tokboxApiKey from "../../secrets";
-import { fetchGame, getUser } from "./store";
+import { fetchGame, user, joinExistingGame } from "../store";
+import CreateUser from "./UserCreateForm";
 
 class GameRoom extends Component {
   constructor(props) {
@@ -12,7 +14,13 @@ class GameRoom extends Component {
   }
 
   componentDidMount() {
-    this.fetchGame.then(this.getUser).then(this.tokboxSession);
+    this.props.fetchGame(this.props.match.params.gameId);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.user && nextProps.user) {
+      this.tokboxSession();
+    }
   }
 
   tokboxSession() {
@@ -69,17 +77,46 @@ class GameRoom extends Component {
   }
 
   render() {
-    <div id="videos">
-      <div id="subscriber" />
-      <div id="publisher" />
-    </div>;
+    const { user, game, handleSubmit } = props;
+    return (
+      <div>
+        {user ? (
+          <div id="videos">
+            <div id="subscriber" />
+            <div id="publisher" />
+          </div>
+        ) : (
+          <div>
+            <form onSubmit={handleSubmit}>
+              <input name="name" placeholder="enter your first name" />
+            </form>
+          </div>
+        )}
+      </div>
+    );
   }
 }
 
 const mapState = ({ user, game }) => ({ user, game });
-const mapDispatch = { fetchGame, getUser };
 
-export default connect(mapState, mapDispatch)(GameRoom);
+const mapDispatch = dispatch => {
+  return {
+    fetchGame(id) {
+      fetchGame(id);
+    },
+    handleSubmit(evt, ownProps) {
+      evt.preventDefault();
+      const name = evt.target.name.value;
+      dispatch(joinExistingGame(ownProps.match.params.gameId, name)).then(
+        () => {
+          tokboxSession();
+        }
+      );
+    }
+  };
+};
+
+export default withRouter(connect(mapState, mapDispatch)(GameRoom));
 
 /* PROP TYPES */
 AuthForm.propTypes = {

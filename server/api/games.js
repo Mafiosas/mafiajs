@@ -6,7 +6,23 @@ const OpenTok = require("opentok");
 
 module.exports = router;
 
-router.post("/", (req, res, next) => {
+router.get("/", (req, res, next) => {
+  Game.findAll({
+    where: {
+      inProgress: false
+    }
+  }).then(activeGames => res.json(activeGames));
+});
+
+router.get("/:gameId", (req, res, next) => {
+  Game.findById(req.params.gameId)
+    .then(game => {
+      res.json(game);
+    })
+    .catch(next);
+});
+
+router.post("/new", (req, res, next) => {
   let opentok = new OpenTok(
     "46081452",
     "3d9f569b114ccfa5ae1e545230656c6adb5465d3"
@@ -27,16 +43,6 @@ router.post("/", (req, res, next) => {
       })
       .catch(next);
   });
-});
-
-module.exports = router;
-
-router.get("/", (req, res, next) => {
-  Game.findAll({
-    where: {
-      inProgress: false
-    }
-  }).then(activeGames => res.json(activeGames));
 });
 
 router.post("/newRound/:gameId", (req, res, next) => {
