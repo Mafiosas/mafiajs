@@ -17,7 +17,7 @@ function shuffle(playersArray) {
   return playersArray;
 }
 
-function assignRoles(shuffled) {
+export function assignRoles(shuffled) {
   let result = {};
 
   const totalMafia = Math.floor(shuffled.length / 2 - 1);

@@ -30,8 +30,7 @@ Player.prototype.isMafia = function() {
 
 Player.afterUpdate(player => {
   const gameId = player.gameId;
-  let aliveMafias, aliveVillagers;
-  console.log("hello!!");
+  let aliveMafias, alivePlayers;
   return Player.findAll({
     where: {
       gameId: gameId,
@@ -40,7 +39,6 @@ Player.afterUpdate(player => {
     }
   })
     .then(mafias => {
-      console.log("Where my mafias at", mafias);
       aliveMafias = mafias;
     })
     .then(() => {
@@ -57,7 +55,6 @@ Player.afterUpdate(player => {
     .then(players => (alivePlayers = players))
     .then(() => {
       if (hasGameEnded(aliveMafias, alivePlayers)) {
-        console.log("did game end");
         Game.update(
           {
             winner: didMafiaWin(aliveMafias) ? "Mafia" : "Villagers"
