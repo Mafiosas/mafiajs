@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import socket from "../socket";
+import { OTSession, OTPublisher, OTStreams, OTSubscriber } from "opentok-react";
 
 import {
   fetchGame,
@@ -20,7 +21,10 @@ class GameRoom extends Component {
     super(props);
 
     this.state = {
-      time: ""
+      time: "",
+      error: null,
+      connection: "Connecting",
+      publishVideo: true
     };
 
     this.tokboxSession = this.tokboxSession.bind(this);
@@ -28,6 +32,42 @@ class GameRoom extends Component {
     this.getRoles = this.getRoles.bind(this);
     this.dark = this.dark.bind(this);
     this.darkOver = this.darkOver.bind(this);
+
+    this.sessionEventHandlers = {
+      sessionConnected: () => {
+        this.setState({ connection: "Connected" });
+      },
+      sessionDisconnected: () => {
+        this.setState({ connection: "Disconnected" });
+      },
+      sessionReconnected: () => {
+        this.setState({ connection: "Reconnected" });
+      },
+      sessionReconnecting: () => {
+        this.setState({ connection: "Reconnecting" });
+      }
+    };
+
+    this.publisherEventHandlers = {
+      accessDenied: () => {
+        console.log("User denied access to media source");
+      },
+      streamCreated: () => {
+        console.log("Publisher stream created");
+      },
+      streamDestroyed: ({ reason }) => {
+        console.log(`Publisher stream destroyed because: ${reason}`);
+      }
+    };
+
+    this.subscriberEventHandlers = {
+      videoEnabled: () => {
+        console.log("Subscriber video enabled");
+      },
+      videoDisabled: () => {
+        console.log("Subscriber video disabled");
+      }
+    };
   }
 
   componentDidMount() {
@@ -86,6 +126,7 @@ class GameRoom extends Component {
     function initializeSession() {
       console.log("tokbox", tokboxApiKey);
       console.log("sessionId", sessionId);
+      console.log("playerToken", playerToken);
       var session = OT.initSession("46081452");
 
       // Subscribe to a newly created stream
@@ -125,21 +166,72 @@ class GameRoom extends Component {
     }
   }
 
+  onSessionError = error => {
+    this.setState({ error });
+  };
+
+  onPublish = () => {
+    console.log("Publish Success");
+  };
+
+  onPublishError = error => {
+    this.setState({ error });
+  };
+
+  onSubscribe = () => {
+    console.log("Subscribe Success");
+  };
+
+  onSubscribeError = error => {
+    this.setState({ error });
+  };
+
+  toggleVideo = () => {
+    this.setState({ publishVideo: !this.state.publishVideo });
+  };
+
   render() {
     const { user, game, players } = this.props;
-    console.log("socket", socket);
+    // console.log("socket", socket);
+    const sessionId = game.sessionId;
 
-    console.log("this.state", this.state);
+    const token = user.token;
+
+    const apiKey = "46081452";
+    const { error, connection, publishVideo } = this.state;
+    // console.log("this.state", this.state);
     return (
       <div>
         {" "}
-        {game.id && this.tokboxSession()}
         {players && game.numPlayers == players.length && this.gameStart()}
-        <div id="videos">
-          <h1>afterUser</h1>
-          <div id="subscriber" />
-          <div id="publisher" />
-        </div>
+        {game.id &&
+          user.id && (
+            <div id="videos">
+              <h1>afterUser</h1>
+              <OTSession
+                apiKey={apiKey}
+                sessionId={sessionId}
+                token={token}
+                onError={this.onSessionError}
+                eventHandlers={this.sessionEventHandlers}
+              >
+                <OTPublisher
+                  properties={{ publishVideo, width: 150, height: 150 }}
+                  onPublish={this.onPublish}
+                  onError={this.onPublishError}
+                  eventHandlers={this.publisherEventHandlers}
+                />
+                <OTStreams>
+                  <OTSubscriber
+                    properties={{ width: 250, height: 250 }}
+                    onSubscribe={this.onSubscribe}
+                    onError={this.onSubscribeError}
+                    eventHandlers={this.subscriberEventHandlers}
+                  />
+                </OTStreams>
+              </OTSession>
+            </div>
+          )}
       </div>
     );
   }
