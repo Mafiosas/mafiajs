@@ -172,6 +172,8 @@ var _reactRedux = __webpack_require__(/*! react-redux */ "./node_modules/react-r
 
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js"));
 
+var _socket = _interopRequireDefault(__webpack_require__(/*! ../socket */ "./client/socket.js"));
+
 var _store = __webpack_require__(/*! ../store */ "./client/store/index.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -207,6 +209,7 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, (GameRoom.__proto__ || Object.getPrototypeOf(GameRoom)).call(this, props));
     _this.tokboxSession = _this.tokboxSession.bind(_assertThisInitialized(_this));
+    _this.gameStart = _this.gameStart.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -215,6 +218,14 @@ function (_Component) {
     value: function componentDidMount() {
       this.props.fetchCurrentGame();
       this.props.findMe();
+      this.props.loadPlayers();
+
+      _socket.default.emit("joinGame", window.location.pathname.slice(window.location.pathname.lastIndexOf("/") + 1));
+    }
+  }, {
+    key: "gameStart",
+    value: function gameStart() {
+      _socket.default.emit("gameStart", this.props.game.id);
     }
   }, {
     key: "tokboxSession",
@@ -263,8 +274,10 @@ function (_Component) {
     value: function render() {
       var _props = this.props,
           user = _props.user,
-          game = _props.game;
-      return _react.default.createElement("div", null, " ", game.id && this.tokboxSession(), _react.default.createElement("div", {
+          game = _props.game,
+          players = _props.players;
+      console.log("socket", _socket.default);
+      return _react.default.createElement("div", null, " ", game.id && this.tokboxSession(), players && game.numPlayers == players.length && this.gameStart(), _react.default.createElement("div", {
         id: "videos"
       }, _react.default.createElement("h1", null, "afterUser"), _react.default.createElement("div", {
         id: "subscriber"
@@ -279,10 +292,12 @@ function (_Component) {
 
 var mapState = function mapState(_ref) {
   var user = _ref.user,
-      game = _ref.game;
+      game = _ref.game,
+      players = _ref.players;
   return {
     user: user,
-    game: game
+    game: game,
+    players: players
   };
 };
 
@@ -293,6 +308,9 @@ var mapDispatch = function mapDispatch(dispatch, ownProps) {
     },
     findMe: function findMe() {
       dispatch((0, _store.getMe)());
+    },
+    loadPlayers: function loadPlayers() {
+      dispatch((0, _store.getPlayersInGame)(+ownProps.match.params.gameId));
     }
   };
 };
@@ -564,8 +582,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var socket = (0, _socket.default)(window.location.origin);
 socket.on("connect", function () {
-  console.log("Connected!");
-  socket.emit("joinGame", window.location.pathname); //on game start submit:
+  console.log("Connected!"); // socket.emit(
+  //   "joinGame",
+  //   window.location.pathname.slice(
+  //     window.location.pathname.lastIndexOf("/") + 1
+  //   )
+  // );
+  //on game start submit:
   //change peoples state/page to role assignment - back end request to players DB ...how do we stagger the getData and the gameStart?
 
   socket.emit("gameStart");
@@ -649,6 +672,7 @@ var createGame = function createGame(game) {
 
 
 var fetchGame = function fetchGame(id) {
+  console.log("id", id);
   return function (dispatch) {
     _axios.default.get("/api/game/".concat(id)).then(function (res) {
       return dispatch(getGame(res.data));
@@ -871,7 +895,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = _default;
-exports.players = void 0;
+exports.getPlayersInGame = void 0;
 
 var _axios = _interopRequireDefault(__webpack_require__(/*! axios */ "./node_modules/axios/index.js"));
 
@@ -893,9 +917,9 @@ var getPlayers = function getPlayers(players) {
 /* THUNK CREATORS */
 
 
-var players = function players() {
+var getPlayersInGame = function getPlayersInGame(id) {
   return function (dispatch) {
-    return _axios.default.get("/api/players/:gameId") //queries the database for a list of the players
+    return _axios.default.get("/api/players/".concat(id)) //queries the database for a list of the players
     .then(function (res) {
       return dispatch(getPlayers(res.data));
     }).catch(function (err) {
@@ -906,7 +930,7 @@ var players = function players() {
 /* REDUCER */
 
 
-exports.players = players;
+exports.getPlayersInGame = getPlayersInGame;
 
 function _default() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultPlayers;

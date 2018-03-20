@@ -12,9 +12,10 @@ router.get("/me", (req, res, next) => {
 });
 
 router.get("/:gameId", (req, res, next) => {
+  console.log("gameId", req.params.gameId);
   const gameId = req.params.gameId;
   Player.findAll({
-    attributes: ["name", "password"],
+    attributes: ["name"],
     where: {
       gameId: gameId
     }

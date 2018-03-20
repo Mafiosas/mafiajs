@@ -10,6 +10,7 @@ module.exports = io => {
     let game;
 
     socket.on("joinGame", gameId => {
+      console.log("joinedgame", gameId);
       game = gameId;
       socket.join(game);
     });
@@ -19,6 +20,7 @@ module.exports = io => {
     });
 
     socket.on("gameStart", async gameId => {
+      console.log("gamestarted", gameId);
       const players = await Player.findAll({
         where: {
           gameId: gameId

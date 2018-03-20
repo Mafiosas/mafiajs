@@ -10,9 +10,9 @@ const defaultPlayers = [];
 const getPlayers = players => ({ type: GET_PLAYERS, players });
 
 /* THUNK CREATORS */
-export const players = () => dispatch =>
+export const getPlayersInGame = id => dispatch =>
   axios
-    .get("/api/players/:gameId") //queries the database for a list of the players
+    .get(`/api/players/${id}`) //queries the database for a list of the players
     .then(res => dispatch(getPlayers(res.data)))
     .catch(err => console.log(err));
 
