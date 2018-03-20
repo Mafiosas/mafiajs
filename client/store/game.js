@@ -1,4 +1,5 @@
 import axios from "axios";
+import { addPlayer } from "./players";
 
 /* ACTION TYPES */
 const GET_GAME = "GET_GAME";
@@ -26,10 +27,15 @@ export const fetchGame = id => {
 export const addNewGame = (roomName, password, name, history) => dispatch => {
   axios
     .post("/api/game/new", { roomName, password, name })
-    .then(res => res.data)
-    .then(game => {
-      dispatch(createGame(game));
-      history.push(`/game/${game.id}`);
+    .then(res => {
+      console.log("this is resdata", res.data);
+      return res.data;
+    })
+    .then(({ createdGame, newPlayer }) => {
+      console.log("this is new player we think!", newPlayer);
+      dispatch(createGame(createdGame));
+      dispatch(addPlayer(newPlayer));
+      history.push(`/game/${createdGame.id}`);
     })
 
     .catch(err => console.log(err));
