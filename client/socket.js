@@ -3,13 +3,14 @@ import io from "socket.io-client";
 const socket = io(window.location.origin);
 
 socket.on("connect", () => {
-  console.log("Connected!");
+  console.log("Connected in the front!");
 
   socket.emit("joinGame", window.location.pathname);
 
   //on game start submit:
   //change peoples state/page to role assignment - back end request to players DB ...how do we stagger the getData and the gameStart?
-  socket.emit("gameStart", gameId);
+  // let gameId = window.location.pathname.slice(1);
+  // socket.emit("gameStart", gameId);
 
   socket.on("getRoles", () => {
     //trigger function in store to get specific user's role from database and set it on state

@@ -11,6 +11,7 @@ module.exports = io => {
 
     socket.on("joinGame", gameId => {
       game = gameId;
+      console.log("this is game", game, gameId);
       socket.join(game);
     });
 
@@ -25,7 +26,8 @@ module.exports = io => {
         }
       });
       let shuffledPlayers = shuffle(players);
-
+      console.log("testing the game start", shuffledPlayers);
+      //shuffle works, we sitll need to assign roles
       socket.broadcast.to(game).emit("getRoles");
     });
 

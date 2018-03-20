@@ -13,8 +13,6 @@ const routes = require("./api");
 const OpenTok = require("opentok");
 const Game = require("./db/models/game");
 
-module.exports = app;
-
 // logging middleware
 const createApp = () => {
   app.use(morgan("dev"));
@@ -88,6 +86,7 @@ if (require.main === module) {
   createApp();
 }
 
+module.exports = { app, startListening };
 // //to disconnect participant from OpenTok session
 // opentok.forceDisconnect(sessionId, connectionId, function(error) {
 //   if (error) return console.log("error:", error);
