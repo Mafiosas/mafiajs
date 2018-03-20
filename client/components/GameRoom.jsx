@@ -19,8 +19,15 @@ class GameRoom extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      time: ""
+    };
+
     this.tokboxSession = this.tokboxSession.bind(this);
     this.gameStart = this.gameStart.bind(this);
+    this.getRoles = this.getRoles.bind(this);
+    this.dark = this.dark.bind(this);
+    this.darkOver = this.darkOver.bind(this);
   }
 
   componentDidMount() {
@@ -33,10 +40,28 @@ class GameRoom extends Component {
         window.location.pathname.lastIndexOf("/") + 1
       )
     );
+    socket.on("getRoles", this.getRoles);
+    socket.on("dark", this.dark);
+    socket.on("darkOver", this.darkOver);
   }
 
   gameStart() {
     socket.emit("gameStart", this.props.game.id);
+  }
+
+  getRoles() {
+    console.log("in get role");
+
+    socket.emit("rolesAssigned");
+  }
+  dark() {
+    console.log("in dark");
+    socket.emit("startDarkTimer");
+    this.setState({ time: "dark" });
+  }
+
+  darkOver() {
+    console.log("ohhhmmmyyygaaaaa dark isover");
   }
 
   tokboxSession() {
@@ -98,6 +123,8 @@ class GameRoom extends Component {
   render() {
     const { user, game, players } = this.props;
     console.log("socket", socket);
+
+    console.log("this.state", this.state);
     return (
       <div>
         {" "}

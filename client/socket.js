@@ -17,10 +17,10 @@ socket.on("connect", () => {
   // let gameId = window.location.pathname.slice(1);
   // socket.emit("gameStart", gameId);
 
-  socket.on("getRoles", () => {
-    //trigger function in store to get specific user's role from database and set it on state
-    socket.emit("rolesAssigned");
-  });
+  // socket.on("getRoles", () => {
+  //   //trigger function in store to get specific user's role from database and set it on state
+  //   socket.emit("rolesAssigned");
+  // });
 
   socket.on("darkOver", () => {
     //dark data from users (who mafia kill/doctor save etc)
@@ -34,10 +34,10 @@ socket.on("connect", () => {
     socket.emit("startDayTimerPreVotes");
   });
 
-  socket.on("dark", () => {
-    //change state/view to dark view
-    socket.emit("startDarkTimer");
-  });
+  // socket.on("dark", () => {
+  //   //change state/view to dark view
+  //   socket.emit("startDarkTimer");
+  // });
 
   socket.on("getVotes", () => {
     //give voteData
