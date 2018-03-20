@@ -54,11 +54,11 @@ module.exports = io => {
     });
 
     socket.on("rolesAssigned", () => {
-      socket.broadcast.to(game).emit("dark", () => {
-        setTimeout(() => {
-          socket.broadcast.to(game).emit("darkOver");
-        }, 60000);
-      });
+      console.log("inside roles assigned");
+      socket.broadcast.to(game).emit("dark");
+      setTimeout(() => {
+        socket.broadcast.to(game).emit("darkOver");
+      }, 10000);
     });
 
     socket.on("darkData", darkData => {
@@ -153,8 +153,9 @@ module.exports = io => {
 
     socket.on("startDarkTimer", () => {
       setTimeout(() => {
+        console.log("dark timer oveeeer"); //this works!
         socket.broadcast.to(game).emit("darkOver");
-      }, 6000);
+      }, 10000);
     });
   });
 };
