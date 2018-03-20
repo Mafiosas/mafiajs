@@ -100,18 +100,6 @@ Router.put("/newRound", (req, res, next) => {
   let saved = req.body.saved || null;
   let died;
 
-  // {roundId, saved}
-  // delete obj.roundId
-
-  // we could theoretically have an object that has just {saved} or just {killed}, so that will be the ONLY thing Sequelize tries to update
-  // then we can get rid of the first 2 updates and combine the elseIf
-  // Round.update({
-  //   where: {
-  //     gameId: gameId,
-  //     isCurrent: true
-  //   }
-  // }, req.body)
-
   const gameId = req.params.gameId;
   Round.findOne({
     where: {

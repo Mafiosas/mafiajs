@@ -12,6 +12,7 @@ module.exports = io => {
     socket.on("joinGame", gameId => {
       console.log("joinedgame", gameId);
       game = gameId;
+      console.log("this is game", game, gameId);
       socket.join(game);
     });
 
@@ -24,11 +25,32 @@ module.exports = io => {
       const players = await Player.findAll({
         where: {
           gameId: gameId
-        }
+        },
+        attributes: ["name"]
       });
-      let shuffledPlayers = shuffle(players);
+      const nameArray = players.map(el => el.name);
 
-      socket.broadcast.to(game).emit("getRoles");
+      let shuffledPlayers = assignRoles(shuffle(nameArray));
+      let promsArray = [];
+      for (let i = 0; i < shuffledPlayers.length; i++) {
+        console.log(shuffledPlayers[i].name, shuffledPlayers[i].role);
+        promsArray.push(
+          Player.update(
+            {
+              role: shuffledPlayers[i].role
+            },
+            {
+              where: {
+                name: shuffledPlayers[i].name
+              }
+            }
+          )
+        );
+      }
+      Promise.all(promsArray)
+        .then(() => socket.broadcast.to(game).emit("getRoles"))
+        .catch(err => console.err);
+      //shuffle works, we sitll need to assign roles
     });
 
     socket.on("rolesAssigned", () => {
