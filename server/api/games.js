@@ -36,12 +36,13 @@ router.post("/new", (req, res, next) => {
     }
 
     let sessionId = session.sessionId;
+    req.body.sessionId = sessionId;
 
-    Game.create({ ...req.body, sessionId })
+    Game.create(req.body)
       .then(created => {
         let token = opentok.generateToken(created.sessionId);
-
-        Player.create({ ...req.body, token })
+        req.body.token = token;
+        Player.create(req.body)
           .then(player => {
             req.session.user = player.id;
           })
