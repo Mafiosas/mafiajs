@@ -2,7 +2,15 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { fetchGame, user, joinExistingGame, getMe } from "../store";
+import socket from "../socket";
+
+import {
+  fetchGame,
+  user,
+  joinExistingGame,
+  getMe,
+  getPlayersInGame
+} from "../store";
 
 const tokboxApiKey = "46081452";
 const tokboxSecret = "3d9f569b114ccfa5ae1e545230656c6adb5465d3";
@@ -12,11 +20,23 @@ class GameRoom extends Component {
     super(props);
 
     this.tokboxSession = this.tokboxSession.bind(this);
+    this.gameStart = this.gameStart.bind(this);
   }
 
   componentDidMount() {
     this.props.fetchCurrentGame();
     this.props.findMe();
+    this.props.loadPlayers();
+    socket.emit(
+      "joinGame",
+      window.location.pathname.slice(
+        window.location.pathname.lastIndexOf("/") + 1
+      )
+    );
+  }
+
+  gameStart() {
+    socket.emit("gameStart", this.props.game.id);
   }
 
   tokboxSession() {
@@ -76,11 +96,13 @@ class GameRoom extends Component {
   }
 
   render() {
-    const { user, game } = this.props;
+    const { user, game, players } = this.props;
+    console.log("socket", socket);
     return (
       <div>
         {" "}
         {game.id && this.tokboxSession()}
+        {players && game.numPlayers == players.length && this.gameStart()}
         <div id="videos">
           <h1>afterUser</h1>
           <div id="subscriber" />
@@ -91,7 +113,7 @@ class GameRoom extends Component {
   }
 }
 
-const mapState = ({ user, game }) => ({ user, game });
+const mapState = ({ user, game, players }) => ({ user, game, players });
 
 const mapDispatch = (dispatch, ownProps) => {
   return {
@@ -101,6 +123,10 @@ const mapDispatch = (dispatch, ownProps) => {
 
     findMe() {
       dispatch(getMe());
+    },
+
+    loadPlayers() {
+      dispatch(getPlayersInGame(+ownProps.match.params.gameId));
     }
   };
 };

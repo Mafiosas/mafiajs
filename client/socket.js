@@ -5,7 +5,12 @@ const socket = io(window.location.origin);
 socket.on("connect", () => {
   console.log("Connected in the front!");
 
-  socket.emit("joinGame", window.location.pathname);
+  // socket.emit(
+  //   "joinGame",
+  //   window.location.pathname.slice(
+  //     window.location.pathname.lastIndexOf("/") + 1
+  //   )
+  // );
 
   //on game start submit:
   //change peoples state/page to role assignment - back end request to players DB ...how do we stagger the getData and the gameStart?
