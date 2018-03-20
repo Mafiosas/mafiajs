@@ -1,4 +1,5 @@
 import io from "socket.io-client";
+import store, { addPlayer } from "./store";
 
 const socket = io(window.location.origin);
 
@@ -21,6 +22,10 @@ socket.on("connect", () => {
   //   //trigger function in store to get specific user's role from database and set it on state
   //   socket.emit("rolesAssigned");
   // });
+
+  socket.on("playerJoined", playerObj => {
+    store.dispatch(addPlayer(playerObj));
+  });
 
   socket.on("darkOver", () => {
     //dark data from users (who mafia kill/doctor save etc)

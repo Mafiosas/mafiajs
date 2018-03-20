@@ -9,11 +9,12 @@ module.exports = io => {
 
     let game;
 
-    socket.on("joinGame", gameId => {
+    socket.on("joinGame", ({ name, id, gameId }) => {
       console.log("joinedgame", gameId);
       game = gameId;
       console.log("this is game", game, gameId);
       socket.join(game);
+      socket.broadcast.to(game).emit("playerJoined", { name, id });
     });
 
     socket.on("disconnect", () => {
@@ -22,34 +23,58 @@ module.exports = io => {
 
     socket.on("gameStart", async gameId => {
       console.log("gamestarted", gameId);
-      const players = await Player.findAll({
-        where: {
-          gameId: gameId
-        },
-        attributes: ["name"]
-      });
-      const nameArray = players.map(el => el.name);
-
-      let shuffledPlayers = assignRoles(shuffle(nameArray));
-      let promsArray = [];
-      for (let i = 0; i < shuffledPlayers.length; i++) {
-        console.log(shuffledPlayers[i].name, shuffledPlayers[i].role);
-        promsArray.push(
-          Player.update(
-            {
-              role: shuffledPlayers[i].role
-            },
-            {
-              where: {
-                name: shuffledPlayers[i].name
-              }
-            }
-          )
-        );
-      }
-      Promise.all(promsArray)
-        .then(() => socket.broadcast.to(game).emit("getRoles"))
+      //here we should update game table to inprogress: true (eager load players here)
+      Game.findById(gameId, {
+        include: [Player]
+      })
+        .then(game => {
+          if (game.inProgress) {
+            return;
+          }
+          return game
+            .update({
+              inProgress: true
+            })
+            .then(updatedGame => {
+              const idArray = game.players.map(el => el.id);
+              let shuffledPlayers = assignRoles(shuffle(idArray));
+              return Promise.all(
+                game.players.map(player =>
+                  player.update(shuffledPlayers[player.id])
+                )
+              );
+            })
+            .then(() => socket.broadcast.to(game).emit("getRoles"));
+        })
         .catch(err => console.err);
+      // const players = await Player.findAll({
+      //   where: {
+      //     gameId: gameId
+      //   },
+      //   attributes: ["name"]
+      // });
+      // const idArray = players.map(el => el.id);
+
+      //let shuffledPlayers = assignRoles(shuffle(idArray));
+      // let promsArray = [];
+      // for (let i = 0; i < shuffledPlayers.length; i++) {
+      //   console.log(shuffledPlayers[i].id, shuffledPlayers[i].role);
+      //   promsArray.push(
+      //     Player.update(
+      //       {
+      //         role: shuffledPlayers[i].role
+      //       },
+      //       {
+      //         where: {
+      //           id: shuffledPlayers[i].id
+      //         }
+      //       }
+      //     )
+      //   );
+      // }
+      // Promise.all(promsArray)
+      //   .then(() => socket.broadcast.to(game).emit("getRoles"))
+      //   .catch(err => console.err);
       //shuffle works, we sitll need to assign roles
     });
 

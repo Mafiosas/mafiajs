@@ -15,7 +15,7 @@ router.get("/:gameId", (req, res, next) => {
   console.log("gameId", req.params.gameId);
   const gameId = req.params.gameId;
   Player.findAll({
-    attributes: ["name"],
+    attributes: ["name", "id"],
     where: {
       gameId: gameId
     }
@@ -32,14 +32,15 @@ router.post("/", (req, res, next) => {
         "3d9f569b114ccfa5ae1e545230656c6adb5465d3"
       );
       let token = opentok.generateToken(game.sessionId);
+      req.body.token = token;
+      return Player.create(req.body);
+    })
+    .then(player => {
+      req.session.user = player.id;
 
-      Player.create({ ...req.body, token })
-        .then(player => {
-          req.session.user = player.id;
-          res.json(player);
-        })
-        .catch(next);
-    });
+      res.json(player);
+    })
+    .catch(next);
 });
 
 router.put("/dead/:playerId", (req, res, next) => {

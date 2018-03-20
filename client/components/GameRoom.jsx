@@ -45,13 +45,18 @@ class GameRoom extends Component {
     socket.on("darkOver", this.darkOver);
   }
 
+  componentWillReceiveProps() {
+    //players && game.numPlayers == players.length && this.gameStart()
+  }
+
   gameStart() {
     socket.emit("gameStart", this.props.game.id);
   }
 
   getRoles() {
     console.log("in get role");
-
+    //make axios request to get me (user info)
+    //how do we keep track of making sure EVERYONE get their role assigned before we tell the server?
     socket.emit("rolesAssigned");
   }
   dark() {
