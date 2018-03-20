@@ -5,10 +5,21 @@ import { Link } from "react-router-dom";
 import { fetchGames, joinExistingGame } from "../store";
 
 class Home extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { password: "" };
+    this.handleChange = this.handleChange.bind(this);
+  }
+
   componentDidMount() {
     this.props.getGames();
   }
+
+  handleChange(event) {
+    this.setState({ password: event.target.value });
+  }
   render() {
+    console.log(this.state);
     const { games, handleSubmit } = this.props;
     return (
       <div>
@@ -20,8 +31,22 @@ class Home extends Component {
                 <div className="rooms" key={game.id}>
                   <h3>{game.roomName}</h3>
                   <form onSubmit={event => handleSubmit(event, game.id)}>
-                    <input name="name" placeholder="enter your first name" />
-                    <button>Join Game</button>
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="enter your first name"
+                    />
+                    {game.password && (
+                      <input
+                        type="text"
+                        onChange={this.handleChange}
+                        name="password"
+                        placeholder="enter password"
+                      />
+                    )}
+                    <button disabled={this.state.password !== game.password}>
+                      Join Game
+                    </button>
                   </form>
                 </div>
               );
