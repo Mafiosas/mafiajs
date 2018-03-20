@@ -23,12 +23,32 @@ module.exports = io => {
       const players = await Player.findAll({
         where: {
           gameId: gameId
-        }
+        },
+        attributes: ["name"]
       });
-      let shuffledPlayers = shuffle(players);
-      console.log("testing the game start", shuffledPlayers);
+      const nameArray = players.map(el => el.name);
+
+      let shuffledPlayers = assignRoles(shuffle(nameArray));
+      let promsArray = [];
+      for (let i = 0; i < shuffledPlayers.length; i++) {
+        console.log(shuffledPlayers[i].name, shuffledPlayers[i].role);
+        promsArray.push(
+          Player.update(
+            {
+              role: shuffledPlayers[i].role
+            },
+            {
+              where: {
+                name: shuffledPlayers[i].name
+              }
+            }
+          )
+        );
+      }
+      Promise.all(promsArray)
+        .then(() => socket.broadcast.to(game).emit("getRoles"))
+        .catch(err => console.err);
       //shuffle works, we sitll need to assign roles
-      socket.broadcast.to(game).emit("getRoles");
     });
 
     socket.on("rolesAssigned", () => {
