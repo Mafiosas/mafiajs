@@ -24,6 +24,7 @@ socket.on("connect", () => {
   // });
 
   socket.on("playerJoined", playerObj => {
+    console.log("testing player joined on client side");
     store.dispatch(addPlayer(playerObj));
   });
 

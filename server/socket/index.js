@@ -1,11 +1,24 @@
 const { Game, Round, Player } = require("../db/models");
 const { whoToSendBack, shuffle, assignRoles } = require("../game.js");
+const axios = require("axios");
 
 module.exports = io => {
   io.on("connection", socket => {
     console.log(
       `A socket connection to the server has been made: ${socket.id}`
     );
+    // console.log(
+    //   "testing right before our socket.io request",
+    //   Object.keys(io.sockets.sockets).length
+    // );
+    for (let key in io.sockets.sockets) {
+      console.log(
+        "Key:",
+        key,
+        " and the other stuff: ",
+        io.sockets.sockets[key]
+      );
+    }
 
     let game;
 
@@ -44,7 +57,18 @@ module.exports = io => {
                 )
               );
             })
-            .then(() => socket.broadcast.to(game).emit("getRoles"));
+            .then(() => {
+              console.log(
+                "testing right before our socket.io request",
+                io.sockets
+              );
+              io.sockets
+                .clients()
+                .forEach(socket =>
+                  console.log("This is one individual socket", socket)
+                );
+              //socket.broadcast.to(game).emit("getRoles");
+            });
         })
         .catch(err => console.err);
       // const players = await Player.findAll({
