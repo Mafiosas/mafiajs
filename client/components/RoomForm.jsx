@@ -14,7 +14,7 @@ const RoomForm = props => {
         </div>
 
         <div>
-          <label>Password:</label>
+          <label>Password (optional):</label>
           <input name="password" type="text" />
         </div>
         <div>
