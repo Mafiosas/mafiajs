@@ -24,7 +24,7 @@ export default function(state = defaultPlayers, action) {
     case GET_PLAYERS:
       return action.players;
     case ADD_PLAYER:
-      return [...state.players, action.player];
+      return [...state, action.player];
     default:
       return state;
   }

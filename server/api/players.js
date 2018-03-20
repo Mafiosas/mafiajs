@@ -25,6 +25,7 @@ router.get("/:gameId", (req, res, next) => {
 });
 
 router.post("/", (req, res, next) => {
+  console.log("In post!", req.body);
   Game.findById(req.body.gameId) //make sure to include gameId in the req.body!
     .then(game => {
       let opentok = new OpenTok(
