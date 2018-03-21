@@ -18,7 +18,7 @@ export default class DetectiveSelectForm extends Component {
   }
 
   render() {
-    const players = this.props;
+    const { players } = this.props;
     return (
       <div>
         <form>

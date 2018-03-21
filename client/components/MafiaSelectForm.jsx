@@ -18,7 +18,7 @@ export default class MafiaSelectForm extends Component {
   }
 
   render() {
-    const { darkOver, players } = this.props;
+    const { players } = this.props;
     console.log("players inside form", players);
     console.log("selected", this.state.selected);
 
