@@ -75,7 +75,7 @@ const startListening = () => {
   app.set("socketio", io);
 };
 
-const syncDb = () => db.sync({});
+const syncDb = () => db.sync();
 
 if (require.main === module) {
   sessionStore
