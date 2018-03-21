@@ -36,7 +36,7 @@ const mapDispatch = dispatch => {
 export default connect(mapState, mapDispatch)(DarkCiv);
 
 //prop types
-GameRoom.propTypes = {
-  facts: PropTypes.array,
-  fetchFacts: PropTypes.func
-};
+// DarkCiv.propTypes = {
+//   facts: PropTypes.array,
+//   fetchFacts: PropTypes.func
+// };

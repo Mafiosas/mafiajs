@@ -7,6 +7,7 @@ import { OTSession, OTPublisher, OTStreams, OTSubscriber } from "opentok-react";
 import MafiaSelectForm from "./MafiaSelectForm.jsx";
 import DetectiveSelectForm from "./DetectiveSelectForm.jsx";
 import DoctorSelectForm from "./DoctorSelectForm.jsx";
+import DarkCiv from "./DarkCiv.jsx";
 
 import {
   fetchGame,
@@ -101,6 +102,7 @@ class GameRoom extends Component {
 
   assignRole(role) {
     this.setState({ role });
+    console.log("we assigned role!");
   }
   testingGame() {
     socket.emit("testingJoin", "5");
@@ -165,13 +167,14 @@ class GameRoom extends Component {
     const token = user.token;
 
     const apiKey = "46081452";
-    const { error, connection, publishVideo } = this.state;
+    const { error, connection, publishVideo, role } = this.state;
 
     // console.log("this.state", this.state);
     return (
       <div className="container">
         {" "}
-        {players &&
+        {!role &&
+          players &&
           game.numPlayers === players.length && (
             <button onClick={this.gameStart}>You're all here</button>
           )}
@@ -179,6 +182,7 @@ class GameRoom extends Component {
           user.id && (
             <div>
               <h1>{game.roomName}</h1>
+              {this.state.role && <h2>You're a {this.state.role}</h2>}
               <OTSession
                 apiKey={apiKey}
                 sessionId={sessionId}
@@ -214,12 +218,7 @@ class GameRoom extends Component {
               </OTSession>
             </div>
           )}
-        {this.state.time === "dark" &&
-          user.role === "Civilian" && (
-            <div>
-              <DarkCiv />
-            </div>
-          )}
+        {this.state.time === "dark" && user.role === "Civilian" && <div />}
         {this.state.time === "dark" &&
           user.role === "Doctor" && (
             <div>
