@@ -167,7 +167,7 @@ class GameRoom extends Component {
     const token = user.token;
 
     const apiKey = "46081452";
-    const { error, connection, publishVideo, role } = this.state;
+    const { error, connection, publishVideo, role, time } = this.state;
 
     // console.log("this.state", this.state);
     return (
@@ -182,7 +182,7 @@ class GameRoom extends Component {
           user.id && (
             <div>
               <h1>{game.roomName}</h1>
-              {this.state.role && <h2>You're a {this.state.role}</h2>}
+              {role && <h2>You're a {role}</h2>}
               <OTSession
                 apiKey={apiKey}
                 sessionId={sessionId}
@@ -202,15 +202,11 @@ class GameRoom extends Component {
                       width: 250,
                       height: 250,
                       subscribeToAudio:
-                        this.state.time === "dark" &&
-                        this.state.role &&
-                        this.state.role !== "Mafia"
+                        time === "dark" && role && role !== "Mafia"
                           ? false
                           : true,
                       subscribeToVideo:
-                        this.state.time === "dark" &&
-                        this.state.role &&
-                        this.state.role !== "Mafia"
+                        time === "dark" && role && role !== "Mafia"
                           ? false
                           : true
                     }}
@@ -222,9 +218,9 @@ class GameRoom extends Component {
               </OTSession>
             </div>
           )}
-        {this.state.time === "dark" && user.role === "Civilian" && <div />}
-        {this.state.time === "dark" &&
-          user.role === "Doctor" && (
+        {time === "dark" && role === "Civilian" && <div />}
+        {time === "dark" &&
+          role === "Doctor" && (
             <div>
               <h1>Doctor, choose who to save</h1>
               <DoctorSelectForm
@@ -233,8 +229,8 @@ class GameRoom extends Component {
               />
             </div>
           )}
-        {this.state.time === "dark" &&
-          user.role === "Detective" && (
+        {time === "dark" &&
+          role === "Detective" && (
             <div>
               <h1>Detective, choose who you think is Mafia</h1>
               <DetectiveSelectForm
@@ -243,8 +239,8 @@ class GameRoom extends Component {
               />
             </div>
           )}
-        {this.state.time === "dark" &&
-          user.role === "Mafia" && (
+        {time === "dark" &&
+          role === "Mafia" && (
             <div>
               <h1>Mafia, choose who to kill</h1>
               <MafiaSelectForm
