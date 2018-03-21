@@ -66,7 +66,8 @@ Player.afterUpdate(player => {
           }
         );
       }
-    });
+    })
+    .catch(err => console.log(err));
 });
 
 module.exports = Player;
