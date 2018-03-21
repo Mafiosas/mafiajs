@@ -212,7 +212,7 @@ class GameRoom extends Component {
         {game.id &&
           user.id && (
             <div>
-              <h1>afterUser</h1>
+              <h1>{game.roomName}</h1>
               <OTSession
                 apiKey={apiKey}
                 sessionId={sessionId}
@@ -227,14 +227,12 @@ class GameRoom extends Component {
                   eventHandlers={this.publisherEventHandlers}
                 />
                 <OTStreams>
-                  <div className="stream">
-                    <OTSubscriber
-                      properties={{ width: 250, height: 250 }}
-                      onSubscribe={this.onSubscribe}
-                      onError={this.onSubscribeError}
-                      eventHandlers={this.subscriberEventHandlers}
-                    />
-                  </div>
+                  <OTSubscriber
+                    properties={{ width: 250, height: 250 }}
+                    onSubscribe={this.onSubscribe}
+                    onError={this.onSubscribeError}
+                    eventHandlers={this.subscriberEventHandlers}
+                  />
                 </OTStreams>
               </OTSession>
             </div>
