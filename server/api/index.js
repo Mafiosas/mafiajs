@@ -4,6 +4,7 @@ const Round = require("../db/models");
 const { Op } = require("sequelize");
 const game = require("./games");
 const player = require("./players");
+const facts = require("./mafiaFacts");
 
 const { hasGameEnded, didMafiaWin, whoToSendBack } = require("../game.js");
 
@@ -11,6 +12,7 @@ module.exports = Router;
 
 Router.use("/game", game);
 Router.use("/players", player);
+Router.use("/facts", facts);
 
 // Router.get("/getInitialData", (req, res, next) => {
 //   const gameId = req.params.gameId;

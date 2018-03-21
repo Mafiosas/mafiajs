@@ -6,8 +6,9 @@ import players from "./players";
 import game from "./game";
 import games from "./games";
 import user from "./user";
+import facts from "./facts";
 
-const reducer = combineReducers({ players, game, games, user });
+const reducer = combineReducers({ players, game, games, user, facts });
 
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({ collapsed: true }))
@@ -19,3 +20,4 @@ export * from "./players";
 export * from "./game";
 export * from "./games";
 export * from "./user";
+export * from "./facts";
