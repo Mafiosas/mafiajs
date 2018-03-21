@@ -43,6 +43,8 @@ module.exports = io => {
 
     socket.on("gameStart", gameId => {
       //here we should update game table to inprogress: true (eager load players here)
+      // socket.broadcast.to(game).emit("dark");
+      io.to(game).emit("dark");
       Game.findById(gameId, {
         include: [Player]
       }).then(game => {
@@ -72,10 +74,7 @@ module.exports = io => {
               )
             );
           })
-          .then(() => {
-            console.log("this is the game: ", game);
-            return socket.broadcast.to(game).emit("dark");
-          });
+          .catch(err => console.log(err));
       });
     });
 
