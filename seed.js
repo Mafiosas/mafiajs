@@ -1,9 +1,36 @@
-const { Death, Game, Player, Round } = require("./server/db/models");
+const { Death, Game, Player, Round, Fact } = require("./server/db/models");
 const db = require("./server/db/db");
 
 const deaths = [
   {
     story: "ate too much cheese and died from indigestion"
+  }
+];
+
+const mafiaFacts = [
+  {
+    fact:
+      "A government analysis estimated that, in the 1960s, the illicit profit of the nation's twenty-odd mob families topped $7 billion annually, approximately the combined earnings of the ten largest industrial corporations in the country."
+  },
+  {
+    fact:
+      "The Sicilian word omerta, Cosa Nostra's strict code of silence, essentially means ‘men of honor.' Omerta is a way of life and a code of conduct. Along with the vow of silence in dealing with law enforcement, omerta ensures that members of the American mafia swear total devotion to the head of their family."
+  },
+  {
+    fact:
+      "Joe Pistone, the undercover FBI Agent known as Donnie Brasco, was an FBI agent for 27 years. He spent about 20 of those years as an undercover agent. When Donnie Brasco's true identity as FBI undercover agent Joe Pistone was revealed, The Bonanno crime family lost its seat on The Commission and a $500,000 open contract was placed on Pistone's head."
+  },
+  {
+    fact:
+      "John 'Sonny' Franzese told mafia informant Guy Fatato, 'I killed a lot of guys...you`re not talking about four, five, six, ten.' Franzese instructed Fatano to wear hairnets when disposing of evidence, and said getting rid of a body could be done by 'dismembering the corpse in a kiddie pool and drying the severed body parts in a microwave before stuffing the parts in a commercial-grade garbage disposal.'"
+  },
+  {
+    fact:
+      "The alleged requirements to become 'made' – fully initiated – in a La Cosa Nostra family are that you're a full-blooded Italian on both sides – specifically Sicilian, if they're being strict - that you're sponsored by made members of that family, and that you commit a murder for the family. This is called 'making your bones.' The only other way to become made is through being an 'earner' – making large amounts of money for the family"
+  },
+  {
+    fact:
+      "Former Mafia associate Sal Polisi always used a white, plastic 'I LOVE NEW YORK' bag for his bank robberies."
   }
 ];
 
@@ -143,11 +170,16 @@ function buildingRounds() {
   return Promise.all(rounds.map(round => Round.create(round)));
 }
 
+function buildingMafiaFacts() {
+  return Promise.all(mafiaFacts.map(fact => Fact.create(fact)));
+}
+
 function seed() {
   return buildingDeaths()
     .then(() => buildingGames())
     .then(() => buildingPlayers())
-    .then(() => buildingRounds());
+    .then(() => buildingRounds())
+    .then(() => buildingMafiaFacts());
 }
 
 console.log("Syncing Database baby");
