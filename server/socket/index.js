@@ -5,35 +5,17 @@ const axios = require("axios");
 module.exports = io => {
   const clients = {};
   io.on("connection", socket => {
-    console.log("Clients here!", clients);
     console.log(
       `A socket connection to the server has been made: ${socket.id}`
     );
 
     let game;
 
-    // socket.on("testingJoin", payload => {
-    //   console.log(
-    //     "back end has received the front end test payload",
-    //     socket.userName
-    //   );
-    // });
-
     socket.on("joinGame", ({ name, id, gameId }) => {
       game = gameId;
       socket.join(game);
       socket.userName = name;
       clients[socket.id] = id;
-      console.log(
-        "this is socket once joined to game, room:",
-        socket.rooms,
-        "username:",
-        socket.userName,
-        "player id is:",
-        id,
-        "and on the clients object it is:",
-        clients
-      );
       socket.broadcast.to(game).emit("playerJoined", { name, id });
     });
 
@@ -42,9 +24,11 @@ module.exports = io => {
     });
 
     socket.on("gameStart", gameId => {
-      //here we should update game table to inprogress: true (eager load players here)
-      // socket.broadcast.to(game).emit("dark");
       io.to(game).emit("dark");
+      setTimeout(() => {
+        console.log("dark timer oveeeer"); //this works!
+        socket.broadcast.to(game).emit("darkOver");
+      }, 10000);
       Game.findById(gameId, {
         include: [Player]
       }).then(game => {
@@ -66,8 +50,6 @@ module.exports = io => {
                 }
               }
             }
-            // io.to(game).emit("dark");
-            // socket.broadcast.to(game).emit("dark");
             return Promise.all(
               game.players.map(player =>
                 player.update(shuffledPlayers[player.id])
@@ -76,14 +58,6 @@ module.exports = io => {
           })
           .catch(err => console.log(err));
       });
-    });
-
-    socket.on("rolesAssigned", () => {
-      console.log("inside roles assigned");
-      socket.broadcast.to(game).emit("dark");
-      setTimeout(() => {
-        socket.broadcast.to(game).emit("darkOver");
-      }, 10000);
     });
 
     socket.on("darkData", darkData => {
@@ -124,7 +98,6 @@ module.exports = io => {
                   where: {
                     gameId: gameId,
                     name: whoDied
-                    //change to ID
                   }
                 }
               )
@@ -177,11 +150,11 @@ module.exports = io => {
       });
     });
 
-    socket.on("startDarkTimer", () => {
-      setTimeout(() => {
-        console.log("dark timer oveeeer"); //this works!
-        socket.broadcast.to(game).emit("darkOver");
-      }, 10000);
-    });
+    // socket.on("startDarkTimer", () => {
+    //   setTimeout(() => {
+    //     console.log("dark timer oveeeer"); //this works!
+    //     socket.broadcast.to(game).emit("darkOver");
+    //   }, 10000);
+    // });
   });
 };
