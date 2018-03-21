@@ -25,11 +25,12 @@ class GameRoom extends Component {
     super(props);
 
     this.state = {
-      time: "dark",
+      time: "",
       error: null,
       connection: "Connecting",
       publishVideo: true,
-      role: ""
+      role: "",
+      isAlive: true
     };
 
     // this.tokboxSession = this.tokboxSession.bind(this);
