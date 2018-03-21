@@ -36,18 +36,22 @@ router.post("/new", (req, res, next) => {
     }
 
     let sessionId = session.sessionId;
+    req.body.sessionId = sessionId;
 
-    Game.create({ ...req.body, sessionId })
-      .then(created => {
-        let token = opentok.generateToken(created.sessionId);
-
-        Player.create({ ...req.body, token })
+    Game.create(req.body)
+      .then(createdGame => {
+        let token = opentok.generateToken(createdGame.sessionId);
+        req.body.token = token;
+        req.body.gameId = createdGame.id;
+        Player.create(req.body)
           .then(player => {
             req.session.user = player.id;
+
+            return player;
           })
-          .then(() => {
-            console.log("created", created);
-            res.json(created);
+          .then(newPlayer => {
+            console.log("new player", newPlayer);
+            res.json({ createdGame, newPlayer });
           });
       })
       .catch(next);
@@ -60,66 +64,66 @@ router.post("/newRound/:gameId", (req, res, next) => {
     .then(currentRound => res.json(currentRound));
 });
 
-router.put("/newRound/:gameId", (req, res, next) => {
-  // backend sends socket about newRound starting with time, send roundId
-  // frontend gets it and starts a countdown
-  // backend sends socket about round ending
-  // frontend gets it and emits a new event with info (saved, killed, null)
-  // info might want to include gameId for ease (or send roundId back)
-  // backend receives event and starts determining if it has all the info to let everyone know if round has ended
+// router.put("/newRound/:gameId", (req, res, next) => {
+//   // backend sends socket about newRound starting with time, send roundId
+//   // frontend gets it and starts a countdown
+//   // backend sends socket about round ending
+//   // frontend gets it and emits a new event with info (saved, killed, null)
+//   // info might want to include gameId for ease (or send roundId back)
+//   // backend receives event and starts determining if it has all the info to let everyone know if round has ended
 
-  //if check to see if it's a mafia making the request, if so:
-  let killed = req.body.killed || null;
-  //if check to see if it's a doctor making the request, if so:
-  let saved = req.body.saved || null;
-  let died;
+//   //if check to see if it's a mafia making the request, if so:
+//   let killed = req.body.killed || null;
+//   //if check to see if it's a doctor making the request, if so:
+//   let saved = req.body.saved || null;
+//   let died;
 
-  const gameId = req.params.gameId;
-  Round.findOne({
-    where: {
-      gameId: gameId,
-      isCurrent: true
-    }
-  }).then(round => {
-    if (killed && !round.saved) {
-      return round.update({ killed: killed });
-    } else if (saved && !round.killed) {
-      return round.update({ saved: saved });
-    } else {
-      died = whoDies(round.killed || killed, round.saved || saved);
-      roundUpdate = {
-        died: died,
-        killed: killed || round.killed,
-        saved: saved || round.saved,
-        isCurrent: false
-      };
+//   const gameId = req.params.gameId;
+//   Round.findOne({
+//     where: {
+//       gameId: gameId,
+//       isCurrent: true
+//     }
+//   }).then(round => {
+//     if (killed && !round.saved) {
+//       return round.update({ killed: killed });
+//     } else if (saved && !round.killed) {
+//       return round.update({ saved: saved });
+//     } else {
+//       died = whoDies(round.killed || killed, round.saved || saved);
+//       roundUpdate = {
+//         died: died,
+//         killed: killed || round.killed,
+//         saved: saved || round.saved,
+//         isCurrent: false
+//       };
 
-      let proms = [round.update(roundUpdate)];
-      if (died !== "none") {
-        proms.push(
-          Player.update(
-            {
-              isAlive: false
-            },
-            {
-              where: {
-                gameId: gameId,
-                name: died
-              }
-            }
-          )
-        );
-      }
-      Promise.all(proms).then(round => {
-        Game.findById(gameId).then(game => {
-          if (game.hasEnded()) {
-            res.json(game.winner);
-          } else {
-            // create new round + vvvv
-            //socket.emit('updateData') and if someone died (if round.died is truthy), send back round.died bc it's their name; else return round.saved and that's the name of who was saved
-          }
-        });
-      });
-    }
-  });
-});
+//       let proms = [round.update(roundUpdate)];
+//       if (died !== "none") {
+//         proms.push(
+//           Player.update(
+//             {
+//               isAlive: false
+//             },
+//             {
+//               where: {
+//                 gameId: gameId,
+//                 name: died
+//               }
+//             }
+//           )
+//         );
+//       }
+//       Promise.all(proms).then(round => {
+//         Game.findById(gameId).then(game => {
+//           if (game.hasEnded()) {
+//             res.json(game.winner);
+//           } else {
+//             // create new round + vvvv
+//             //socket.emit('updateData') and if someone died (if round.died is truthy), send back round.died bc it's their name; else return round.saved and that's the name of who was saved
+//           }
+//         });
+//       });
+//     }
+//   });
+// });

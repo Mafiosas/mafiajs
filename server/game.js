@@ -17,21 +17,28 @@ function shuffle(playersArray) {
   return playersArray;
 }
 
-function assignRoles(shuffled) {
+function assignRoles(shuffledIdArray) {
   let result = {};
 
-  const totalMafia = Math.floor(shuffled.length / 2 - 1);
+  const totalMafia = Math.floor(shuffledIdArray.length / 2 - 1);
 
   //arrays of players
-  const maf = shuffled.splice(0, totalMafia);
-  const det = [shuffled.pop()];
-  const doc = [shuffled.pop()];
-  const civ = shuffled;
-
-  result["mafia"] = maf;
-  result["detective"] = det;
-  result["doctor"] = doc;
-  result["civilian"] = civ;
+  for (let i = 0; i < totalMafia; i++) {
+    result[shuffledIdArray[i]] = {
+      role: "Mafia"
+    };
+  }
+  result[shuffledIdArray[totalMafia]] = {
+    role: "Detective"
+  };
+  result[shuffledIdArray[totalMafia + 1]] = {
+    role: "Doctor"
+  };
+  for (let j = totalMafia + 2; j < shuffledIdArray.length; j++) {
+    result[shuffledIdArray[j]] = {
+      role: "Civilian"
+    };
+  }
 
   return result;
 }

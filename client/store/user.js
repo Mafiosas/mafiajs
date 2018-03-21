@@ -1,13 +1,15 @@
 import axios from "axios";
+import { addPlayer } from "./players";
+import socket from "../socket";
 
 //ACTION TYPE
-const GET_USER = "GET_USER";
+const SET_USER = "SET_USER";
 
 //INITIAL STATE
 const defaultUser = {};
 
 //ACTION CREATOR
-const getUser = user => ({ type: GET_USER, user });
+const setUser = user => ({ type: SET_USER, user });
 
 //THUNK CREATORS
 export const getMe = () => {
@@ -15,7 +17,7 @@ export const getMe = () => {
     axios
       .get("/api/players/me")
       .then(res => {
-        dispatch(getUser(res.data));
+        dispatch(setUser(res.data));
       })
       .catch(err => console);
   };
@@ -25,7 +27,19 @@ export const joinExistingGame = (gameId, name, history) => dispatch => {
   axios
     .post(`/api/players`, { gameId, name }) // back route needs to post to Player and associate the gameId
     .then(res => {
-      dispatch(getUser(res.data));
+      dispatch(setUser(res.data));
+      dispatch(
+        addPlayer({
+          id: res.data.id,
+          name: res.data.name
+        })
+      );
+      socket.emit("joinGame", {
+        id: res.data.id,
+        name: res.data.name,
+        gameId
+      });
+
       history.push(`/game/${gameId}`);
     })
     .catch(err => console.log(err));
@@ -34,7 +48,7 @@ export const joinExistingGame = (gameId, name, history) => dispatch => {
 //REDUCER
 export default function(state = defaultUser, action) {
   switch (action.type) {
-    case GET_USER:
+    case SET_USER:
       return action.user;
     default:
       return state;

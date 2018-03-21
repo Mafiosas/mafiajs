@@ -37,7 +37,6 @@ Game.prototype.alivePlayers = async function() {
       isAlive: true
     }
   });
-  console.log("these my players", players.length);
   return players.length;
 };
 

@@ -1,17 +1,33 @@
 const { Game, Round, Player } = require("../db/models");
 const { whoToSendBack, shuffle, assignRoles } = require("../game.js");
+const axios = require("axios");
 
 module.exports = io => {
   io.on("connection", socket => {
     console.log(
       `A socket connection to the server has been made: ${socket.id}`
     );
+    // console.log(
+    //   "testing right before our socket.io request",
+    //   Object.keys(io.sockets.sockets).length
+    // );
+    for (let key in io.sockets.sockets) {
+      console.log(
+        "Key:",
+        key,
+        " and the other stuff: ",
+        io.sockets.sockets[key]
+      );
+    }
 
     let game;
 
-    socket.on("joinGame", gameId => {
+    socket.on("joinGame", ({ name, id, gameId }) => {
+      console.log("joinedgame", gameId);
       game = gameId;
+      console.log("this is game", game, gameId);
       socket.join(game);
+      socket.broadcast.to(game).emit("playerJoined", { name, id });
     });
 
     socket.on("disconnect", () => {
@@ -19,22 +35,79 @@ module.exports = io => {
     });
 
     socket.on("gameStart", async gameId => {
-      const players = await Player.findAll({
-        where: {
-          gameId: gameId
-        }
-      });
-      let shuffledPlayers = shuffle(players);
+      console.log("gamestarted", gameId);
+      //here we should update game table to inprogress: true (eager load players here)
+      Game.findById(gameId, {
+        include: [Player]
+      })
+        .then(game => {
+          if (game.inProgress) {
+            return;
+          }
+          return game
+            .update({
+              inProgress: true
+            })
+            .then(updatedGame => {
+              const idArray = game.players.map(el => el.id);
+              let shuffledPlayers = assignRoles(shuffle(idArray));
+              return Promise.all(
+                game.players.map(player =>
+                  player.update(shuffledPlayers[player.id])
+                )
+              );
+            })
+            .then(() => {
+              console.log(
+                "testing right before our socket.io request",
+                io.sockets
+              );
+              io.sockets
+                .clients()
+                .forEach(socket =>
+                  console.log("This is one individual socket", socket)
+                );
+              //socket.broadcast.to(game).emit("getRoles");
+            });
+        })
+        .catch(err => console.err);
+      // const players = await Player.findAll({
+      //   where: {
+      //     gameId: gameId
+      //   },
+      //   attributes: ["name"]
+      // });
+      // const idArray = players.map(el => el.id);
 
-      socket.broadcast.to(game).emit("getRoles");
+      //let shuffledPlayers = assignRoles(shuffle(idArray));
+      // let promsArray = [];
+      // for (let i = 0; i < shuffledPlayers.length; i++) {
+      //   console.log(shuffledPlayers[i].id, shuffledPlayers[i].role);
+      //   promsArray.push(
+      //     Player.update(
+      //       {
+      //         role: shuffledPlayers[i].role
+      //       },
+      //       {
+      //         where: {
+      //           id: shuffledPlayers[i].id
+      //         }
+      //       }
+      //     )
+      //   );
+      // }
+      // Promise.all(promsArray)
+      //   .then(() => socket.broadcast.to(game).emit("getRoles"))
+      //   .catch(err => console.err);
+      //shuffle works, we sitll need to assign roles
     });
 
     socket.on("rolesAssigned", () => {
-      socket.broadcast.to(game).emit("dark", () => {
-        setTimeout(() => {
-          socket.broadcast.to(game).emit("darkOver");
-        }, 60000);
-      });
+      console.log("inside roles assigned");
+      socket.broadcast.to(game).emit("dark");
+      setTimeout(() => {
+        socket.broadcast.to(game).emit("darkOver");
+      }, 10000);
     });
 
     socket.on("darkData", darkData => {
@@ -129,8 +202,9 @@ module.exports = io => {
 
     socket.on("startDarkTimer", () => {
       setTimeout(() => {
+        console.log("dark timer oveeeer"); //this works!
         socket.broadcast.to(game).emit("darkOver");
-      }, 6000);
+      }, 10000);
     });
   });
 };

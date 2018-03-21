@@ -1,4 +1,5 @@
 import axios from "axios";
+import { addPlayer } from "./players";
 
 /* ACTION TYPES */
 const GET_GAME = "GET_GAME";
@@ -13,20 +14,28 @@ const getGame = game => ({ type: GET_GAME, game });
 const createGame = game => ({ type: CREATE_GAME, game });
 
 /* THUNK CREATORS */
-export const fetchGame = id => dispatch => {
-  axios
-    .get(`/api/game/${id}`)
-    .then(res => dispatch(getGame(res.data)))
-    .catch(err => console.log(err));
+export const fetchGame = id => {
+  console.log("id", id);
+  return dispatch => {
+    axios
+      .get(`/api/game/${id}`)
+      .then(res => dispatch(getGame(res.data)))
+      .catch(err => console.log(err));
+  };
 };
 
 export const addNewGame = (roomName, password, name, history) => dispatch => {
   axios
     .post("/api/game/new", { roomName, password, name })
-    .then(res => res.data)
-    .then(game => {
-      dispatch(createGame(game));
-      history.push(`/game/${game.id}`);
+    .then(res => {
+      console.log("this is resdata", res.data);
+      return res.data;
+    })
+    .then(({ createdGame, newPlayer }) => {
+      console.log("this is new player we think!", newPlayer);
+      dispatch(createGame(createdGame));
+      dispatch(addPlayer(newPlayer));
+      history.push(`/game/${createdGame.id}`);
     })
 
     .catch(err => console.log(err));
