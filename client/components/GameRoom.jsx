@@ -24,7 +24,8 @@ class GameRoom extends Component {
       time: "",
       error: null,
       connection: "Connecting",
-      publishVideo: true
+      publishVideo: true,
+      role: ""
     };
 
     // this.tokboxSession = this.tokboxSession.bind(this);
@@ -33,6 +34,7 @@ class GameRoom extends Component {
     this.dark = this.dark.bind(this);
     this.darkOver = this.darkOver.bind(this);
     this.testingGame = this.testingGame.bind(this);
+    this.assignRole = this.assignRole.bind(this);
 
     this.sessionEventHandlers = {
       sessionConnected: () => {
@@ -85,12 +87,16 @@ class GameRoom extends Component {
     socket.on("getRoles", this.getRoles);
     socket.on("dark", this.dark);
     socket.on("darkOver", this.darkOver);
+    socket.on("role", payload => this.assignRole(payload));
   }
 
   componentWillReceiveProps() {
     //players && game.numPlayers == players.length && this.gameStart()
   }
 
+  assignRole(role) {
+    this.setState({ role });
+  }
   testingGame() {
     socket.emit("testingJoin", "5");
   }

@@ -130,6 +130,7 @@ module.exports = io => {
                   where: {
                     gameId: gameId,
                     name: whoDied
+                    //change to ID
                   }
                 }
               )
