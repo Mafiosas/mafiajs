@@ -1,5 +1,6 @@
 import axios from "axios";
 import { addPlayer } from "./players";
+import socket from "../socket";
 
 /* ACTION TYPES */
 const GET_GAME = "GET_GAME";
@@ -28,11 +29,15 @@ export const addNewGame = (roomName, password, name, history) => dispatch => {
   axios
     .post("/api/game/new", { roomName, password, name })
     .then(res => {
-      console.log("this is resdata", res.data);
       return res.data;
     })
     .then(({ createdGame, newPlayer }) => {
-      console.log("this is new player we think!", newPlayer);
+      socket.emit("joinGame", {
+        id: newPlayer.id,
+        name: newPlayer.name,
+        gameId: createdGame.id
+      });
+
       dispatch(createGame(createdGame));
       dispatch(addPlayer(newPlayer));
       history.push(`/game/${createdGame.id}`);

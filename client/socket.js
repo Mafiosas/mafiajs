@@ -25,6 +25,7 @@ socket.on("connect", () => {
 
   socket.on("playerJoined", playerObj => {
     console.log("testing player joined on client side");
+    console.log("this socket id is:", socket.id);
     store.dispatch(addPlayer(playerObj));
   });
 
@@ -59,6 +60,9 @@ socket.on("connect", () => {
   socket.on("gameOver", winners => {
     //change state to game over which changes page
     //winners will either be Villagers or Mafia
+  });
+  socket.on("role", payload => {
+    console.log("we got assigned!", payload);
   });
 });
 
