@@ -173,7 +173,7 @@ class GameRoom extends Component {
     // console.log("this.state", this.state);
     return (
       <div className="container">
-        {" "}
+        <h1>It's {time}!</h1>
         {!role &&
           players &&
           game.numPlayers === players.length && (

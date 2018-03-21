@@ -64,12 +64,17 @@ module.exports = io => {
                 }
               }
             }
-            io.to(game).emit("dark");
+            // io.to(game).emit("dark");
+            // socket.broadcast.to(game).emit("dark");
             return Promise.all(
               game.players.map(player =>
                 player.update(shuffledPlayers[player.id])
               )
             );
+          })
+          .then(() => {
+            console.log("this is the game: ", game);
+            return socket.broadcast.to(game).emit("dark");
           });
       });
     });
