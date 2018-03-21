@@ -12,21 +12,34 @@ module.exports = io => {
     //   Object.keys(io.sockets.sockets).length
     // );
     for (let key in io.sockets.sockets) {
-      console.log(
-        "Key:",
-        key,
-        " and the other stuff: ",
-        io.sockets.sockets[key]
-      );
+      // console.log(
+      //   "Key:",
+      //   key,
+      //   " and the other stuff: ",
+      //   io.sockets.sockets[key]
+      // );
     }
 
     let game;
 
+    socket.on("testingJoin", payload => {
+      console.log(
+        "back end has received the front end test payload",
+        socket.userName
+      );
+    });
+
     socket.on("joinGame", ({ name, id, gameId }) => {
-      console.log("joinedgame", gameId);
+      console.log("joinedgame", name, id, gameId);
       game = gameId;
-      console.log("this is game", game, gameId);
       socket.join(game);
+      socket.userName = name;
+      console.log(
+        "this is socket once joined to game, room:",
+        socket.rooms,
+        "username:",
+        socket.userName
+      );
       socket.broadcast.to(game).emit("playerJoined", { name, id });
     });
 

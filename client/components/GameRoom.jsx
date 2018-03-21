@@ -32,6 +32,7 @@ class GameRoom extends Component {
     this.getRoles = this.getRoles.bind(this);
     this.dark = this.dark.bind(this);
     this.darkOver = this.darkOver.bind(this);
+    this.testingGame = this.testingGame.bind(this);
 
     this.sessionEventHandlers = {
       sessionConnected: () => {
@@ -74,12 +75,13 @@ class GameRoom extends Component {
     this.props.fetchCurrentGame();
     this.props.findMe();
     this.props.loadPlayers();
-    socket.emit(
-      "joinGame",
-      window.location.pathname.slice(
-        window.location.pathname.lastIndexOf("/") + 1
-      )
-    );
+    this.testingGame();
+    // socket.emit(
+    //   "joinGame",
+    //   window.location.pathname.slice(
+    //     window.location.pathname.lastIndexOf("/") + 1
+    //   )
+    // );
     socket.on("getRoles", this.getRoles);
     socket.on("dark", this.dark);
     socket.on("darkOver", this.darkOver);
@@ -89,6 +91,9 @@ class GameRoom extends Component {
     //players && game.numPlayers == players.length && this.gameStart()
   }
 
+  testingGame() {
+    socket.emit("testingJoin", "5");
+  }
   gameStart() {
     socket.emit("gameStart", this.props.game.id);
   }
@@ -192,7 +197,7 @@ class GameRoom extends Component {
 
   render() {
     const { user, game, players } = this.props;
-    // console.log("socket", socket);
+    console.log("socket in game room", socket);
     const sessionId = game.sessionId;
 
     const token = user.token;
