@@ -208,7 +208,10 @@ class GameRoom extends Component {
     return (
       <div className="container">
         {" "}
-        {players && game.numPlayers === players.length && this.gameStart()}
+        {players &&
+          game.numPlayers === players.length && (
+            <button onClick={this.gameStart}>You're all here</button>
+          )}
         {game.id &&
           user.id && (
             <div>
