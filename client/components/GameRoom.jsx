@@ -4,7 +4,9 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import socket from "../socket";
 import { OTSession, OTPublisher, OTStreams, OTSubscriber } from "opentok-react";
-import SelectPlayerForm from "./SelectPlayerForm.jsx";
+import MafiaSelectForm from "./MafiaSelectForm.jsx";
+import DetectiveSelectForm from "./DetectiveSelectForm.jsx";
+import DoctorSelectForm from "./DoctorSelectForm.jsx";
 
 import {
   fetchGame,
@@ -32,7 +34,9 @@ class GameRoom extends Component {
     this.gameStart = this.gameStart.bind(this);
     this.getRoles = this.getRoles.bind(this);
     this.dark = this.dark.bind(this);
-    this.darkOver = this.darkOver.bind(this);
+    this.darkOverMafia = this.darkOverMafia.bind(this);
+    this.darkOverDetective = this.darkOverDetective.bind(this);
+    this.darkOverDoctor = this.darkOverDoctor.bind(this);
     this.testingGame = this.testingGame.bind(this);
 
     this.sessionEventHandlers = {
@@ -111,67 +115,18 @@ class GameRoom extends Component {
     this.setState({ time: "dark" });
   }
 
-  darkOver() {
-    console.log("ohhhmmmyyygaaaaa dark isover");
+  darkOverMafia(killedId) {
+    console.log("ohhhmmmyyygaaaaa dark isover for mafiaa");
+    socket.emit("darkData", { killed: killedId });
   }
 
-  // tokboxSession() {
-  //   const sessionId = this.props.game.sessionId;
+  darkOverDetective(guessId) {
+    socket.emit("darkData", { guess: guessId });
+  }
 
-  //   const playerToken = this.props.user.token;
-
-  //   initializeSession();
-
-  //   // Handling all of our errors here by alerting them
-  //   function handleError(error) {
-  //     if (error) {
-  //       alert(error.message);
-  //     }
-  //   }
-
-  //   function initializeSession() {
-  //     console.log("tokbox", tokboxApiKey);
-  //     console.log("sessionId", sessionId);
-  //     console.log("playerToken", playerToken);
-  //     var session = OT.initSession("46081452");
-
-  //     // Subscribe to a newly created stream
-  //     session.on("streamCreated", function(event) {
-  //       session.subscribe(
-  //         event.stream,
-  //         "subscriber",
-  //         {
-  //           insertMode: "append",
-  //           width: "250px",
-  //           height: "250px"
-  //         },
-  //         handleError
-  //       );
-  //     });
-
-  //     // Create a publisher
-  //     var publisher = OT.initPublisher(
-  //       "publisher",
-  //       {
-  //         insertMode: "append",
-  //         width: "250px",
-  //         height: "250px"
-  //       },
-  //       handleError
-  //     );
-
-  //     // Connect to the session
-  //     session.connect(playerToken, function(error) {
-  //       // If the connection is successful, publish to the session
-  //       if (error) {
-  //         handleError(error);
-  //       } else {
-  //         session.publish(publisher, handleError);
-  //       }
-  //     });
-  //   }
-  // }
-
+  darkOverDoctor(savedId) {
+    socket.emit("darkData", { saved: savedId });
+  }
   onSessionError = error => {
     this.setState({ error });
   };
@@ -260,21 +215,30 @@ class GameRoom extends Component {
           user.role === "Doctor" && (
             <div>
               <h1>Doctor, choose who to save</h1>
-              <SelectPlayerForm />
+              <DoctorSelectForm
+                players={this.props.players}
+                darkOverDoctor={this.darkOverDoctor}
+              />
             </div>
           )}
         {this.state.time === "dark" &&
           user.role === "Detective" && (
             <div>
               <h1>Detective, choose who you think is Mafia</h1>
-              <SelectPlayerForm />
+              <DetectiveSelectForm
+                players={this.props.players}
+                darkOverDetective={this.darkOverDetective}
+              />
             </div>
           )}
         {this.state.time === "dark" &&
           user.role === "Mafia" && (
             <div>
               <h1>Mafia, choose who to kill</h1>
-              <SelectPlayerForm players={this.props.players} />
+              <MafiaSelectForm
+                players={this.props.players}
+                darkOverMafia={this.darkOverMafia}
+              />
             </div>
           )}
       </div>
