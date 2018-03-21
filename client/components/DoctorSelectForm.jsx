@@ -9,7 +9,7 @@ export default class DoctorSelectForm extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     socket.on("darkOver", () => {
-      this.props.darkOverMDoctor(this.state.selected);
+      this.props.darkOverDoctor(this.state.selected);
     });
   }
 

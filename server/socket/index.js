@@ -42,8 +42,6 @@ module.exports = io => {
     });
 
     socket.on("gameStart", gameId => {
-      console.log("gamestarted", clients);
-
       //here we should update game table to inprogress: true (eager load players here)
       Game.findById(gameId, {
         include: [Player]
@@ -58,23 +56,15 @@ module.exports = io => {
           .then(updatedGame => {
             const idArray = game.players.map(el => el.id);
             let shuffledPlayers = assignRoles(shuffle(idArray));
-            console.log(
-              "clients",
-              clients,
-              "and shuffled players",
-              shuffledPlayers
-            );
 
             for (let id in shuffledPlayers) {
-              console.log("inside shuggled players");
               for (let key in clients) {
-                console.log("inside clients");
                 if (clients[key] == +id) {
-                  console.log("we got ths far, we're bound to make it out", id);
                   io.to(key).emit("role", shuffledPlayers[id].role);
                 }
               }
             }
+            io.to(game).emit("dark");
             return Promise.all(
               game.players.map(player =>
                 player.update(shuffledPlayers[player.id])
