@@ -6,8 +6,9 @@ import { addNewGame, joinExistingGame } from "../store";
 const RoomForm = props => {
   const { handleSubmit } = props;
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className="container">
+      <form id="room-form" onSubmit={handleSubmit}>
+        <h4>Let's Play A Game...</h4>
         <div>
           <label>Room Name:</label>
           <input name="roomName" type="text" />
@@ -19,8 +20,10 @@ const RoomForm = props => {
         </div>
         <div>
           <label>Player Name:</label>
-          <input name="name" placeholder="enter your first name" />
-          <button type="submit">Create Game</button>
+          <input name="name" />
+          <button className="waves-effect waves-light btn" type="submit">
+            Create Game
+          </button>
         </div>
       </form>
     </div>

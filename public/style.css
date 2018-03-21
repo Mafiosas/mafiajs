@@ -25,3 +25,29 @@
   border: 3px solid white;
   border-radius: 3px;
 } */
+
+body {
+  background-image: url("mafia-background-3.jpg");
+  background-size: cover;
+  color: white;
+  font-family: "PT Mono", monospace;
+}
+
+#header {
+  font-size: 20em;
+  font-family: "Special Elite", cursive;
+}
+
+#room-form {
+  margin-top: 60px;
+  width: 40%;
+}
+
+.OT_widget-container {
+  border-radius: 50%;
+  display: flex;
+}
+
+.streams {
+  display: flex;
+}
