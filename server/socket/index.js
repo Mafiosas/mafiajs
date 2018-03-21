@@ -30,7 +30,6 @@ module.exports = io => {
     });
 
     socket.on("joinGame", ({ name, id, gameId }) => {
-      console.log("joinedgame", name, id, gameId);
       game = gameId;
       socket.join(game);
       socket.userName = name;
@@ -48,7 +47,7 @@ module.exports = io => {
     });
 
     socket.on("gameStart", async gameId => {
-      console.log("gamestarted", gameId);
+      console.log("gamestarted", gameId, socket.name);
       //here we should update game table to inprogress: true (eager load players here)
       Game.findById(gameId, {
         include: [Player]

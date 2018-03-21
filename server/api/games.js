@@ -50,7 +50,6 @@ router.post("/new", (req, res, next) => {
             return player;
           })
           .then(newPlayer => {
-            console.log("new player", newPlayer);
             res.json({ createdGame, newPlayer });
           });
       })
