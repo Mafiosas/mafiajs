@@ -202,11 +202,15 @@ class GameRoom extends Component {
                       width: 250,
                       height: 250,
                       subscribeToAudio:
-                        this.state.time === "dark" && user.role !== "Mafia"
+                        this.state.time === "dark" &&
+                        this.state.role &&
+                        this.state.role !== "Mafia"
                           ? false
                           : true,
                       subscribeToVideo:
-                        this.state.time === "dark" && user.role !== "Mafia"
+                        this.state.time === "dark" &&
+                        this.state.role &&
+                        this.state.role !== "Mafia"
                           ? false
                           : true
                     }}
