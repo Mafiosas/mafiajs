@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import socket from "../socket";
 import { OTSession, OTPublisher, OTStreams, OTSubscriber } from "opentok-react";
+import SelectPlayerForm from "./SelectPlayerForm.jsx";
 
 import {
   fetchGame,
@@ -21,7 +22,7 @@ class GameRoom extends Component {
     super(props);
 
     this.state = {
-      time: "",
+      time: "dark",
       error: null,
       connection: "Connecting",
       publishVideo: true
@@ -204,6 +205,7 @@ class GameRoom extends Component {
 
     const apiKey = "46081452";
     const { error, connection, publishVideo } = this.state;
+
     // console.log("this.state", this.state);
     return (
       <div className="container">
@@ -228,13 +230,51 @@ class GameRoom extends Component {
                 />
                 <OTStreams>
                   <OTSubscriber
-                    properties={{ width: 250, height: 250 }}
+                    properties={{
+                      width: 250,
+                      height: 250,
+                      subscribeToAudio:
+                        this.state.time === "dark" && user.role !== "Mafia"
+                          ? false
+                          : true,
+                      subscribeToVideo:
+                        this.state.time === "dark" && user.role !== "Mafia"
+                          ? false
+                          : true
+                    }}
                     onSubscribe={this.onSubscribe}
                     onError={this.onSubscribeError}
                     eventHandlers={this.subscriberEventHandlers}
                   />
                 </OTStreams>
               </OTSession>
+            </div>
+          )}
+        {this.state.time === "dark" &&
+          user.role === "Civilian" && (
+            <div>
+              <DarkCiv />
+            </div>
+          )}
+        {this.state.time === "dark" &&
+          user.role === "Doctor" && (
+            <div>
+              <h1>Doctor, choose who to save</h1>
+              <SelectPlayerForm />
+            </div>
+          )}
+        {this.state.time === "dark" &&
+          user.role === "Detective" && (
+            <div>
+              <h1>Detective, choose who you think is Mafia</h1>
+              <SelectPlayerForm />
+            </div>
+          )}
+        {this.state.time === "dark" &&
+          user.role === "Mafia" && (
+            <div>
+              <h1>Mafia, choose who to kill</h1>
+              <SelectPlayerForm players={this.props.players} />
             </div>
           )}
       </div>
