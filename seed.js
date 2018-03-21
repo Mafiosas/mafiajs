@@ -4,6 +4,32 @@ const db = require("./server/db/db");
 const deaths = [
   {
     story: "ate too much cheese and died from indigestion"
+  },
+  {
+    story:
+      "should've gone for the caramel macchiato because the skinny latte was poisoned"
+  },
+  {
+    story:
+      "should've gone for the caramel macchiato because the skinny latte was poisoned"
+  },
+  {
+    story: "summoned an evil genie from a lamp and suffered the consequences"
+  },
+  {
+    story: "crossed the road at the same time as the chicken and didn't make it"
+  },
+  {
+    story: "was walking home alone one night when a rabid squirrel attacked"
+  },
+  {
+    story: "was found on the kitchen floor, covered in blood and chocolate cake"
+  },
+  {
+    story: "tried to free all the animals from the zoo, but got trampled"
+  },
+  {
+    story: "was least seen ordering a coffee, but never came to pick it up"
   }
 ];
 
