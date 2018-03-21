@@ -23,41 +23,56 @@ class Home extends Component {
     const { games, handleSubmit } = this.props;
     return (
       <div>
-        <h1> Join if you dare. </h1>
-        <div id="sidebar">
-          {games.length ? (
-            games.map(game => {
-              return (
-                <div className="rooms" key={game.id}>
-                  <h3>{game.roomName}</h3>
-                  <form onSubmit={event => handleSubmit(event, game.id)}>
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="enter your first name"
-                    />
-                    {game.password && (
+        <div className="row">
+          <div className="col s2" id="sidebar">
+            {games.length ? (
+              games.map(game => {
+                return (
+                  <div className="rooms" key={game.id}>
+                    <h3>{game.roomName}</h3>
+                    <form onSubmit={event => handleSubmit(event, game.id)}>
                       <input
                         type="text"
-                        onChange={this.handleChange}
-                        name="password"
-                        placeholder="enter password"
+                        name="name"
+                        placeholder="enter your first name"
                       />
-                    )}
-                    <button disabled={this.state.password !== game.password}>
-                      Join Game
-                    </button>
-                  </form>
-                </div>
-              );
-            })
-          ) : (
-            <div> No active games </div>
-          )}
+                      {game.password && (
+                        <input
+                          type="text"
+                          onChange={this.handleChange}
+                          name="password"
+                          placeholder="enter password"
+                        />
+                      )}
+                      <button
+                        className="waves-effect waves-light btn"
+                        disabled={this.state.password !== game.password}
+                      >
+                        Join Game
+                      </button>
+                    </form>
+                  </div>
+                );
+              })
+            ) : (
+              <div> No active games </div>
+            )}
+          </div>
+
+          <div className="col s10">
+            <div className="center-align">
+              <h1 id="header">MAFIA</h1>
+
+              <h2> Join if you dare. </h2>
+
+              <Link to={"/createGame"}>
+                <button className="waves-effect waves-light btn">
+                  Create A New Game
+                </button>
+              </Link>
+            </div>
+          </div>
         </div>
-        <Link to={"/createGame"}>
-          <button>Create A New Game</button>
-        </Link>
       </div>
     );
   }

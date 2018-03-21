@@ -201,12 +201,12 @@ class GameRoom extends Component {
     const { error, connection, publishVideo } = this.state;
     // console.log("this.state", this.state);
     return (
-      <div>
+      <div className="container">
         {" "}
         {players && game.numPlayers == players.length && this.gameStart()}
         {game.id &&
           user.id && (
-            <div id="videos">
+            <div>
               <h1>afterUser</h1>
               <OTSession
                 apiKey={apiKey}
@@ -222,12 +222,14 @@ class GameRoom extends Component {
                   eventHandlers={this.publisherEventHandlers}
                 />
                 <OTStreams>
-                  <OTSubscriber
-                    properties={{ width: 250, height: 250 }}
-                    onSubscribe={this.onSubscribe}
-                    onError={this.onSubscribeError}
-                    eventHandlers={this.subscriberEventHandlers}
-                  />
+                  <div className="stream">
+                    <OTSubscriber
+                      properties={{ width: 250, height: 250 }}
+                      onSubscribe={this.onSubscribe}
+                      onError={this.onSubscribeError}
+                      eventHandlers={this.subscriberEventHandlers}
+                    />
+                  </div>
                 </OTStreams>
               </OTSession>
             </div>
