@@ -14,7 +14,9 @@ import {
   user,
   joinExistingGame,
   getMe,
-  getPlayersInGame
+  getPlayersInGame,
+  fetchFacts,
+  fetchDeaths
 } from "../store";
 
 const tokboxApiKey = "46081452";
@@ -30,7 +32,7 @@ class GameRoom extends Component {
       connection: "Connecting",
       publishVideo: true,
       role: "",
-      isAlive: true
+      resultMessage: ""
     };
 
     this.gameStart = this.gameStart.bind(this);
@@ -39,7 +41,6 @@ class GameRoom extends Component {
     this.darkOverMafia = this.darkOverMafia.bind(this);
     this.darkOverDetective = this.darkOverDetective.bind(this);
     this.darkOverDoctor = this.darkOverDoctor.bind(this);
-    this.testingGame = this.testingGame.bind(this);
     this.assignRole = this.assignRole.bind(this);
     this.daytime = this.daytime.bind(this);
 
@@ -84,10 +85,12 @@ class GameRoom extends Component {
     this.props.fetchCurrentGame();
     this.props.findMe();
     this.props.loadPlayers();
-    this.testingGame();
+    this.props.loadFacts();
+    this.props.loadDeaths();
+
     socket.on("getRoles", this.getRoles);
     socket.on("dark", this.dark);
-    socket.on("daytime", this.daytime);
+    socket.on("daytime", payload => this.daytime(payload));
     socket.on("role", payload => this.assignRole(payload));
     socket.on("DetectiveRight", () => {
       console.log("detective right");
@@ -97,18 +100,39 @@ class GameRoom extends Component {
     });
   }
 
-  daytime() {
+  daytime(payload) {
     console.log("client has reached daytime");
-    this.setState({ time: "Day" });
+
+    this.setState({ time: "day" });
+    if (payload.killed === user.id) {
+      this.setState({ role: "dead" });
+    }
+
+    if (payload.killed) {
+      let num = player.id % this.props.deaths.length;
+      let died = this.props.players.find(player => {
+        payload.id === player.id;
+      });
+      this.setState({
+        resultMessage: `${died.name} ${this.props.deaths[num]}`
+      });
+    }
+
+    if (payload.saved) {
+      let saved = this.props.players.find(player => {
+        payload.id === player.id;
+      });
+      this.setState({
+        resultMessage: `Nobody died! ${saved.name} was saved by the Doctor`
+      });
+    }
   }
 
   assignRole(role) {
     this.setState({ role });
     console.log("we assigned role!");
   }
-  testingGame() {
-    socket.emit("testingJoin", "5");
-  }
+
   gameStart() {
     socket.emit("gameStart", this.props.game.id);
     //only the creator will have access to this start button
@@ -264,12 +288,19 @@ class GameRoom extends Component {
               />
             </div>
           )}
+        {time === "day" && <h1>{this.state.resultsMessage}</h1>}
       </div>
     );
   }
 }
 
-const mapState = ({ user, game, players }) => ({ user, game, players });
+const mapState = ({ user, game, players, deaths, facts }) => ({
+  user,
+  game,
+  players,
+  deaths,
+  facts
+});
 
 const mapDispatch = (dispatch, ownProps) => {
   return {
@@ -283,6 +314,14 @@ const mapDispatch = (dispatch, ownProps) => {
 
     loadPlayers() {
       dispatch(getPlayersInGame(+ownProps.match.params.gameId));
+    },
+
+    loadDeaths() {
+      dispatch(fetchDeaths());
+    },
+
+    loadFacts() {
+      dispatch(fetchFacts());
     }
   };
 };

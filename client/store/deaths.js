@@ -1,20 +1,20 @@
 import axios from "axios";
 
 //action types
-const GET_FACTS = "GET_FACTS";
+const GET_DEATHS = "GET_DEATHS";
 
-//Initial State
+//initial state
 const defaultState = [];
 
 //action creators
-const getFacts = facts => ({ type: GET_FACTS, facts });
+const getDeaths = deaths => ({ type: GET_DEATHS, deaths });
 
 //thunk creators
-export const fetchFacts = () => {
+export const fetchDeaths = () => {
   return dispatch => {
     axios
-      .get("/api/facts")
-      .then(res => dispatch(getFacts(res.data)))
+      .get("/api/deaths")
+      .then(res => dispatch(getDeaths(res.data)))
       .catch(err => console.error(err));
   };
 };
@@ -22,7 +22,7 @@ export const fetchFacts = () => {
 //reducer
 export default function(state = defaultState, action) {
   switch (action.type) {
-    case GET_FACTS:
+    case GET_DEATHS:
       return action.facts;
     default:
       return state;

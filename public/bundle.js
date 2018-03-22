@@ -583,7 +583,7 @@ function (_Component) {
       connection: "Connecting",
       publishVideo: true,
       role: "",
-      isAlive: true
+      resultMessage: ""
     };
     _this.gameStart = _this.gameStart.bind(_assertThisInitialized(_this));
     _this.getRoles = _this.getRoles.bind(_assertThisInitialized(_this));
@@ -591,7 +591,6 @@ function (_Component) {
     _this.darkOverMafia = _this.darkOverMafia.bind(_assertThisInitialized(_this));
     _this.darkOverDetective = _this.darkOverDetective.bind(_assertThisInitialized(_this));
     _this.darkOverDoctor = _this.darkOverDoctor.bind(_assertThisInitialized(_this));
-    _this.testingGame = _this.testingGame.bind(_assertThisInitialized(_this));
     _this.assignRole = _this.assignRole.bind(_assertThisInitialized(_this));
     _this.daytime = _this.daytime.bind(_assertThisInitialized(_this));
     _this.sessionEventHandlers = {
@@ -647,13 +646,16 @@ function (_Component) {
       this.props.fetchCurrentGame();
       this.props.findMe();
       this.props.loadPlayers();
-      this.testingGame();
+      this.props.loadFacts();
+      this.props.loadDeaths();
 
       _socket.default.on("getRoles", this.getRoles);
 
       _socket.default.on("dark", this.dark);
 
-      _socket.default.on("daytime", this.daytime);
+      _socket.default.on("daytime", function (payload) {
+        return _this2.daytime(payload);
+      });
 
       _socket.default.on("role", function (payload) {
         return _this2.assignRole(payload);
@@ -669,11 +671,36 @@ function (_Component) {
     }
   }, {
     key: "daytime",
-    value: function daytime() {
+    value: function daytime(payload) {
       console.log("client has reached daytime");
       this.setState({
-        time: "Day"
+        time: "day"
       });
+
+      if (payload.killed === _store.user.id) {
+        this.setState({
+          role: "dead"
+        });
+      }
+
+      if (payload.killed) {
+        var num = player.id % this.props.deaths.length;
+        var died = this.props.players.find(function (player) {
+          payload.id === player.id;
+        });
+        this.setState({
+          resultMessage: "".concat(died.name, " ").concat(this.props.deaths[num])
+        });
+      }
+
+      if (payload.saved) {
+        var saved = this.props.players.find(function (player) {
+          payload.id === player.id;
+        });
+        this.setState({
+          resultMessage: "Nobody died! ".concat(saved.name, " was saved by the Doctor")
+        });
+      }
     }
   }, {
     key: "assignRole",
@@ -682,11 +709,6 @@ function (_Component) {
         role: role
       });
       console.log("we assigned role!");
-    }
-  }, {
-    key: "testingGame",
-    value: function testingGame() {
-      _socket.default.emit("testingJoin", "5");
     }
   }, {
     key: "gameStart",
@@ -795,7 +817,7 @@ function (_Component) {
       })), time === "dark" && role === "Lead Mafia" && _react.default.createElement("div", null, _react.default.createElement("h1", null, "Lead Mafia, choose who to kill"), _react.default.createElement(_MafiaSelectForm.default, {
         players: this.props.players,
         darkOverMafia: this.darkOverMafia
-      })));
+      })), time === "day" && _react.default.createElement("h1", null, this.state.resultsMessage));
     }
   }]);
 
@@ -805,11 +827,15 @@ function (_Component) {
 var mapState = function mapState(_ref2) {
   var user = _ref2.user,
       game = _ref2.game,
-      players = _ref2.players;
+      players = _ref2.players,
+      deaths = _ref2.deaths,
+      facts = _ref2.facts;
   return {
     user: user,
     game: game,
-    players: players
+    players: players,
+    deaths: deaths,
+    facts: facts
   };
 };
 
@@ -823,6 +849,12 @@ var mapDispatch = function mapDispatch(dispatch, ownProps) {
     },
     loadPlayers: function loadPlayers() {
       dispatch((0, _store.getPlayersInGame)(+ownProps.match.params.gameId));
+    },
+    loadDeaths: function loadDeaths() {
+      dispatch((0, _store.fetchDeaths)());
+    },
+    loadFacts: function loadFacts() {
+      dispatch((0, _store.fetchFacts)());
     }
   };
 };
@@ -1246,6 +1278,67 @@ exports.default = _default;
 
 /***/ }),
 
+/***/ "./client/store/deaths.js":
+/*!********************************!*\
+  !*** ./client/store/deaths.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = _default;
+exports.fetchDeaths = void 0;
+
+var _axios = _interopRequireDefault(__webpack_require__(/*! axios */ "./node_modules/axios/index.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//action types
+var GET_DEATHS = "GET_DEATHS"; //initial state
+
+var defaultState = []; //action creators
+
+var getDeaths = function getDeaths(deaths) {
+  return {
+    type: GET_DEATHS,
+    deaths: deaths
+  };
+}; //thunk creators
+
+
+var fetchDeaths = function fetchDeaths() {
+  return function (dispatch) {
+    _axios.default.get("/api/deaths").then(function (res) {
+      return dispatch(getDeaths(res.data));
+    }).catch(function (err) {
+      return console.error(err);
+    });
+  };
+}; //reducer
+
+
+exports.fetchDeaths = fetchDeaths;
+
+function _default() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultState;
+  var action = arguments.length > 1 ? arguments[1] : undefined;
+
+  switch (action.type) {
+    case GET_DEATHS:
+      return action.facts;
+
+    default:
+      return state;
+  }
+}
+
+/***/ }),
+
 /***/ "./client/store/facts.js":
 /*!*******************************!*\
   !*** ./client/store/facts.js ***!
@@ -1284,7 +1377,7 @@ var fetchFacts = function fetchFacts() {
     _axios.default.get("/api/facts").then(function (res) {
       return dispatch(getFacts(res.data));
     }).catch(function (err) {
-      return console.log(err);
+      return console.error(err);
     });
   };
 }; //reducer
@@ -1572,6 +1665,19 @@ Object.keys(_facts).forEach(function (key) {
   });
 });
 
+var _deaths = _interopRequireDefault(__webpack_require__(/*! ./deaths */ "./client/store/deaths.js"));
+
+Object.keys(_deaths).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _deaths[key];
+    }
+  });
+});
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var reducer = (0, _redux.combineReducers)({
@@ -1579,7 +1685,8 @@ var reducer = (0, _redux.combineReducers)({
   game: _game.default,
   games: _games.default,
   user: _user.default,
-  facts: _facts.default
+  facts: _facts.default,
+  deaths: _deaths.default
 });
 var middleware = (0, _reduxDevtoolsExtension.composeWithDevTools)((0, _redux.applyMiddleware)(_reduxThunk.default, (0, _reduxLogger.createLogger)({
   collapsed: true

@@ -1,11 +1,10 @@
 const router = require("express").Router();
-const { Fact } = require("../db/models");
+const { Death } = require("../db/models");
 
 module.exports = router;
 
-// /api/facts
 router.get("/", (req, res, next) => {
-  Fact.findAll()
-    .then(res => res.json(facts))
+  Death.findAll()
+    .then(deaths => res.json(deaths))
     .catch(next);
 });
