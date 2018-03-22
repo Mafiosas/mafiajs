@@ -34,9 +34,3 @@ const mapDispatch = dispatch => {
 };
 
 export default connect(mapState, mapDispatch)(DarkCiv);
-
-//prop types
-// DarkCiv.propTypes = {
-//   facts: PropTypes.array,
-//   fetchFacts: PropTypes.func
-// };

@@ -15,7 +15,7 @@ export default class DayTimeForm extends Component {
 
     socket.on("getVotes", () => {
       console.log("sending back our vote", this.state.selected);
-      this.props.darkOverMafia(this.state.selected);
+      socket.emit("voteData", this.state.selected);
     });
   }
 
