@@ -187,8 +187,7 @@ module.exports = io => {
     let voteArray = [];
     let voted = {};
     socket.on("voteData", voteData => {
-      const gameId = voteData.gameId;
-      voteArray.push(voteData.id);
+      voteArray.push(voteData);
 
       if (io.sockets.length === voteArray.length) {
         for (let i = 0; i < voteArray.length; i++) {
@@ -213,12 +212,13 @@ module.exports = io => {
           }
         )
           .then(player => {
-            Game.findById(gameId)
+            Game.findById(player.gameId)
               .then(currentGame => {
                 if (currentGame.hasEnded()) {
                   io.to(currentGame).emit("gameOver");
                 } else {
-                  socket.broadcast.to(currentGame).emit("daytime", player);
+                  socket.broadcast.to(currentGame).emit("votesAreIn", player);
+                  //we need to have an on 'votesarein' that changes the front end rendering, gives a few seconds,then goes back to dark
                 }
               })
               .catch(err => console.error(err));
