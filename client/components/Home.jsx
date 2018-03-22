@@ -8,8 +8,7 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      password: "",
-      renderTimer: false
+      password: ""
     };
     this.handleChange = this.handleChange.bind(this);
   }
