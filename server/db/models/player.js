@@ -10,7 +10,7 @@ const Player = db.define("player", {
   },
   role: {
     type: Sequelize.ENUM,
-    values: ["Mafia", "Doctor", "Detective", "Civilian"]
+    values: ["Lead Mafia", "Mafia", "Doctor", "Detective", "Civilian"]
   },
   name: {
     type: Sequelize.STRING
@@ -21,6 +21,10 @@ const Player = db.define("player", {
   },
   token: {
     type: Sequelize.TEXT
+  },
+  creator: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
 });
 
@@ -55,7 +59,7 @@ Player.afterUpdate(player => {
     .then(players => (alivePlayers = players))
     .then(() => {
       if (hasGameEnded(aliveMafias, alivePlayers)) {
-        Game.update(
+        return Game.update(
           {
             winner: didMafiaWin(aliveMafias) ? "Mafia" : "Villagers"
           },

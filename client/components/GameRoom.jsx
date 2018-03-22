@@ -33,7 +33,6 @@ class GameRoom extends Component {
       isAlive: true
     };
 
-    // this.tokboxSession = this.tokboxSession.bind(this);
     this.gameStart = this.gameStart.bind(this);
     this.getRoles = this.getRoles.bind(this);
     this.dark = this.dark.bind(this);
@@ -42,6 +41,7 @@ class GameRoom extends Component {
     this.darkOverDoctor = this.darkOverDoctor.bind(this);
     this.testingGame = this.testingGame.bind(this);
     this.assignRole = this.assignRole.bind(this);
+    this.daytime = this.daytime.bind(this);
 
     this.sessionEventHandlers = {
       sessionConnected: () => {
@@ -85,20 +85,21 @@ class GameRoom extends Component {
     this.props.findMe();
     this.props.loadPlayers();
     this.testingGame();
-    // socket.emit(
-    //   "joinGame",
-    //   window.location.pathname.slice(
-    //     window.location.pathname.lastIndexOf("/") + 1
-    //   )
-    // );
     socket.on("getRoles", this.getRoles);
     socket.on("dark", this.dark);
-    socket.on("darkOver", this.darkOver);
+    socket.on("daytime", this.daytime);
     socket.on("role", payload => this.assignRole(payload));
+    socket.on("DetectiveRight", () => {
+      console.log("detective right");
+    });
+    socket.on("DetectiveWrong", () => {
+      console.log("detective wrong");
+    });
   }
 
-  componentWillReceiveProps() {
-    //players && game.numPlayers == players.length && this.gameStart()
+  daytime() {
+    console.log("client has reached daytime");
+    this.setState({ time: "Day" });
   }
 
   assignRole(role) {
@@ -110,6 +111,7 @@ class GameRoom extends Component {
   }
   gameStart() {
     socket.emit("gameStart", this.props.game.id);
+    //only the creator will have access to this start button
   }
 
   getRoles() {
@@ -126,15 +128,15 @@ class GameRoom extends Component {
 
   darkOverMafia(killedId) {
     console.log("ohhhmmmyyygaaaaa dark isover for mafiaa");
-    socket.emit("darkData", { killed: killedId });
+    socket.emit("darkData", { killed: killedId, gameId: this.props.game.id });
   }
 
   darkOverDetective(guessId) {
-    socket.emit("darkData", { guess: guessId });
+    socket.emit("darkData", { guess: guessId, gameId: this.props.game.id });
   }
 
   darkOverDoctor(savedId) {
-    socket.emit("darkData", { saved: savedId });
+    socket.emit("darkData", { saved: savedId, gameId: this.props.game.id });
   }
   onSessionError = error => {
     this.setState({ error });
@@ -175,7 +177,7 @@ class GameRoom extends Component {
       <div className="container">
         <h1>It's {time}!</h1>
         {!role &&
-          players &&
+          user.creator &&
           game.numPlayers === players.length && (
             <button onClick={this.gameStart}>You're all here</button>
           )}

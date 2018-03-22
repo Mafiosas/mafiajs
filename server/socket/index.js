@@ -15,8 +15,11 @@ module.exports = io => {
       game = gameId;
       socket.join(game);
       socket.userName = name;
-      clients[socket.id] = id;
-      socket.broadcast.to(game).emit("playerJoined", { name, id });
+      clients[id] = socket.id;
+      socket.broadcast.to(game).emit("playerJoined", {
+        name,
+        id
+      });
     });
 
     socket.on("disconnect", () => {
@@ -27,8 +30,8 @@ module.exports = io => {
       io.to(game).emit("dark");
       setTimeout(() => {
         console.log("dark timer oveeeer"); //this works!
-        socket.broadcast.to(game).emit("darkOver");
-      }, 10000);
+        io.to(game).emit("darkOver");
+      }, 30000);
       Game.findById(gameId, {
         include: [Player]
       }).then(game => {
@@ -41,79 +44,128 @@ module.exports = io => {
           })
           .then(updatedGame => {
             const idArray = game.players.map(el => el.id);
-            let shuffledPlayers = assignRoles(shuffle(idArray));
-
-            for (let id in shuffledPlayers) {
-              for (let key in clients) {
-                if (clients[key] == +id) {
-                  io.to(key).emit("role", shuffledPlayers[id].role);
-                }
-              }
-            }
-            return Promise.all(
-              game.players.map(player =>
-                player.update(shuffledPlayers[player.id])
-              )
+            const shuffledPlayers = assignRoles(shuffle(idArray));
+            const creatingPlayers = game.players.map(player =>
+              player.update(shuffledPlayers[player.id])
             );
+            const newRound = Round.create({
+              gameId: updatedGame.id,
+              number: 1
+            });
+            return Promise.all([...creatingPlayers, newRound]);
+          })
+          .then(players => {
+            players.pop();
+            players.forEach(player => {
+              if (clients[player.id]) {
+                io.to(clients[player.id]).emit("role", player.role);
+              }
+            });
           })
           .catch(err => console.log(err));
       });
     });
 
     socket.on("darkData", darkData => {
-      let killed = darkData.killed || null;
-      let saved = darkData.saved || null;
+      let { killed, saved, guess } = darkData;
 
       const gameId = darkData.gameId;
-      Round.findOne({
-        where: {
-          gameId: gameId,
-          isCurrent: true
-        }
-      }).then(round => {
-        if (killed && !round.saved) {
-          return round.update({ killed: killed });
-        } else if (saved && !round.killed) {
-          return round.update({ saved: saved });
-        } else {
-          let actualKilled = killed || round.killed;
-          let actualSaved = saved || round.saved;
-          let person = whoToSendBack(actualKilled, actualSaved);
-          const whoDied = person.saved ? null : person.killed;
-          roundUpdate = {
-            died: whoDied,
-            killed: actualKilled,
-            saved: actualSaved,
-            isCurrent: false
-          };
-
-          let proms = [round.update(roundUpdate)];
-          if (whoDied) {
-            proms.push(
-              Player.update(
-                {
-                  isAlive: false
-                },
-                {
-                  where: {
-                    gameId: gameId,
-                    name: whoDied
-                  }
-                }
-              )
-            );
+      if (guess) {
+        Player.findById(guess)
+          .then(foundPlayer => {
+            if (foundPlayer.isMafia()) {
+              io.to(socket.id).emit("DetectiveRight");
+            } else {
+              io.to(socket.id).emit("DetectiveWrong");
+            }
+          })
+          .catch(err => console.error(err));
+      } else {
+        Round.findOne({
+          where: {
+            gameId: gameId,
+            isCurrent: true
           }
-          Promise.all(proms).then(() => {
-            Game.findById(gameId).then(game => {
-              if (game.hasEnded()) {
-                socket.broadcast.to(game).emit("gameOver", game.winner);
-              } else {
-                socket.broadcast.to(game).emit("daytime", person);
-              }
+        }).then(round => {
+          if (!round) console.log("theres no round but we go on");
+          if (killed && !round.saved) {
+            return round.update({
+              killed: killed
             });
-          });
-        }
-      });
+          } else if (saved && !round.killed) {
+            return round.update({
+              saved: saved
+            });
+          } else {
+            let actualKilled = killed || round.killed;
+            let actualSaved = saved || round.saved;
+            let person = whoToSendBack(actualKilled, actualSaved);
+            const whoDied = person.saved ? null : person.killed;
+            roundUpdate = {
+              died: whoDied,
+              killed: actualKilled,
+              saved: actualSaved,
+              isCurrent: false
+            };
+            //we're creating a new round more than once, we should put this in a .then
+
+            let proms = [round.update(roundUpdate)];
+            if (whoDied) {
+              proms.push(
+                Player.update(
+                  {
+                    isAlive: false
+                  },
+                  {
+                    where: {
+                      gameId: gameId,
+                      id: whoDied
+                    }
+                  }
+                )
+              );
+            }
+            Promise.all(proms).then(() => {
+              Game.findById(gameId)
+                .then(game => {
+                  if (game.hasEnded()) {
+                    console.log("Game is done here");
+                    socket.broadcast.to(game).emit("gameOver", game.winner);
+                  } else {
+                    console.log("we should be creating a new round");
+                    Round.findOrCreate({
+                      where: {
+                        gameId: gameId,
+                        isCurrent: true
+                      }
+                    })
+                      // .then(round => {
+                      //   if (!round) {
+                      //     console.log(
+                      //       "queried the database, didnt find current round so were creating a new one"
+                      //     );
+                      //     return Round.create({
+                      //       gameId: gameId
+                      //     });
+                      //   }
+                      // })
+                      .then(([round, boolean]) => {
+                        if (round) {
+                          console.log(
+                            "were broadcasting daylight!!!! and here's the boolean:",
+                            boolean
+                          );
+                          socket.broadcast.to(game).emit("daytime", person);
+                        }
+                      })
+                      .catch(err => console.err);
+                  }
+                })
+                .catch(err => console.err);
+            });
+          }
+        });
+      }
     });
 
     socket.on("startDayTimerPreVotes", () => {
