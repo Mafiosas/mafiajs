@@ -7,7 +7,10 @@ import { fetchGames, joinExistingGame } from "../store";
 class Home extends Component {
   constructor(props) {
     super(props);
-    this.state = { password: "" };
+    this.state = {
+      password: "",
+      renderTimer: false
+    };
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -19,7 +22,6 @@ class Home extends Component {
     this.setState({ password: event.target.value });
   }
   render() {
-    console.log(this.state);
     const { games, handleSubmit } = this.props;
     return (
       <div>
