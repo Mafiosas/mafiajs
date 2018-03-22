@@ -10,7 +10,7 @@ const Player = db.define("player", {
   },
   role: {
     type: Sequelize.ENUM,
-    values: ["Mafia", "Doctor", "Detective", "Civilian"]
+    values: ["Lead Mafia", "Mafia", "Doctor", "Detective", "Civilian"]
   },
   name: {
     type: Sequelize.STRING
@@ -21,11 +21,15 @@ const Player = db.define("player", {
   },
   token: {
     type: Sequelize.TEXT
+  },
+  creator: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
 });
 
 Player.prototype.isMafia = function() {
-  return this.role === "Mafia";
+  return this.role === "Mafia" || this.role === "Lead Mafia";
 };
 
 Player.afterUpdate(player => {
@@ -34,7 +38,9 @@ Player.afterUpdate(player => {
   return Player.findAll({
     where: {
       gameId: gameId,
-      role: "Mafia",
+      role: {
+        [Op.or]: ["Mafia", "Lead Mafia"]
+      },
       isAlive: true
     }
   })
@@ -47,7 +53,7 @@ Player.afterUpdate(player => {
           gameId: gameId,
           isAlive: true,
           role: {
-            [Op.ne]: "Mafia"
+            [Op.or]: ["Civilian", "Doctor", "Detective"]
           }
         }
       });
@@ -55,7 +61,7 @@ Player.afterUpdate(player => {
     .then(players => (alivePlayers = players))
     .then(() => {
       if (hasGameEnded(aliveMafias, alivePlayers)) {
-        Game.update(
+        return Game.update(
           {
             winner: didMafiaWin(aliveMafias) ? "Mafia" : "Villagers"
           },

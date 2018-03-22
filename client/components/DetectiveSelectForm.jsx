@@ -13,6 +13,14 @@ export default class DetectiveSelectForm extends Component {
     });
   }
 
+  componentDidMount() {
+    console.log("detective component has mounted");
+    socket.on("darkOverForVillagers", () => {
+      console.log("dark is over for detective");
+      this.props.darkOverDetective(this.state.selected);
+    });
+  }
+
   handleChange(event) {
     this.setState({ selected: event.target.value });
   }
@@ -28,6 +36,7 @@ export default class DetectiveSelectForm extends Component {
             className="browser-default"
             name="selectPlayers"
           >
+            <option>Select a player</option>
             {players.length &&
               players.map(player => {
                 return (

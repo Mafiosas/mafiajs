@@ -6,7 +6,8 @@ const Round = db.define("round", {
     type: Sequelize.INTEGER
   },
   isCurrent: {
-    type: Sequelize.BOOLEAN
+    type: Sequelize.BOOLEAN,
+    defaultValue: true
   },
   killed: {
     type: Sequelize.STRING
@@ -18,5 +19,21 @@ const Round = db.define("round", {
     type: Sequelize.STRING
   }
 });
+
+Round.beforeCreate = function(round) {
+  return this.findAll({
+    where: {
+      gameId: round.gameId
+    }
+  }).then(rounds => {
+    console.log(
+      "inside hook,",
+      rounds.length,
+      "and the the round we on is,",
+      round
+    );
+    round.number = rounds.length + 1;
+  });
+};
 
 module.exports = Round;
