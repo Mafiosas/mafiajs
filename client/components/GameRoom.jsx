@@ -132,11 +132,17 @@ class GameRoom extends Component {
   }
 
   darkOverDetective(guessId) {
-    socket.emit("darkData", { guess: guessId, gameId: this.props.game.id });
+    socket.emit("villagerChoice", {
+      guess: guessId,
+      gameId: this.props.game.id
+    });
   }
 
   darkOverDoctor(savedId) {
-    socket.emit("darkData", { saved: savedId, gameId: this.props.game.id });
+    socket.emit("villagerChoice", {
+      saved: savedId,
+      gameId: this.props.game.id
+    });
   }
   onSessionError = error => {
     this.setState({ error });
@@ -205,11 +211,17 @@ class GameRoom extends Component {
                       width: 250,
                       height: 250,
                       subscribeToAudio:
-                        time === "dark" && role && role !== "Mafia"
+                        time === "dark" &&
+                        role &&
+                        role !== "Mafia" &&
+                        role !== "Lead Mafia"
                           ? false
                           : true,
                       subscribeToVideo:
-                        time === "dark" && role && role !== "Mafia"
+                        time === "dark" &&
+                        role &&
+                        role !== "Mafia" &&
+                        role !== "Lead Mafia"
                           ? false
                           : true
                     }}
@@ -243,9 +255,9 @@ class GameRoom extends Component {
             </div>
           )}
         {time === "dark" &&
-          role === "Mafia" && (
+          role === "Lead Mafia" && (
             <div>
-              <h1>Mafia, choose who to kill</h1>
+              <h1>Lead Mafia, choose who to kill</h1>
               <MafiaSelectForm
                 players={this.props.players}
                 darkOverMafia={this.darkOverMafia}

@@ -29,7 +29,7 @@ const Player = db.define("player", {
 });
 
 Player.prototype.isMafia = function() {
-  return this.role === "Mafia";
+  return this.role === "Mafia" || this.role === "Lead Mafia";
 };
 
 Player.afterUpdate(player => {
@@ -38,7 +38,9 @@ Player.afterUpdate(player => {
   return Player.findAll({
     where: {
       gameId: gameId,
-      role: "Mafia",
+      role: {
+        [Op.or]: ["Mafia", "Lead Mafia"]
+      },
       isAlive: true
     }
   })
@@ -51,7 +53,7 @@ Player.afterUpdate(player => {
           gameId: gameId,
           isAlive: true,
           role: {
-            [Op.ne]: "Mafia"
+            [Op.or]: ["Civilian", "Doctor", "Detective"]
           }
         }
       });

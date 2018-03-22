@@ -20,13 +20,18 @@ const Round = db.define("round", {
   }
 });
 
-Round.beforeCreate = function (round) {
+Round.beforeCreate = function(round) {
   return this.findAll({
     where: {
       gameId: round.gameId
     }
   }).then(rounds => {
-    console.log('inside hook,', rounds.length, 'and the the round we on is,', round)
+    console.log(
+      "inside hook,",
+      rounds.length,
+      "and the the round we on is,",
+      round
+    );
     round.number = rounds.length + 1;
   });
 };

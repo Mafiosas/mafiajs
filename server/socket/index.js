@@ -30,8 +30,13 @@ module.exports = io => {
       io.to(game).emit("dark");
       setTimeout(() => {
         console.log("dark timer oveeeer"); //this works!
-        io.to(game).emit("darkOver");
+        io.to(game).emit("darkOverForVillagers");
+      }, 28000);
+      setTimeout(() => {
+        console.log("dark timer oveeeer"); //this works!
+        io.to(game).emit("darkOverForMafia");
       }, 30000);
+
       Game.findById(gameId, {
         include: [Player]
       }).then(game => {
@@ -66,10 +71,8 @@ module.exports = io => {
       });
     });
 
-    socket.on("darkData", darkData => {
-      let { killed, saved, guess } = darkData;
-
-      const gameId = darkData.gameId;
+    socket.on("villagerChoice", data => {
+      const { gameId, saved, guess } = data;
       if (guess) {
         Player.findById(guess)
           .then(foundPlayer => {
@@ -86,30 +89,42 @@ module.exports = io => {
             gameId: gameId,
             isCurrent: true
           }
-        }).then(round => {
-          if (!round) console.log("theres no round but we go on");
-          if (killed && !round.saved) {
-            return round.update({
-              killed: killed
-            });
-          } else if (saved && !round.killed) {
+        })
+          .then(round => {
             return round.update({
               saved: saved
             });
-          } else {
-            let actualKilled = killed || round.killed;
-            let actualSaved = saved || round.saved;
+          })
+          .catch(err => console.error(err));
+      }
+    });
+
+    socket.on("darkData", darkData => {
+      let { killed, gameId } = darkData;
+      Round.findOne({
+        where: {
+          gameId: gameId,
+          isCurrent: true
+        }
+      }).then(round => {
+        if (!round) console.log("theres no round but we go on");
+        return round
+          .update({
+            killed: killed
+          })
+          .then(updatedRound => {
+            let actualKilled = updatedRound.killed;
+            let actualSaved = updatedRound.saved;
             let person = whoToSendBack(actualKilled, actualSaved);
             const whoDied = person.saved ? null : person.killed;
-            roundUpdate = {
+            const roundUpdate = {
               died: whoDied,
               killed: actualKilled,
-              saved: actualSaved,
               isCurrent: false
             };
             //we're creating a new round more than once, we should put this in a .then
 
-            let proms = [round.update(roundUpdate)];
+            let proms = [updatedRound.update(roundUpdate)];
             if (whoDied) {
               proms.push(
                 Player.update(
@@ -127,45 +142,34 @@ module.exports = io => {
             }
             Promise.all(proms).then(() => {
               Game.findById(gameId)
-                .then(game => {
-                  if (game.hasEnded()) {
-                    console.log("Game is done here");
-                    socket.broadcast.to(game).emit("gameOver", game.winner);
+                .then(updatedGame => {
+                  if (updatedGame.hasEnded()) {
+                    console.log("updatedGame is done here");
+                    socket.broadcast
+                      .to(gameId)
+                      .emit("updatedGameOver", updatedGame.winner);
                   } else {
                     console.log("we should be creating a new round");
-                    Round.findOrCreate({
-                      where: {
-                        gameId: gameId,
-                        isCurrent: true
-                      }
+                    Round.create({
+                      gameId: gameId,
+                      isCurrent: true
                     })
-                      // .then(round => {
-                      //   if (!round) {
-                      //     console.log(
-                      //       "queried the database, didnt find current round so were creating a new one"
-                      //     );
-                      //     return Round.create({
-                      //       gameId: gameId
-                      //     });
-                      //   }
-                      // })
-                      .then(([round, boolean]) => {
+                      .then(round => {
                         if (round) {
                           console.log(
-                            "were broadcasting daylight!!!! and here's the boolean:",
-                            boolean
+                            "were broadcasting daylight!!!! and here's the person",
+                            person
                           );
-                          socket.broadcast.to(game).emit("daytime", person);
+                          io.to(gameId).emit("daytime", person);
                         }
                       })
-                      .catch(err => console.err);
+                      .catch(err => console.error(err));
                   }
                 })
-                .catch(err => console.err);
+                .catch(err => console.error(err));
             });
-          }
-        });
-      }
+          });
+      });
     });
 
     socket.on("startDayTimerPreVotes", () => {
@@ -201,12 +205,5 @@ module.exports = io => {
         }
       });
     });
-
-    // socket.on("startDarkTimer", () => {
-    //   setTimeout(() => {
-    //     console.log("dark timer oveeeer"); //this works!
-    //     socket.broadcast.to(game).emit("darkOver");
-    //   }, 10000);
-    // });
   });
 };

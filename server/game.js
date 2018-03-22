@@ -23,11 +23,14 @@ function assignRoles(shuffledIdArray) {
   const totalMafia = Math.floor(shuffledIdArray.length / 2 - 1);
 
   //arrays of players
-  for (let i = 0; i < totalMafia; i++) {
+  for (let i = 0; i < totalMafia - 1; i++) {
     result[shuffledIdArray[i]] = {
       role: "Mafia"
     };
   }
+  result[shuffledIdArray[totalMafia - 1]] = {
+    role: "Lead Mafia"
+  };
   result[shuffledIdArray[totalMafia]] = {
     role: "Detective"
   };
@@ -62,7 +65,8 @@ function didMafiaWin(mafias) {
 }
 
 function whoToSendBack(killed, saved) {
-  return killed === saved
+  console.log("inside who to send back, killed", killed, " and saved ", saved);
+  return killed == saved
     ? {
         saved: saved
       }

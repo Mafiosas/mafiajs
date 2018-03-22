@@ -11,25 +11,11 @@ socket.on("connect", () => {
     store.dispatch(addPlayer(playerObj));
   });
 
-  // socket.on("darkOver", () => {
-  //   //dark data from users (who mafia kill/doctor save etc)
-  //   socket.emit("darkData", darkData);
-  // });
-
   socket.on("daytime", dataFromDark => {
-    //change state/view to daytime view;
-    //data we get back will look like { killed: Name } or { saved: Name }
-    //share the data
     socket.emit("startDayTimerPreVotes");
   });
 
-  // socket.on("dark", () => {
-  //   //change state/view to dark view
-  //   socket.emit("startDarkTimer");
-  // });
-
   socket.on("getVotes", () => {
-    //give voteData
     socket.broadcast.emit("voteData", voteData);
   });
 

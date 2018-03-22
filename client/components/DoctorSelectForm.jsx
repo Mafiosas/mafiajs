@@ -13,7 +13,7 @@ export default class DoctorSelectForm extends Component {
   componentDidMount() {
     console.log("doctor component has mounted");
 
-    socket.on("darkOver", () => {
+    socket.on("darkOverForVillagers", () => {
       console.log("dark is over for doctor");
 
       this.props.darkOverDoctor(this.state.selected);
@@ -38,6 +38,7 @@ export default class DoctorSelectForm extends Component {
             className="browser-default"
             name="selectPlayers"
           >
+            <option>Select a player</option>
             {players.length &&
               players.map(player => {
                 return (

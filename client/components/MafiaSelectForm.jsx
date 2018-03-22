@@ -13,7 +13,7 @@ export default class MafiaSelectForm extends Component {
   componentDidMount() {
     console.log("mafia component has mounted");
 
-    socket.on("darkOver", () => {
+    socket.on("darkOverForMafia", () => {
       console.log("dark is over for mafia");
       this.props.darkOverMafia(this.state.selected);
     });
@@ -37,6 +37,7 @@ export default class MafiaSelectForm extends Component {
             className="browser-default"
             name="selectPlayers"
           >
+            <option>Select a player</option>
             {players.length &&
               players.map(player => {
                 return (

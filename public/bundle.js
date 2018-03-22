@@ -312,7 +312,7 @@ function (_Component) {
 
       console.log("detective component has mounted");
 
-      _socket.default.on("darkOver", function () {
+      _socket.default.on("darkOverForVillagers", function () {
         console.log("dark is over for detective");
 
         _this2.props.darkOverDetective(_this2.state.selected);
@@ -333,7 +333,7 @@ function (_Component) {
         onChange: this.handleChange,
         className: "browser-default",
         name: "selectPlayers"
-      }, players.length && players.map(function (player) {
+      }, _react.default.createElement("option", null, "Select a player"), players.length && players.map(function (player) {
         return _react.default.createElement("option", {
           key: player.id,
           value: player.id
@@ -411,7 +411,7 @@ function (_Component) {
 
       console.log("doctor component has mounted");
 
-      _socket.default.on("darkOver", function () {
+      _socket.default.on("darkOverForVillagers", function () {
         console.log("dark is over for doctor");
 
         _this2.props.darkOverDoctor(_this2.state.selected);
@@ -436,7 +436,7 @@ function (_Component) {
         onChange: this.handleChange,
         className: "browser-default",
         name: "selectPlayers"
-      }, players.length && players.map(function (player) {
+      }, _react.default.createElement("option", null, "Select a player"), players.length && players.map(function (player) {
         return _react.default.createElement("option", {
           key: player.id,
           value: player.id
@@ -726,7 +726,7 @@ function (_Component) {
   }, {
     key: "darkOverDetective",
     value: function darkOverDetective(guessId) {
-      _socket.default.emit("darkData", {
+      _socket.default.emit("villagerChoice", {
         guess: guessId,
         gameId: this.props.game.id
       });
@@ -734,7 +734,7 @@ function (_Component) {
   }, {
     key: "darkOverDoctor",
     value: function darkOverDoctor(savedId) {
-      _socket.default.emit("darkData", {
+      _socket.default.emit("villagerChoice", {
         saved: savedId,
         gameId: this.props.game.id
       });
@@ -780,8 +780,8 @@ function (_Component) {
         properties: {
           width: 250,
           height: 250,
-          subscribeToAudio: time === "dark" && role && role !== "Mafia" ? false : true,
-          subscribeToVideo: time === "dark" && role && role !== "Mafia" ? false : true
+          subscribeToAudio: time === "dark" && role && role !== "Mafia" && role !== "Lead Mafia" ? false : true,
+          subscribeToVideo: time === "dark" && role && role !== "Mafia" && role !== "Lead Mafia" ? false : true
         },
         onSubscribe: this.onSubscribe,
         onError: this.onSubscribeError,
@@ -792,7 +792,7 @@ function (_Component) {
       })), time === "dark" && role === "Detective" && _react.default.createElement("div", null, _react.default.createElement("h1", null, "Detective, choose who you think is Mafia"), _react.default.createElement(_DetectiveSelectForm.default, {
         players: this.props.players,
         darkOverDetective: this.darkOverDetective
-      })), time === "dark" && role === "Mafia" && _react.default.createElement("div", null, _react.default.createElement("h1", null, "Mafia, choose who to kill"), _react.default.createElement(_MafiaSelectForm.default, {
+      })), time === "dark" && role === "Lead Mafia" && _react.default.createElement("div", null, _react.default.createElement("h1", null, "Lead Mafia, choose who to kill"), _react.default.createElement(_MafiaSelectForm.default, {
         players: this.props.players,
         darkOverMafia: this.darkOverMafia
       })));
@@ -1053,7 +1053,7 @@ function (_Component) {
 
       console.log("mafia component has mounted");
 
-      _socket.default.on("darkOver", function () {
+      _socket.default.on("darkOverForMafia", function () {
         console.log("dark is over for mafia");
 
         _this2.props.darkOverMafia(_this2.state.selected);
@@ -1076,7 +1076,7 @@ function (_Component) {
         onChange: this.handleChange,
         className: "browser-default",
         name: "selectPlayers"
-      }, players.length && players.map(function (player) {
+      }, _react.default.createElement("option", null, "Select a player"), players.length && players.map(function (player) {
         return _react.default.createElement("option", {
           key: player.id,
           value: player.id
@@ -1222,23 +1222,11 @@ socket.on("connect", function () {
     console.log("this socket id is:", socket.id);
 
     _store.default.dispatch((0, _store.addPlayer)(playerObj));
-  }); // socket.on("darkOver", () => {
-  //   //dark data from users (who mafia kill/doctor save etc)
-  //   socket.emit("darkData", darkData);
-  // });
-
+  });
   socket.on("daytime", function (dataFromDark) {
-    //change state/view to daytime view;
-    //data we get back will look like { killed: Name } or { saved: Name }
-    //share the data
     socket.emit("startDayTimerPreVotes");
-  }); // socket.on("dark", () => {
-  //   //change state/view to dark view
-  //   socket.emit("startDarkTimer");
-  // });
-
+  });
   socket.on("getVotes", function () {
-    //give voteData
     socket.broadcast.emit("voteData", voteData);
   });
   socket.on("dayVoteResults", function (dayVoteResults) {
