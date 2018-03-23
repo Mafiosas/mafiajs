@@ -169,6 +169,10 @@ module.exports = io => {
       });
     });
 
+    socket.on("myVote", voteData => {
+      io.to(game).emit("myVote", voteData);
+    });
+
     socket.on("startDayTimerPreVotes", () => {
       setTimeout(() => {
         socket.broadcast.to(game).emit("getVotes");

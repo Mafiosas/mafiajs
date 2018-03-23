@@ -3,18 +3,28 @@ const db = require("./server/db/db");
 
 const deaths = [
   {
-    story:
+    storyForAll:
+      "should've gone for the caramel macchiato because the skinny latte was poisoned",
+    storyForKilled:
       "should've gone for the caramel macchiato because the skinny latte was poisoned"
   },
   {
-    story: "was found on the kitchen floor, covered in blood and chocolate cake"
+    storyForAll:
+      "was found on the kitchen floor, covered in blood and chocolate cake",
+    storyForKilled:
+      "were found on the kitchen floor, covered in blood and chocolate cake"
   },
   {
-    story: "was least seen ordering a coffee, but never came to pick it up"
+    storyForAll:
+      "was last seen ordering a coffee, but never came to pick it up",
+    storyForKilled:
+      "were last seen ordering a coffee, but never came to pick it up"
   },
   {
-    story:
-      "went into the salon for a simple hair cut but came out with her head cut right off"
+    storyForAll:
+      "went into the salon for a simple hair cut but came out with her head cut off",
+    storyForKilled:
+      "went into the salon for a simple hair cut but came out with your head cut off"
   }
 ];
 
