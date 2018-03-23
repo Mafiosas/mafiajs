@@ -11,6 +11,10 @@ const deaths = [
   },
   {
     story: "was least seen ordering a coffee, but never came to pick it up"
+  },
+  {
+    story:
+      "went into the salon for a simple hair cut but came out with her head cut right off"
   }
 ];
 
