@@ -104,23 +104,29 @@ class GameRoom extends Component {
     console.log("client has reached daytime");
 
     this.setState({ time: "day" });
-    if (payload.killed === user.id) {
+
+    if (+payload.killed === this.props.user.id) {
       this.setState({ role: "dead" });
     }
 
     if (payload.killed) {
-      let num = player.id % this.props.deaths.length;
       let died = this.props.players.find(player => {
-        payload.id === player.id;
+        console.log(player.id);
+        return +payload.killed === player.id;
       });
+      console.log("died", died);
+      console.log("payload", payload);
+      let num = died.id % this.props.deaths.length;
+      let death = this.props.deaths[num].story;
+
       this.setState({
-        resultMessage: `${died.name} ${this.props.deaths[num]}`
+        resultMessage: `${died.name} ${death}`
       });
     }
 
     if (payload.saved) {
       let saved = this.props.players.find(player => {
-        payload.id === player.id;
+        return +payload.saved === player.id;
       });
       this.setState({
         resultMessage: `Nobody died! ${saved.name} was saved by the Doctor`
@@ -257,7 +263,7 @@ class GameRoom extends Component {
               </OTSession>
             </div>
           )}
-        {time === "dark" && role === "Civilian" && <div />}
+
         {time === "dark" &&
           role === "Doctor" && (
             <div>
@@ -288,7 +294,7 @@ class GameRoom extends Component {
               />
             </div>
           )}
-        {time === "day" && <h1>{this.state.resultsMessage}</h1>}
+        {time === "day" && <h1>{this.state.resultMessage}</h1>}
       </div>
     );
   }

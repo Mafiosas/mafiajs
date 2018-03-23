@@ -23,7 +23,7 @@ export const fetchDeaths = () => {
 export default function(state = defaultState, action) {
   switch (action.type) {
     case GET_DEATHS:
-      return action.facts;
+      return action.deaths;
     default:
       return state;
   }

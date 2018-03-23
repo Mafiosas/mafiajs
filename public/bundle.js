@@ -677,25 +677,29 @@ function (_Component) {
         time: "day"
       });
 
-      if (payload.killed === _store.user.id) {
+      if (+payload.killed === this.props.user.id) {
         this.setState({
           role: "dead"
         });
       }
 
       if (payload.killed) {
-        var num = player.id % this.props.deaths.length;
         var died = this.props.players.find(function (player) {
-          payload.id === player.id;
+          console.log(player.id);
+          return +payload.killed === player.id;
         });
+        console.log("died", died);
+        console.log("payload", payload);
+        var num = died.id % this.props.deaths.length;
+        var death = this.props.deaths[num].story;
         this.setState({
-          resultMessage: "".concat(died.name, " ").concat(this.props.deaths[num])
+          resultMessage: "".concat(died.name, " ").concat(death)
         });
       }
 
       if (payload.saved) {
         var saved = this.props.players.find(function (player) {
-          payload.id === player.id;
+          return +payload.saved === player.id;
         });
         this.setState({
           resultMessage: "Nobody died! ".concat(saved.name, " was saved by the Doctor")
@@ -817,7 +821,7 @@ function (_Component) {
       })), time === "dark" && role === "Lead Mafia" && _react.default.createElement("div", null, _react.default.createElement("h1", null, "Lead Mafia, choose who to kill"), _react.default.createElement(_MafiaSelectForm.default, {
         players: this.props.players,
         darkOverMafia: this.darkOverMafia
-      })), time === "day" && _react.default.createElement("h1", null, this.state.resultsMessage));
+      })), time === "day" && _react.default.createElement("h1", null, this.state.resultMessage));
     }
   }]);
 
@@ -1330,7 +1334,7 @@ function _default() {
 
   switch (action.type) {
     case GET_DEATHS:
-      return action.facts;
+      return action.deaths;
 
     default:
       return state;
