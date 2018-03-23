@@ -35,7 +35,11 @@ class GameRoom extends Component {
       publishVideo: true,
       role: "",
       resultMessage: "",
+
       votes: ""
+
+      detective: ""
+
     };
 
     this.gameStart = this.gameStart.bind(this);
@@ -94,7 +98,10 @@ class GameRoom extends Component {
 
     socket.on("getRoles", this.getRoles);
     socket.on("dark", this.dark);
-    socket.on("daytime", payload => this.daytime(payload));
+    socket.on("daytime", payload => {
+      this.props.loadPlayers();
+      this.daytime(payload);
+    });
     socket.on("role", payload => this.assignRole(payload));
     socket.on("DetectiveRight", () => {
       this.detectiveAnswer("right");
@@ -103,7 +110,7 @@ class GameRoom extends Component {
       this.detectiveAnswer("wrong");
     });
     socket.on("myVote", dataVal => {
-      dispatch(addVote(dataVal));
+      this.props.releaseVote(dataVal);
     });
   }
 
@@ -115,20 +122,25 @@ class GameRoom extends Component {
     this.setState({ time: "day" });
 
     if (+payload.killed === this.props.user.id) {
-      let num = died.id % this.props.deaths.length;
-      let death = this.props.deaths[num].storyForKilled;
-      this.setState({ role: "Dead" });
-      this.setState({
-        resultMessage: `${this.props.user.name} the Mafia got you!!`
-      });
-    }
-
-    if (payload.killed) {
       let died = this.props.players.find(player => {
         return +payload.killed === player.id;
       });
       let num = died.id % this.props.deaths.length;
-      let death = this.props.deaths[num].storyForEveryone;
+      let death = this.props.deaths[num].storyForKilled;
+      this.setState({ role: "Dead" });
+      this.setState({
+        resultMessage: `${
+          this.props.user.name
+        } the Mafia got you!! You ${death}`
+      });
+    }
+
+    if (payload.killed && +payload.killed !== this.props.user.id) {
+      let died = this.props.players.find(player => {
+        return +payload.killed === player.id;
+      });
+      let num = died.id % this.props.deaths.length;
+      let death = this.props.deaths[num].storyForAll;
 
       this.setState({
         resultMessage: `${died.name} ${death}`
@@ -225,10 +237,6 @@ class GameRoom extends Component {
     const messageToMafia =
       "Mafia, you can see and hear everyone, they cannot see you! Discuss your plans freely...";
 
-    let count;
-    let nameChosen;
-
-    // console.log("this.state", this.state);
     return (
       <div className="container">
         <div className="row">
@@ -285,7 +293,11 @@ class GameRoom extends Component {
               role !== "Dead" && (
                 <div>
                   <h3>Who do you think the Mafia is?</h3>
-                  <DayTimeForm user={user.id} players={this.props.players} />
+
+       
+
+                  <DayTimeForm user={user.id} players={players} />
+
                 </div>
               )}
             {time === "dark" &&
@@ -299,9 +311,10 @@ class GameRoom extends Component {
                 </div>
               )}
             {time === "dark" &&
-              role === "Detective" && (
+              role === "Detective" &&
+              !detective && (
                 <div>
-                  <h1>Choose who you think is Mafia</h1>
+                  <h1>Choose who you suspect is Mafia</h1>
                   <DetectiveSelectForm
                     user={user.id}
                     players={this.props.players}
@@ -309,6 +322,9 @@ class GameRoom extends Component {
                   />
                 </div>
               )}
+            {time === "dark" &&
+              role === "Detective" &&
+              detective && <p>Detective, you were {detective}</p>}
             {time === "dark" &&
               role === "Lead Mafia" && (
                 <div>
@@ -414,6 +430,10 @@ const mapDispatch = (dispatch, ownProps) => {
 
     loadFacts() {
       dispatch(fetchFacts());
+    },
+
+    releaseVote(dataVal) {
+      dispatch(addVote(dataVal));
     }
   };
 };
