@@ -34,12 +34,13 @@ export default class DayTimeForm extends Component {
 
     return (
       <div>
-        <form>
+        <form onSubmit={this.submitVote}>
           <label>Who do you think is Mafia?</label>
           <select
             onChange={this.handleChange}
             className="browser-default"
             name="selectPlayers"
+            onSubmit={this.submitVote}
           >
             <option>Select a player</option>
             {players.length &&
@@ -50,10 +51,8 @@ export default class DayTimeForm extends Component {
                   </option>
                 );
               })}
-            <button type="submit" onSubmit={this.submitVote}>
-              Submit your guess
-            </button>
           </select>
+          <button type="submit">Submit your guess</button>
         </form>
       </div>
     );

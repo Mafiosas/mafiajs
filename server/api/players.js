@@ -16,7 +16,8 @@ router.get("/:gameId", (req, res, next) => {
   Player.findAll({
     attributes: ["name", "id"],
     where: {
-      gameId: gameId
+      gameId: gameId,
+      isAlive: true
     }
   })
     .then(users => res.json(users))

@@ -14,9 +14,9 @@ socket.on("connect", () => {
     socket.emit("startDayTimerPreVotes");
   });
 
-  socket.on("getVotes", () => {
-    socket.broadcast.emit("voteData", voteData);
-  });
+  // socket.on("getVotes",  => {
+  //   socket.broadcast.emit("voteData", voteData);
+  // });
 
   socket.on("dayVoteResults", dayVoteResults => {
     //tell them the results
