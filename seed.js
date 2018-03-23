@@ -3,30 +3,11 @@ const db = require("./server/db/db");
 
 const deaths = [
   {
-    story: "ate too much cheese and died from indigestion"
-  },
-  {
     story:
       "should've gone for the caramel macchiato because the skinny latte was poisoned"
-  },
-  {
-    story:
-      "should've gone for the caramel macchiato because the skinny latte was poisoned"
-  },
-  {
-    story: "summoned an evil genie from a lamp and suffered the consequences"
-  },
-  {
-    story: "crossed the road at the same time as the chicken and didn't make it"
-  },
-  {
-    story: "was walking home alone one night when a rabid squirrel attacked"
   },
   {
     story: "was found on the kitchen floor, covered in blood and chocolate cake"
-  },
-  {
-    story: "tried to free all the animals from the zoo, but got trampled"
   },
   {
     story: "was least seen ordering a coffee, but never came to pick it up"
@@ -60,152 +41,154 @@ const mafiaFacts = [
   }
 ];
 
-const games = [
-  {
-    //game has not started yet, still waiting for players to join room
-    id: 1,
-    roomName: "mafiosas",
-    password: "mafia123",
-    numPlayers: 6,
-    winner: null,
-    inProgress: false,
-    sessionId: ""
-  },
-  {
-    //game has started, finished round 1
-    id: 2,
-    roomName: "theOGmafia",
-    password: "gangsta",
-    numPlayers: 6,
-    winner: null,
-    inProgress: true,
-    sessionId: ""
-  },
-  {
-    //game has ended, winner is Joey
-    id: 3,
-    roomName: "friends",
-    password: "chanandlerbong",
-    numPlayers: 6,
-    winner: "Mafia",
-    inProgress: false,
-    sessionId: ""
-  }
-];
+// const games = [
+//   {
+//     //game has not started yet, still waiting for players to join room
+//     id: 1,
+//     roomName: "mafiosas",
+//     password: "mafia123",
+//     numPlayers: 6,
+//     winner: null,
+//     inProgress: false,
+//     sessionId: ""
+//   },
+//   {
+//     //game has started, finished round 1
+//     id: 2,
+//     roomName: "theOGmafia",
+//     password: "gangsta",
+//     numPlayers: 6,
+//     winner: null,
+//     inProgress: true,
+//     sessionId: ""
+//   },
+//   {
+//     //game has ended, winner is Joey
+//     id: 3,
+//     roomName: "friends",
+//     password: "chanandlerbong",
+//     numPlayers: 6,
+//     winner: "Mafia",
+//     inProgress: false,
+//     sessionId: ""
+//   }
+// ];
 
-const players = [
-  {
-    gameId: 1,
-    name: "Dani"
-  },
-  {
-    gameId: 1,
-    name: "Brittany"
-  },
-  {
-    gameId: 1,
-    name: "Gabby"
-  },
-  {
-    gameId: 2,
-    name: "Noor",
-    role: "Mafia"
-  },
-  {
-    gameId: 2,
-    name: "John",
-    role: "Mafia"
-  },
-  {
-    gameId: 2,
-    name: "Ella",
-    role: "Civilian",
-    isAlive: false
-  },
-  {
-    gameId: 2,
-    name: "Emily",
-    role: "Doctor"
-  },
-  {
-    gameId: 2,
-    name: "Eleni",
-    role: "Civilian"
-  },
-  {
-    gameId: 2,
-    name: "Leigh",
-    role: "Detective"
-  },
-  {
-    gameId: 3,
-    name: "Rachel",
-    role: "Civilian"
-  },
-  {
-    gameId: 3,
-    name: "Monica",
-    role: "Mafia"
-  },
-  {
-    gameId: 3,
-    name: "Phoebe",
-    role: "Mafia"
-  },
-  {
-    gameId: 3,
-    name: "Joey",
-    role: "Civilian"
-  },
-  {
-    gameId: 3,
-    name: "Chandler",
-    role: "Doctor"
-  },
-  {
-    gameId: 3,
-    name: "Ross",
-    role: "Detective"
-  }
-];
+// const players = [
+//   {
+//     gameId: 1,
+//     name: "Dani"
+//   },
+//   {
+//     gameId: 1,
+//     name: "Brittany"
+//   },
+//   {
+//     gameId: 1,
+//     name: "Gabby"
+//   },
+//   {
+//     gameId: 2,
+//     name: "Noor",
+//     role: "Mafia"
+//   },
+//   {
+//     gameId: 2,
+//     name: "John",
+//     role: "Mafia"
+//   },
+//   {
+//     gameId: 2,
+//     name: "Ella",
+//     role: "Civilian",
+//     isAlive: false
+//   },
+//   {
+//     gameId: 2,
+//     name: "Emily",
+//     role: "Doctor"
+//   },
+//   {
+//     gameId: 2,
+//     name: "Eleni",
+//     role: "Civilian"
+//   },
+//   {
+//     gameId: 2,
+//     name: "Leigh",
+//     role: "Detective"
+//   },
+//   {
+//     gameId: 3,
+//     name: "Rachel",
+//     role: "Civilian"
+//   },
+//   {
+//     gameId: 3,
+//     name: "Monica",
+//     role: "Mafia"
+//   },
+//   {
+//     gameId: 3,
+//     name: "Phoebe",
+//     role: "Mafia"
+//   },
+//   {
+//     gameId: 3,
+//     name: "Joey",
+//     role: "Civilian"
+//   },
+//   {
+//     gameId: 3,
+//     name: "Chandler",
+//     role: "Doctor"
+//   },
+//   {
+//     gameId: 3,
+//     name: "Ross",
+//     role: "Detective"
+//   }
+// ];
 
-const rounds = [
-  {
-    gameId: 2,
-    number: 1,
-    isCurrent: false,
-    killed: "Ella",
-    saved: "Leigh",
-    died: "Ella"
-  }
-];
+// const rounds = [
+//   {
+//     gameId: 2,
+//     number: 1,
+//     isCurrent: false,
+//     killed: "Ella",
+//     saved: "Leigh",
+//     died: "Ella"
+//   }
+// ];
 
 function buildingDeaths() {
   return Promise.all(deaths.map(death => Death.create(death)));
 }
 
-function buildingGames() {
-  return Promise.all(games.map(game => Game.create(game)));
-}
+// function buildingGames() {
+//   return Promise.all(games.map(game => Game.create(game)));
+// }
 
-function buildingPlayers() {
-  return Promise.all(players.map(player => Player.create(player)));
-}
+// function buildingPlayers() {
+//   return Promise.all(players.map(player => Player.create(player)));
+// }
 
-function buildingRounds() {
-  return Promise.all(rounds.map(round => Round.create(round)));
-}
+// function buildingRounds() {
+//   return Promise.all(rounds.map(round => Round.create(round)));
+// }
 
 function buildingMafiaFacts() {
   return Promise.all(mafiaFacts.map(fact => Fact.create(fact)));
 }
 
 function seed() {
-  return buildingDeaths()
-    .then(() => buildingGames())
-    .then(() => buildingPlayers())
-    .then(() => buildingRounds())
-    .then(() => buildingMafiaFacts());
+  return (
+    buildingDeaths()
+      // .then(() => buildingGames())
+      // .then(() => buildingPlayers())
+      // .then(() => buildingRounds())
+      .then(() => buildingMafiaFacts())
+  );
 }
 
 console.log("Syncing Database baby");

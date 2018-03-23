@@ -14,7 +14,9 @@ import {
   user,
   joinExistingGame,
   getMe,
-  getPlayersInGame
+  getPlayersInGame,
+  fetchFacts,
+  fetchDeaths
 } from "../store";
 
 const tokboxApiKey = "46081452";
@@ -30,7 +32,7 @@ class GameRoom extends Component {
       connection: "Connecting",
       publishVideo: true,
       role: "",
-      isAlive: true
+      resultMessage: ""
     };
 
     this.gameStart = this.gameStart.bind(this);
@@ -39,7 +41,6 @@ class GameRoom extends Component {
     this.darkOverMafia = this.darkOverMafia.bind(this);
     this.darkOverDetective = this.darkOverDetective.bind(this);
     this.darkOverDoctor = this.darkOverDoctor.bind(this);
-    this.testingGame = this.testingGame.bind(this);
     this.assignRole = this.assignRole.bind(this);
     this.daytime = this.daytime.bind(this);
 
@@ -84,10 +85,12 @@ class GameRoom extends Component {
     this.props.fetchCurrentGame();
     this.props.findMe();
     this.props.loadPlayers();
-    this.testingGame();
+    this.props.loadFacts();
+    this.props.loadDeaths();
+
     socket.on("getRoles", this.getRoles);
     socket.on("dark", this.dark);
-    socket.on("daytime", this.daytime);
+    socket.on("daytime", payload => this.daytime(payload));
     socket.on("role", payload => this.assignRole(payload));
     socket.on("DetectiveRight", () => {
       console.log("detective right");
@@ -97,18 +100,45 @@ class GameRoom extends Component {
     });
   }
 
-  daytime() {
+  daytime(payload) {
     console.log("client has reached daytime");
-    this.setState({ time: "Day" });
+
+    this.setState({ time: "day" });
+
+    if (+payload.killed === this.props.user.id) {
+      this.setState({ role: "dead" });
+    }
+
+    if (payload.killed) {
+      let died = this.props.players.find(player => {
+        console.log(player.id);
+        return +payload.killed === player.id;
+      });
+      console.log("died", died);
+      console.log("payload", payload);
+      let num = died.id % this.props.deaths.length;
+      let death = this.props.deaths[num].story;
+
+      this.setState({
+        resultMessage: `${died.name} ${death}`
+      });
+    }
+
+    if (payload.saved) {
+      let saved = this.props.players.find(player => {
+        return +payload.saved === player.id;
+      });
+      this.setState({
+        resultMessage: `Nobody died! ${saved.name} was saved by the Doctor`
+      });
+    }
   }
 
   assignRole(role) {
     this.setState({ role });
     console.log("we assigned role!");
   }
-  testingGame() {
-    socket.emit("testingJoin", "5");
-  }
+
   gameStart() {
     socket.emit("gameStart", this.props.game.id);
     //only the creator will have access to this start button
@@ -169,7 +199,7 @@ class GameRoom extends Component {
   };
 
   render() {
-    const { user, game, players } = this.props;
+    const { user, game, players, facts } = this.props;
     console.log("socket in game room", socket);
     const sessionId = game.sessionId;
 
@@ -177,6 +207,8 @@ class GameRoom extends Component {
 
     const apiKey = "46081452";
     const { error, connection, publishVideo, role, time } = this.state;
+
+    const index = Math.floor(Math.random() * Math.floor(facts.length - 1));
 
     // console.log("this.state", this.state);
     return (
@@ -233,43 +265,61 @@ class GameRoom extends Component {
               </OTSession>
             </div>
           )}
-        {time === "dark" && role === "Civilian" && <div />}
-        {time === "dark" &&
-          role === "Doctor" && (
-            <div>
-              <h1>Doctor, choose who to save</h1>
-              <DoctorSelectForm
-                players={this.props.players}
-                darkOverDoctor={this.darkOverDoctor}
-              />
-            </div>
-          )}
-        {time === "dark" &&
-          role === "Detective" && (
-            <div>
-              <h1>Detective, choose who you think is Mafia</h1>
-              <DetectiveSelectForm
-                players={this.props.players}
-                darkOverDetective={this.darkOverDetective}
-              />
-            </div>
-          )}
-        {time === "dark" &&
-          role === "Lead Mafia" && (
-            <div>
-              <h1>Lead Mafia, choose who to kill</h1>
-              <MafiaSelectForm
-                players={this.props.players}
-                darkOverMafia={this.darkOverMafia}
-              />
-            </div>
-          )}
+        <div className="row">
+          <div col s9>
+            {time === "dark" &&
+              role === "Doctor" && (
+                <div>
+                  <h1>Doctor, choose who to save</h1>
+                  <DoctorSelectForm
+                    players={this.props.players}
+                    darkOverDoctor={this.darkOverDoctor}
+                  />
+                </div>
+              )}
+            {time === "dark" &&
+              role === "Detective" && (
+                <div>
+                  <h1>Detective, choose who you think is Mafia</h1>
+                  <DetectiveSelectForm
+                    players={this.props.players}
+                    darkOverDetective={this.darkOverDetective}
+                  />
+                </div>
+              )}
+            {time === "dark" &&
+              role === "Lead Mafia" && (
+                <div>
+                  <h1>Lead Mafia, choose who to kill</h1>
+                  <MafiaSelectForm
+                    players={this.props.players}
+                    darkOverMafia={this.darkOverMafia}
+                  />
+                </div>
+              )}
+            {time === "dark" &&
+              role === "Civilian" && (
+                <div>
+                  <h2>{facts[index].fact}</h2>
+                </div>
+              )}
+          </div>
+          <div col s3>
+            {time === "day" && <h1>{this.state.resultMessage}</h1>}
+          </div>
+        </div>
       </div>
     );
   }
 }
 
-const mapState = ({ user, game, players }) => ({ user, game, players });
+const mapState = ({ user, game, players, deaths, facts }) => ({
+  user,
+  game,
+  players,
+  deaths,
+  facts
+});
 
 const mapDispatch = (dispatch, ownProps) => {
   return {
@@ -283,6 +333,14 @@ const mapDispatch = (dispatch, ownProps) => {
 
     loadPlayers() {
       dispatch(getPlayersInGame(+ownProps.match.params.gameId));
+    },
+
+    loadDeaths() {
+      dispatch(fetchDeaths());
+    },
+
+    loadFacts() {
+      dispatch(fetchFacts());
     }
   };
 };

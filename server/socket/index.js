@@ -129,7 +129,8 @@ module.exports = io => {
               proms.push(
                 Player.update(
                   {
-                    isAlive: false
+                    isAlive: false,
+                    role: "dead"
                   },
                   {
                     where: {
@@ -168,7 +169,8 @@ module.exports = io => {
                 })
                 .catch(err => console.error(err));
             });
-          });
+          })
+          .catch(err => console.error(err));
       });
     });
 

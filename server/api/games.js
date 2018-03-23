@@ -11,7 +11,9 @@ router.get("/", (req, res, next) => {
     where: {
       inProgress: false
     }
-  }).then(activeGames => res.json(activeGames));
+  })
+    .then(activeGames => res.json(activeGames))
+    .catch(next);
 });
 
 router.get("/:gameId", (req, res, next) => {
