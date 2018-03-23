@@ -109,7 +109,7 @@ class GameRoom extends Component {
     this.setState({ time: "day" });
 
     if (+payload.killed === this.props.user.id) {
-      this.setState({ role: "dead" });
+      this.setState({ role: "Dead" });
     }
 
     if (payload.killed) {
@@ -211,64 +211,33 @@ class GameRoom extends Component {
 
     const index = Math.floor(Math.random() * Math.floor(facts.length - 1));
 
+    const messageToMafia =
+      "Mafia, you can see and hear everyone, they cannot see you! Discuss your plans freely...";
+
     // console.log("this.state", this.state);
     return (
       <div className="container">
-        <h1>It's {time}!</h1>
-        {!role &&
-          user.creator &&
-          game.numPlayers === players.length && (
-            <button onClick={this.gameStart}>You're all here</button>
-          )}
-        {game.id &&
-          user.id && (
-            <div>
-              <h1>{game.roomName}</h1>
-              {detective && <p>Detective, you were {detective}!</p>}
-              {role && <h2>You're a {role}</h2>}
-              <OTSession
-                apiKey={apiKey}
-                sessionId={sessionId}
-                token={token}
-                onError={this.onSessionError}
-                eventHandlers={this.sessionEventHandlers}
-              >
-                <OTPublisher
-                  properties={{ publishVideo, width: 150, height: 150 }}
-                  onPublish={this.onPublish}
-                  onError={this.onPublishError}
-                  eventHandlers={this.publisherEventHandlers}
-                />
-                <OTStreams>
-                  <OTSubscriber
-                    properties={{
-                      width: 250,
-                      height: 250,
-                      subscribeToAudio:
-                        time === "dark" &&
-                        role &&
-                        role !== "Mafia" &&
-                        role !== "Lead Mafia"
-                          ? false
-                          : true,
-                      subscribeToVideo:
-                        time === "dark" &&
-                        role &&
-                        role !== "Mafia" &&
-                        role !== "Lead Mafia"
-                          ? false
-                          : true
-                    }}
-                    onSubscribe={this.onSubscribe}
-                    onError={this.onSubscribeError}
-                    eventHandlers={this.subscriberEventHandlers}
-                  />
-                </OTStreams>
-              </OTSession>
-            </div>
-          )}
         <div className="row">
-          <div col s9>
+          <div className="col s6">
+            <h1>{game.roomName}</h1>
+          </div>
+          <div className="col s6">
+            {role && <h2>You're a {role}</h2>}
+            {time && <h1>It's {time}!</h1>}
+          </div>
+        </div>
+        <div className="row">
+          {!role &&
+            user.creator &&
+            game.numPlayers === players.length && (
+              <button onClick={this.gameStart}>
+                Ready? Click here to begin your game of MAFIA
+              </button>
+            )}
+          {time === "dark" && role === "Mafia" && <h5>{messageToMafia}</h5>}
+        </div>
+        <div className="row">
+          <div className="col s9">
             {time === "dark" &&
               role === "Doctor" && (
                 <div>
@@ -292,6 +261,7 @@ class GameRoom extends Component {
             {time === "dark" &&
               role === "Lead Mafia" && (
                 <div>
+                  <h5>{messageToMafia}</h5>
                   <h1>Lead Mafia, choose who to kill</h1>
                   <MafiaSelectForm
                     players={this.props.players}
@@ -299,16 +269,65 @@ class GameRoom extends Component {
                   />
                 </div>
               )}
+
             {time === "dark" &&
               role === "Civilian" && (
                 <div>
-                  <h2>{facts[index].fact}</h2>
+                  <h4>{facts[index].fact}</h4>
                 </div>
               )}
           </div>
-          <div col s3>
-            {time === "day" && <h1>{this.state.resultMessage}</h1>}
+          <div className="col s3">
+            {time === "day" && <h5>{this.state.resultMessage}</h5>}
           </div>
+        </div>
+        <div className="row">
+          {game.id &&
+            user.id && (
+              <div>
+                <OTSession
+                  apiKey={apiKey}
+                  sessionId={sessionId}
+                  token={token}
+                  onError={this.onSessionError}
+                  eventHandlers={this.sessionEventHandlers}
+                >
+                  <OTPublisher
+                    properties={{ publishVideo, width: 150, height: 150 }}
+                    onPublish={this.onPublish}
+                    onError={this.onPublishError}
+                    eventHandlers={this.publisherEventHandlers}
+                  />
+                  <OTStreams>
+                    <OTSubscriber
+                      properties={{
+                        width: 250,
+                        height: 250,
+                        subscribeToAudio:
+                          time === "dark" &&
+                          role &&
+                          role !== "Mafia" &&
+                          role !== "Lead Mafia" &&
+                          role !== "Dead"
+                            ? false
+                            : true,
+                        subscribeToVideo:
+                          time === "dark" &&
+                          role &&
+                          role !== "Mafia" &&
+                          role !== "Lead Mafia" &&
+                          role !== "Dead"
+                            ? false
+                            : true
+                      }}
+                      onSubscribe={this.onSubscribe}
+                      onError={this.onSubscribeError}
+                      eventHandlers={this.subscriberEventHandlers}
+                    />
+                  </OTStreams>
+                </OTSession>
+              </div>
+            )}
         </div>
       </div>
     );

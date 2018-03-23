@@ -131,7 +131,7 @@ module.exports = io => {
                 Player.update(
                   {
                     isAlive: false,
-                    role: "dead"
+                    role: "Dead"
                   },
                   {
                     where: {
