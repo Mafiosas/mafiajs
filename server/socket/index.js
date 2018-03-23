@@ -187,7 +187,6 @@ module.exports = io => {
 
       Player.update(
         {
-          isAlive: false,
           role: "Dead"
         },
         {
@@ -200,11 +199,11 @@ module.exports = io => {
         return Game.findById(updated.gameId)
           .then(currentGame => {
             if (currentGame.hasEnded()) {
-              io.to(currentGame).emit("gameOver");
+              io.to(currentGame.id).emit("gameOver");
             } else {
-              io.to(currentGame).emit("votesData", updated.name);
+              io.to(currentGame.id).emit("votesData", updated.name);
               setTimeout(() => {
-                io.to(game).emit("dark");
+                io.to(currentGame.id).emit("dark");
               }, 30000);
               //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
             }
@@ -214,78 +213,3 @@ module.exports = io => {
     });
   });
 };
-
-// socket.on("startDayTimerPreVotes", () => {
-//   setTimeout(() => {
-//     socket.broadcast.to(game).emit("getVotes");
-//   }, 300000);
-// });
-
-//   let voteArray = [];
-//   let voted = {};
-//   socket.on("voteData", voteData => {
-//     voteArray.push(voteData);
-
-//     Player.findAll({
-//       where: {
-//         isAlive: true,
-//         gameId: voteData.gameId
-//       }
-//     });
-
-//     if (io.sockets.length === voteArray.length) {
-//       for (let i = 0; i < voteArray.length; i++) {
-//         if (voted[voteArray[i]]) {
-//           voted[voteArray[i]]++;
-//         } else {
-//           voted[voteArray[i]] = 1;
-//         }
-//       }
-
-//       const votedOut = Object.keys(voted).reduce(
-//         (a, b) => (obj[a] > obj[b] ? a : b)
-//       );
-//       let killBoolean;
-//       Player.findById(votedOut)
-//         .then(player => {
-//           if (
-//             player.dataValues.role === "Mafia" ||
-//             player.dataValues.role === "Lead Mafia"
-//           ) {
-//             killBoolean = true;
-//           } else {
-//             killBoolean = false;
-//           }
-//           return player.update(
-//             {
-//               isAlive: false,
-//               role: "Dead"
-//             },
-//             {
-//               where: {
-//                 id: votedOut
-//               }
-//             }
-//           );
-//         })
-//         .then(player => {
-//           Game.findById(player.gameId)
-//             .then(currentGame => {
-//               if (currentGame.hasEnded()) {
-//                 io.to(currentGame).emit("gameOver");
-//               } else {
-//                 io
-//                   .to(currentGame)
-//                   .emit("votesAreIn", { player, killBoolean });
-//                 setTimeout(() => {
-//                   io.to(game).emit("dark");
-//                 }, 300000);
-//                 //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
-//               }
-//             })
-//             .catch(err => console.error(err));
-//         })
-//         .catch(err => console.error(err));
-//     }
-//   });
-// })

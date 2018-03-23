@@ -18,7 +18,8 @@ import {
   getPlayersInGame,
   fetchFacts,
   fetchDeaths,
-  addVote
+  addVote,
+  resetVotes
 } from "../store";
 
 const tokboxApiKey = "46081452";
@@ -194,9 +195,10 @@ class GameRoom extends Component {
 
   sendVotes(votes) {
     socket.emit("daytimeVotes", votes);
+    this.props.resetStoreVotes();
   }
 
-  votesData(name) {
+  giveVotesData(name) {
     this.setState({
       resultMessage: `You were wrong! ${name} is not Mafia, and is now out of the game.`
     });
@@ -244,6 +246,8 @@ class GameRoom extends Component {
       time
     } = this.state;
 
+    const newVotes = votes;
+
     const index = Math.floor(Math.random() * Math.floor(facts.length - 1));
 
     const messageToMafia =
@@ -273,7 +277,6 @@ class GameRoom extends Component {
         <div className="row">
           {votes && (
             <div>
-              <h1>We're inside table</h1>
               <table className="votedTable">
                 <thead>
                   <tr>
@@ -283,15 +286,20 @@ class GameRoom extends Component {
                 </thead>
 
                 <tbody>
-                  {Object.keys(votes).forEach(key => {
+                  {Object.keys(votes).map(key => {
                     let whoVotedId = players.find(player => {
-                      return player.id === key;
+                      return player.id === +key;
                     });
                     let whoForId = players.find(player => {
-                      return player.id === votes[key];
+                      return player.id === +votes[key];
                     });
+                    console.log(
+                      "who is who after calculation",
+                      whoVotedId,
+                      whoForId
+                    );
                     return (
-                      <tr>
+                      <tr key={key}>
                         <td>{whoVotedId.name}</td>
                         <td>{whoForId.name}</td>
                       </tr>
@@ -301,9 +309,17 @@ class GameRoom extends Component {
               </table>
             </div>
           )}
-          {Object.keys(votes).length === players.length &&
-            user.id === +Object.keys(votes)[0] &&
-            this.sendVotes(votes)}
+          {console.log(
+            "Here is the info:",
+            Object.keys(newVotes).length,
+            players.length,
+            user.id,
+            +Object.keys(newVotes)[0]
+          )}
+
+          {Object.keys(newVotes).length == players.length &&
+            user.id == +Object.keys(newVotes)[0] &&
+            this.sendVotes(newVotes)}
         </div>
         <div className="row">
           <div className="col s9">
@@ -449,6 +465,10 @@ const mapDispatch = (dispatch, ownProps) => {
 
     releaseVote(dataVal) {
       dispatch(addVote(dataVal));
+    },
+
+    resetStoreVotes() {
+      dispatch(resetVotes());
     }
   };
 };

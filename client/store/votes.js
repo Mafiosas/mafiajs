@@ -3,6 +3,7 @@ import axios from "axios";
 /* ACTION TYPES */
 const ADD_VOTE = "ADD_VOTE";
 const GET_VOTES = "GET_VOTES";
+const RESET_VOTES = "RESET_VOTES";
 
 /* INITIAL STATE */
 const defaultVotes = {};
@@ -10,6 +11,7 @@ const defaultVotes = {};
 /* ACTION CREATORS */
 export const getVotes = votes => ({ type: GET_VOTES, votes });
 export const addVote = vote => ({ type: ADD_VOTE, vote });
+export const resetVotes = () => ({ type: RESET_VOTES, votes: {} });
 
 /* REDUCER */
 export default function(state = defaultVotes, action) {
@@ -17,8 +19,11 @@ export default function(state = defaultVotes, action) {
     case GET_VOTES:
       return state;
     case ADD_VOTE:
-      state[action.vote.whoVoted] = action.vote.whoFor;
-      return state;
+      const newState = Object.assign({}, state);
+      newState[action.vote.whoVoted] = action.vote.whoFor;
+      return newState;
+    case RESET_VOTES:
+      return action.votes;
     default:
       return state;
   }
