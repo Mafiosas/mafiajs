@@ -107,7 +107,9 @@ module.exports = io => {
           isCurrent: true
         }
       }).then(round => {
-        if (!round) console.log("theres no round but we go on");
+        if (!round) {
+          return;
+        }
         return round
           .update({
             killed: killed
@@ -122,7 +124,6 @@ module.exports = io => {
               killed: actualKilled,
               isCurrent: false
             };
-            //we're creating a new round more than once, we should put this in a .then
 
             let proms = [updatedRound.update(roundUpdate)];
             if (whoDied) {
@@ -145,22 +146,16 @@ module.exports = io => {
               Game.findById(gameId)
                 .then(updatedGame => {
                   if (updatedGame.hasEnded()) {
-                    console.log("updatedGame is done here");
                     socket.broadcast
                       .to(gameId)
                       .emit("updatedGameOver", updatedGame.winner);
                   } else {
-                    console.log("we should be creating a new round");
                     Round.create({
                       gameId: gameId,
                       isCurrent: true
                     })
                       .then(round => {
                         if (round) {
-                          console.log(
-                            "were broadcasting daylight!!!! and here's the person",
-                            person
-                          );
                           io.to(gameId).emit("daytime", person);
                         }
                       })
@@ -220,7 +215,7 @@ module.exports = io => {
                   io.to(currentGame).emit("gameOver");
                 } else {
                   socket.broadcast.to(currentGame).emit("votesAreIn", player);
-                  //we need to have an on 'votesarein' that changes the front end rendering, gives a few seconds,then goes back to dark
+                  //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
                 }
               })
               .catch(err => console.error(err));

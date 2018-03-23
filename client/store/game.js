@@ -16,7 +16,6 @@ const createGame = game => ({ type: CREATE_GAME, game });
 
 /* THUNK CREATORS */
 export const fetchGame = id => {
-  console.log("id", id);
   return dispatch => {
     axios
       .get(`/api/game/${id}`)

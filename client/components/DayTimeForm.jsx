@@ -11,8 +11,6 @@ export default class DayTimeForm extends Component {
   }
 
   componentDidMount() {
-    console.log("day time component has mounted");
-
     socket.on("getVotes", () => {
       console.log("sending back our vote", this.state.selected);
       socket.emit("voteData", this.state.selected);
@@ -25,8 +23,6 @@ export default class DayTimeForm extends Component {
 
   render() {
     const { players } = this.props;
-    console.log("players inside form", players);
-    console.log("selected", this.state.selected);
 
     return (
       <div>
