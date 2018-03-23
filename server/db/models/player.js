@@ -10,7 +10,7 @@ const Player = db.define("player", {
   },
   role: {
     type: Sequelize.ENUM,
-    values: ["Lead Mafia", "Mafia", "Doctor", "Detective", "Civilian", "dead"]
+    values: ["Lead Mafia", "Mafia", "Doctor", "Detective", "Civilian", "Dead"]
   },
   name: {
     type: Sequelize.STRING
@@ -48,7 +48,15 @@ Player.afterUpdate(player => {
     }
   })
     .then(mafias => {
-      console.log("what do mafias look like in hook?", mafias);
+      leadMafia = mafias.find(mafia => (mafia.dataValues.role = "Lead Mafia"));
+      otherMafia = mafias.filter(mafia => (mafia.dataValues.role = "Mafia"));
+      if (!leadMafia) {
+        return otherMafia[0]
+          .update({
+            role: "Lead Mafia"
+          })
+          .catch(err => console.error(err));
+      }
       aliveMafias = mafias;
     })
     .then(() => {
