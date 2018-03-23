@@ -35,11 +35,7 @@ class GameRoom extends Component {
       publishVideo: true,
       role: "",
       resultMessage: "",
-
-      votes: ""
-
       detective: ""
-
     };
 
     this.gameStart = this.gameStart.bind(this);
@@ -216,7 +212,7 @@ class GameRoom extends Component {
   };
 
   render() {
-    const { user, game, players, facts } = this.props;
+    const { user, game, players, facts, votes } = this.props;
     const sessionId = game.sessionId;
 
     const token = user.token;
@@ -228,8 +224,7 @@ class GameRoom extends Component {
       connection,
       publishVideo,
       role,
-      time,
-      votes
+      time
     } = this.state;
 
     const index = Math.floor(Math.random() * Math.floor(facts.length - 1));
@@ -260,31 +255,34 @@ class GameRoom extends Component {
         </div>
         <div className="row">
           {votes && (
-            <table>
-              <thead>
-                <tr>
-                  <th>Who Voted</th>
-                  <th>For Who?</th>
-                </tr>
-              </thead>
+            <div>
+              <h1>We're inside table</h1>
+              <table className="votedTable">
+                <thead>
+                  <tr>
+                    <th>Who Voted</th>
+                    <th>For Who?</th>
+                  </tr>
+                </thead>
 
-              <tbody>
-                {Object.keys(votes).forEach(key => {
-                  let whoVotedId = players.find(player => {
-                    return player.id === key;
-                  });
-                  let whoForId = players.find(player => {
-                    return player.id === votes[key];
-                  });
-                  return (
-                    <tr>
-                      <td>{whoVotedId.name}</td>
-                      <td>{whoForId.name}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                <tbody>
+                  {Object.keys(votes).forEach(key => {
+                    let whoVotedId = players.find(player => {
+                      return player.id === key;
+                    });
+                    let whoForId = players.find(player => {
+                      return player.id === votes[key];
+                    });
+                    return (
+                      <tr>
+                        <td>{whoVotedId.name}</td>
+                        <td>{whoForId.name}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
         <div className="row">
@@ -294,10 +292,7 @@ class GameRoom extends Component {
                 <div>
                   <h3>Who do you think the Mafia is?</h3>
 
-       
-
                   <DayTimeForm user={user.id} players={players} />
-
                 </div>
               )}
             {time === "dark" &&
@@ -401,7 +396,7 @@ class GameRoom extends Component {
   }
 }
 
-const mapState = ({ user, game, players, deaths, facts }) => ({
+const mapState = ({ user, game, players, deaths, facts, votes }) => ({
   user,
   game,
   players,
