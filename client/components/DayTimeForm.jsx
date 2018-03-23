@@ -22,8 +22,15 @@ export default class DayTimeForm extends Component {
     evt.preventDefault();
     let userId = this.props.user;
     let voted = this.props.players.find(player => {
-      return player.name === evt.target.value;
+      return player.name === this.state.selected;
     });
+    console.log(
+      "Inside submit vote:",
+      userId,
+      this.state.selected,
+      voted,
+      this.props.players
+    );
     let votedId = voted.id;
     socket.emit("myVote", { whoVoted: userId, whoFor: votedId });
   }
@@ -48,11 +55,7 @@ export default class DayTimeForm extends Component {
             <option>Select a player</option>
             {players.length &&
               players.map(player => {
-                return (
-                  <option key={player.id} value={player.id}>
-                    {player.name}
-                  </option>
-                );
+                return <option key={player.id}>{player.name}</option>;
               })}
           </select>
           <button type="submit">Submit your guess</button>
