@@ -186,26 +186,47 @@ module.exports = io => {
       }, 300000);
     });
 
+    let voteArray = [];
+    let voted = {};
     socket.on("voteData", voteData => {
       const gameId = voteData.gameId;
-      let voteTable;
-      if (voteTable[voteData.name]) {
-        voteTable[voteData.name]++;
-      } else {
-        voteTable[voteData.name] = 1;
-      }
+      voteArray.push(voteData.id);
 
-      const votedOut = Object.keys(voteData).reduce(
-        (a, b) => (obj[a] > obj[b] ? a : b)
-      );
-
-      Game.findById(gameId).then(currentGame => {
-        if (currentGame.hasEnded()) {
-          socket.broadcast.to(currentGame).emit("gameOver");
-        } else {
-          socket.broadcast.to(currentGame).emit("daytime", votedOut);
+      if (io.sockets.length === voteArray.length) {
+        for (let i = 0; i < voteArray.length; i++) {
+          if (voted[voteArray[i]]) {
+            voted[voteArray[i]]++;
+          } else {
+            voted[voteArray[i]] = 1;
+          }
         }
-      });
+
+        const votedOut = Object.keys(voted).reduce(
+          (a, b) => (obj[a] > obj[b] ? a : b)
+        );
+        Player.update(
+          {
+            isAlive: false
+          },
+          {
+            where: {
+              id: votedOut
+            }
+          }
+        )
+          .then(player => {
+            Game.findById(gameId)
+              .then(currentGame => {
+                if (currentGame.hasEnded()) {
+                  io.to(currentGame).emit("gameOver");
+                } else {
+                  socket.broadcast.to(currentGame).emit("daytime", player);
+                }
+              })
+              .catch(err => console.error(err));
+          })
+          .catch(err => console.error(err));
+      }
     });
   });
 };

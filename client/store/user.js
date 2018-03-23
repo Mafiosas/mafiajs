@@ -19,7 +19,7 @@ export const getMe = () => {
       .then(res => {
         dispatch(setUser(res.data));
       })
-      .catch(err => console);
+      .catch(err => console.error(err));
   };
 };
 
