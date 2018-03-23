@@ -8,7 +8,7 @@ import MafiaSelectForm from "./MafiaSelectForm.jsx";
 import DetectiveSelectForm from "./DetectiveSelectForm.jsx";
 import DoctorSelectForm from "./DoctorSelectForm.jsx";
 import DarkCiv from "./DarkCiv.jsx";
-import RoomForm from "./RoomForm.jsx";
+import DayTimeForm from "./DayTimeForm.jsx";
 
 import {
   fetchGame,
@@ -17,7 +17,8 @@ import {
   getMe,
   getPlayersInGame,
   fetchFacts,
-  fetchDeaths
+  fetchDeaths,
+  addVote
 } from "../store";
 
 const tokboxApiKey = "46081452";
@@ -99,6 +100,9 @@ class GameRoom extends Component {
     });
     socket.on("DetectiveWrong", () => {
       this.detectiveAnswer("wrong");
+    });
+    socket.on("myVote", dataVal => {
+      dispatch(addVote(dataVal));
     });
   }
 
@@ -195,7 +199,6 @@ class GameRoom extends Component {
 
   render() {
     const { user, game, players, facts } = this.props;
-    console.log("socket in game room", socket);
     const sessionId = game.sessionId;
 
     const token = user.token;
@@ -243,7 +246,7 @@ class GameRoom extends Component {
               role !== "Dead" && (
                 <div>
                   <h3>Who do you think the Mafia is?</h3>
-                  <RoomForm players={this.props.plaers} />
+                  <DayTimeForm players={this.props.plaers} />
                 </div>
               )}
             {time === "dark" &&
@@ -261,6 +264,7 @@ class GameRoom extends Component {
                 <div>
                   <h1>Detective, choose who you think is Mafia</h1>
                   <DetectiveSelectForm
+                    user={user.id}
                     players={this.props.players}
                     darkOverDetective={this.darkOverDetective}
                   />
