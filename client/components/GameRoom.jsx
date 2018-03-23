@@ -35,7 +35,11 @@ class GameRoom extends Component {
       publishVideo: true,
       role: "",
       resultMessage: "",
+
+      votes: ""
+
       detective: ""
+
     };
 
     this.gameStart = this.gameStart.bind(this);
@@ -224,7 +228,8 @@ class GameRoom extends Component {
       connection,
       publishVideo,
       role,
-      time
+      time,
+      votes
     } = this.state;
 
     const index = Math.floor(Math.random() * Math.floor(facts.length - 1));
@@ -232,7 +237,6 @@ class GameRoom extends Component {
     const messageToMafia =
       "Mafia, you can see and hear everyone, they cannot see you! Discuss your plans freely...";
 
-    console.log("this.state", this.state);
     return (
       <div className="container">
         <div className="row">
@@ -255,12 +259,45 @@ class GameRoom extends Component {
           {time === "dark" && role === "Mafia" && <h5>{messageToMafia}</h5>}
         </div>
         <div className="row">
+          {votes && (
+            <table>
+              <thead>
+                <tr>
+                  <th>Who Voted</th>
+                  <th>For Who?</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {Object.keys(votes).forEach(key => {
+                  let whoVotedId = players.find(player => {
+                    return player.id === key;
+                  });
+                  let whoForId = players.find(player => {
+                    return player.id === votes[key];
+                  });
+                  return (
+                    <tr>
+                      <td>{whoVotedId.name}</td>
+                      <td>{whoForId.name}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
+        <div className="row">
           <div className="col s9">
             {time === "day" &&
               role !== "Dead" && (
                 <div>
                   <h3>Who do you think the Mafia is?</h3>
+
+       
+
                   <DayTimeForm user={user.id} players={players} />
+
                 </div>
               )}
             {time === "dark" &&
@@ -369,7 +406,8 @@ const mapState = ({ user, game, players, deaths, facts }) => ({
   game,
   players,
   deaths,
-  facts
+  facts,
+  votes
 });
 
 const mapDispatch = (dispatch, ownProps) => {

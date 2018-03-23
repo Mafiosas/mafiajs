@@ -21,8 +21,11 @@ export default class DayTimeForm extends Component {
   submitVote(evt) {
     evt.preventDefault();
     let userId = this.props.user;
-    let votedFor = evt.target.value;
-    socket.emit("myVote", { userId: votedFor });
+    let voted = this.props.players.find(player => {
+      return player.name === evt.target.value;
+    });
+    let votedId = voted.id;
+    socket.emit("myVote", { whoVoted: userId, whoFor: votedId });
   }
 
   handleChange(event) {
