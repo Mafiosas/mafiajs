@@ -8,6 +8,7 @@ export default class DayTimeForm extends Component {
       selected: ""
     };
     this.handleChange = this.handleChange.bind(this);
+    this.submitVote = this.submitVote.bind(this);
   }
 
   componentDidMount() {
@@ -15,6 +16,13 @@ export default class DayTimeForm extends Component {
       console.log("sending back our vote", this.state.selected);
       socket.emit("voteData", this.state.selected);
     });
+  }
+
+  submitVote(evt) {
+    evt.preventDefault();
+    let userId = this.props.user;
+    let votedFor = evt.target.value;
+    socket.emit("myVote", { userId: votedFor });
   }
 
   handleChange(event) {
@@ -42,6 +50,9 @@ export default class DayTimeForm extends Component {
                   </option>
                 );
               })}
+            <button type="submit" onSubmit={this.submitVote}>
+              Submit your guess
+            </button>
           </select>
         </form>
       </div>

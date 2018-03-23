@@ -175,16 +175,17 @@ module.exports = io => {
       }, 300000);
     });
 
-    socket.on("startDayTimerPostVotes", () => {
-      setTimeout(() => {
-        socket.broadcast.to(game).emit("dark");
-      }, 300000);
-    });
-
     let voteArray = [];
     let voted = {};
     socket.on("voteData", voteData => {
       voteArray.push(voteData);
+
+      Player.findAll({
+        where: {
+          isAlive: true,
+          gameId: voteData.gameId
+        }
+      });
 
       if (io.sockets.length === voteArray.length) {
         for (let i = 0; i < voteArray.length; i++) {
@@ -198,23 +199,41 @@ module.exports = io => {
         const votedOut = Object.keys(voted).reduce(
           (a, b) => (obj[a] > obj[b] ? a : b)
         );
-        Player.update(
-          {
-            isAlive: false
-          },
-          {
-            where: {
-              id: votedOut
+        let killBoolean;
+        Player.findById(votedOut)
+          .then(player => {
+            if (
+              player.dataValues.role === "Mafia" ||
+              player.dataValues.role === "Lead Mafia"
+            ) {
+              killBoolean = true;
+            } else {
+              killBoolean = false;
             }
-          }
-        )
+            return player.update(
+              {
+                isAlive: false,
+                role: "Dead"
+              },
+              {
+                where: {
+                  id: votedOut
+                }
+              }
+            );
+          })
           .then(player => {
             Game.findById(player.gameId)
               .then(currentGame => {
                 if (currentGame.hasEnded()) {
                   io.to(currentGame).emit("gameOver");
                 } else {
-                  socket.broadcast.to(currentGame).emit("votesAreIn", player);
+                  io
+                    .to(currentGame)
+                    .emit("votesAreIn", { player, killBoolean });
+                  setTimeout(() => {
+                    io.to(game).emit("dark");
+                  }, 300000);
                   //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
                 }
               })
