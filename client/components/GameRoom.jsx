@@ -109,6 +109,9 @@ class GameRoom extends Component {
     socket.on("myVote", dataVal => {
       this.props.releaseVote(dataVal);
     });
+    socket.on("votesData", votedOut => {
+      this.giveVotesData(votedOut);
+    });
   }
 
   detectiveAnswer(choice) {
@@ -191,6 +194,14 @@ class GameRoom extends Component {
 
   sendVotes(votes) {
     socket.emit("daytimeVotes", votes);
+  }
+
+  votesData(name) {
+    this.setState({
+      resultMessage: `You were wrong! ${name} is not Mafia, and is now out of the game.`
+    });
+    this.props.loadPlayers();
+    this.props.findMe();
   }
 
   onSessionError = error => {
