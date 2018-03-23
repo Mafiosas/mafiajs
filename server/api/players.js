@@ -12,7 +12,6 @@ router.get("/me", (req, res, next) => {
 });
 
 router.get("/:gameId", (req, res, next) => {
-  console.log("gameId", req.params.gameId);
   const gameId = req.params.gameId;
   Player.findAll({
     attributes: ["name", "id"],
@@ -25,7 +24,6 @@ router.get("/:gameId", (req, res, next) => {
 });
 
 router.post("/", (req, res, next) => {
-  console.log("In post!", req.body);
   Game.findById(req.body.gameId) //make sure to include gameId in the req.body!
     .then(game => {
       let opentok = new OpenTok(

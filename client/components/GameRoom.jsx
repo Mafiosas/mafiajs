@@ -144,12 +144,6 @@ class GameRoom extends Component {
     //only the creator will have access to this start button
   }
 
-  getRoles() {
-    console.log("in get role");
-    //make axios request to get me (user info)
-    //how do we keep track of making sure EVERYONE get their role assigned before we tell the server?
-    socket.emit("rolesAssigned");
-  }
   dark() {
     console.log("in dark");
     socket.emit("startDarkTimer");
