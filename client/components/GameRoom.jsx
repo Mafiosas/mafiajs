@@ -51,6 +51,7 @@ class GameRoom extends Component {
     this.assignRole = this.assignRole.bind(this);
     this.daytime = this.daytime.bind(this);
     this.detectiveAnswer = this.detectiveAnswer.bind(this);
+    this.sendVotes = this.sendVotes.bind(this);
 
     this.sessionEventHandlers = {
       sessionConnected: () => {
@@ -191,9 +192,16 @@ class GameRoom extends Component {
       gameId: this.props.game.id
     });
   }
+
+  sendVotes(votes) {
+    socket.emit("daytimeVotes", votes)
+  }
+
+
   onSessionError = error => {
     this.setState({ error });
   };
+
 
   onPublish = () => {
     console.log("Publish Success");
@@ -286,6 +294,9 @@ class GameRoom extends Component {
               </tbody>
             </table>
           )}
+          {
+            Object.keys(votes).length === players.length && user.id === +Object.keys(votes)[0] && this.sendVotes(votes)
+          }
         </div>
         <div className="row">
           <div className="col s9">
@@ -294,7 +305,7 @@ class GameRoom extends Component {
                 <div>
                   <h3>Who do you think the Mafia is?</h3>
 
-       
+
 
                   <DayTimeForm user={user.id} players={players} />
 
