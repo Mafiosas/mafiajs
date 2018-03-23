@@ -8,6 +8,7 @@ import MafiaSelectForm from "./MafiaSelectForm.jsx";
 import DetectiveSelectForm from "./DetectiveSelectForm.jsx";
 import DoctorSelectForm from "./DoctorSelectForm.jsx";
 import DarkCiv from "./DarkCiv.jsx";
+import DayTimeForm from "./DayTimeForm.jsx";
 
 import {
   fetchGame,
@@ -16,7 +17,8 @@ import {
   getMe,
   getPlayersInGame,
   fetchFacts,
-  fetchDeaths
+  fetchDeaths,
+  addVote
 } from "../store";
 
 const tokboxApiKey = "46081452";
@@ -36,6 +38,7 @@ class GameRoom extends Component {
     };
 
     this.gameStart = this.gameStart.bind(this);
+
     this.dark = this.dark.bind(this);
     this.darkOverMafia = this.darkOverMafia.bind(this);
     this.darkOverDetective = this.darkOverDetective.bind(this);
@@ -93,10 +96,13 @@ class GameRoom extends Component {
     socket.on("daytime", payload => this.daytime(payload));
     socket.on("role", payload => this.assignRole(payload));
     socket.on("DetectiveRight", () => {
-      detectiveAnswer("right");
+      this.detectiveAnswer("right");
     });
     socket.on("DetectiveWrong", () => {
-      detectiveAnswer("wrong");
+      this.detectiveAnswer("wrong");
+    });
+    socket.on("myVote", dataVal => {
+      dispatch(addVote(dataVal));
     });
   }
 
@@ -198,7 +204,6 @@ class GameRoom extends Component {
 
   render() {
     const { user, game, players, facts } = this.props;
-    console.log("socket in game room", socket);
     const sessionId = game.sessionId;
 
     const token = user.token;
@@ -242,6 +247,13 @@ class GameRoom extends Component {
         </div>
         <div className="row">
           <div className="col s9">
+            {time === "day" &&
+              role !== "Dead" && (
+                <div>
+                  <h3>Who do you think the Mafia is?</h3>
+                  <DayTimeForm players={this.props.plaers} />
+                </div>
+              )}
             {time === "dark" &&
               role === "Doctor" && (
                 <div>
@@ -257,6 +269,7 @@ class GameRoom extends Component {
                 <div>
                   <h1>Choose who you think is Mafia</h1>
                   <DetectiveSelectForm
+                    user={user.id}
                     players={this.props.players}
                     darkOverDetective={this.darkOverDetective}
                   />
