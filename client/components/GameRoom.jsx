@@ -199,7 +199,7 @@ class GameRoom extends Component {
   };
 
   render() {
-    const { user, game, players } = this.props;
+    const { user, game, players, facts } = this.props;
     console.log("socket in game room", socket);
     const sessionId = game.sessionId;
 
@@ -207,6 +207,8 @@ class GameRoom extends Component {
 
     const apiKey = "46081452";
     const { error, connection, publishVideo, role, time } = this.state;
+
+    const index = Math.floor(Math.random() * Math.floor(facts.length - 1));
 
     // console.log("this.state", this.state);
     return (
@@ -263,38 +265,49 @@ class GameRoom extends Component {
               </OTSession>
             </div>
           )}
-
-        {time === "dark" &&
-          role === "Doctor" && (
-            <div>
-              <h1>Doctor, choose who to save</h1>
-              <DoctorSelectForm
-                players={this.props.players}
-                darkOverDoctor={this.darkOverDoctor}
-              />
-            </div>
-          )}
-        {time === "dark" &&
-          role === "Detective" && (
-            <div>
-              <h1>Detective, choose who you think is Mafia</h1>
-              <DetectiveSelectForm
-                players={this.props.players}
-                darkOverDetective={this.darkOverDetective}
-              />
-            </div>
-          )}
-        {time === "dark" &&
-          role === "Lead Mafia" && (
-            <div>
-              <h1>Lead Mafia, choose who to kill</h1>
-              <MafiaSelectForm
-                players={this.props.players}
-                darkOverMafia={this.darkOverMafia}
-              />
-            </div>
-          )}
-        {time === "day" && <h1>{this.state.resultMessage}</h1>}
+        <div className="row">
+          <div col s9>
+            {time === "dark" &&
+              role === "Doctor" && (
+                <div>
+                  <h1>Doctor, choose who to save</h1>
+                  <DoctorSelectForm
+                    players={this.props.players}
+                    darkOverDoctor={this.darkOverDoctor}
+                  />
+                </div>
+              )}
+            {time === "dark" &&
+              role === "Detective" && (
+                <div>
+                  <h1>Detective, choose who you think is Mafia</h1>
+                  <DetectiveSelectForm
+                    players={this.props.players}
+                    darkOverDetective={this.darkOverDetective}
+                  />
+                </div>
+              )}
+            {time === "dark" &&
+              role === "Lead Mafia" && (
+                <div>
+                  <h1>Lead Mafia, choose who to kill</h1>
+                  <MafiaSelectForm
+                    players={this.props.players}
+                    darkOverMafia={this.darkOverMafia}
+                  />
+                </div>
+              )}
+            {time === "dark" &&
+              role === "Civilian" && (
+                <div>
+                  <h2>{facts[index].fact}</h2>
+                </div>
+              )}
+          </div>
+          <div col s3>
+            {time === "day" && <h1>{this.state.resultMessage}</h1>}
+          </div>
+        </div>
       </div>
     );
   }
