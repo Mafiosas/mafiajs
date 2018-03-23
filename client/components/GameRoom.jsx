@@ -36,7 +36,6 @@ class GameRoom extends Component {
     };
 
     this.gameStart = this.gameStart.bind(this);
-    this.getRoles = this.getRoles.bind(this);
     this.dark = this.dark.bind(this);
     this.darkOverMafia = this.darkOverMafia.bind(this);
     this.darkOverDetective = this.darkOverDetective.bind(this);
@@ -109,7 +108,12 @@ class GameRoom extends Component {
     this.setState({ time: "day" });
 
     if (+payload.killed === this.props.user.id) {
+      let num = died.id % this.props.deaths.length;
+      let death = this.props.deaths[num].storyForKilled;
       this.setState({ role: "Dead" });
+      this.setState({
+        resultMessage: `${this.props.user.name} the Mafia got you!!`
+      });
     }
 
     if (payload.killed) {
@@ -117,7 +121,7 @@ class GameRoom extends Component {
         return +payload.killed === player.id;
       });
       let num = died.id % this.props.deaths.length;
-      let death = this.props.deaths[num].story;
+      let death = this.props.deaths[num].storyForEveryone;
 
       this.setState({
         resultMessage: `${died.name} ${death}`
@@ -222,8 +226,8 @@ class GameRoom extends Component {
             <h1>{game.roomName}</h1>
           </div>
           <div className="col s6">
-            {role && <h2>You're a {role}</h2>}
             {time && <h1>It's {time}!</h1>}
+            {role && time === "dark" && <h2>You're a {role}</h2>}
           </div>
         </div>
         <div className="row">
@@ -241,7 +245,7 @@ class GameRoom extends Component {
             {time === "dark" &&
               role === "Doctor" && (
                 <div>
-                  <h1>Doctor, choose who to save</h1>
+                  <h1>Choose who to save</h1>
                   <DoctorSelectForm
                     players={this.props.players}
                     darkOverDoctor={this.darkOverDoctor}
@@ -251,7 +255,7 @@ class GameRoom extends Component {
             {time === "dark" &&
               role === "Detective" && (
                 <div>
-                  <h1>Detective, choose who you think is Mafia</h1>
+                  <h1>Choose who you think is Mafia</h1>
                   <DetectiveSelectForm
                     players={this.props.players}
                     darkOverDetective={this.darkOverDetective}
@@ -262,7 +266,7 @@ class GameRoom extends Component {
               role === "Lead Mafia" && (
                 <div>
                   <h5>{messageToMafia}</h5>
-                  <h1>Lead Mafia, choose who to kill</h1>
+                  <h3>Lead Mafia cast your decided vote below</h3>
                   <MafiaSelectForm
                     players={this.props.players}
                     darkOverMafia={this.darkOverMafia}

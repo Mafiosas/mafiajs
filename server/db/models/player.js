@@ -10,7 +10,7 @@ const Player = db.define("player", {
   },
   role: {
     type: Sequelize.ENUM,
-    values: ["Lead Mafia", "Mafia", "Doctor", "Detective", "Civilian", "dead"]
+    values: ["Lead Mafia", "Mafia", "Doctor", "Detective", "Civilian", "Dead"]
   },
   name: {
     type: Sequelize.STRING
