@@ -32,9 +32,12 @@ Player.prototype.isMafia = function() {
   return this.role === "Mafia" || this.role === "Lead Mafia";
 };
 
+//write a prototype method that fires when lead mafia is killed, try to find another mafia to assign lead mafia, if not game is over
+
 Player.afterUpdate(player => {
   const gameId = player.gameId;
   let aliveMafias, alivePlayers;
+  //did lead mafia die?
   return Player.findAll({
     where: {
       gameId: gameId,
@@ -45,6 +48,7 @@ Player.afterUpdate(player => {
     }
   })
     .then(mafias => {
+      console.log("what do mafias look like in hook?", mafias);
       aliveMafias = mafias;
     })
     .then(() => {
