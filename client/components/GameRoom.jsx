@@ -43,6 +43,7 @@ class GameRoom extends Component {
     this.darkOverDoctor = this.darkOverDoctor.bind(this);
     this.assignRole = this.assignRole.bind(this);
     this.daytime = this.daytime.bind(this);
+    this.detectiveAnswer = this.detectiveAnswer.bind(this);
 
     this.sessionEventHandlers = {
       sessionConnected: () => {
@@ -93,16 +94,18 @@ class GameRoom extends Component {
     socket.on("daytime", payload => this.daytime(payload));
     socket.on("role", payload => this.assignRole(payload));
     socket.on("DetectiveRight", () => {
-      console.log("detective right");
+      detectiveAnswer("right");
     });
     socket.on("DetectiveWrong", () => {
-      console.log("detective wrong");
+      detectiveAnswer("wrong");
     });
   }
 
-  daytime(payload) {
-    console.log("client has reached daytime");
+  detectiveAnswer(choice) {
+    this.setState({ detective: choice });
+  }
 
+  daytime(payload) {
     this.setState({ time: "day" });
 
     if (+payload.killed === this.props.user.id) {
@@ -111,11 +114,8 @@ class GameRoom extends Component {
 
     if (payload.killed) {
       let died = this.props.players.find(player => {
-        console.log(player.id);
         return +payload.killed === player.id;
       });
-      console.log("died", died);
-      console.log("payload", payload);
       let num = died.id % this.props.deaths.length;
       let death = this.props.deaths[num].story;
 
@@ -206,7 +206,14 @@ class GameRoom extends Component {
     const token = user.token;
 
     const apiKey = "46081452";
-    const { error, connection, publishVideo, role, time } = this.state;
+    const {
+      detective,
+      error,
+      connection,
+      publishVideo,
+      role,
+      time
+    } = this.state;
 
     const index = Math.floor(Math.random() * Math.floor(facts.length - 1));
 
@@ -223,6 +230,7 @@ class GameRoom extends Component {
           user.id && (
             <div>
               <h1>{game.roomName}</h1>
+              {detective && <p>Detective, you were {detective}!</p>}
               {role && <h2>You're a {role}</h2>}
               <OTSession
                 apiKey={apiKey}
