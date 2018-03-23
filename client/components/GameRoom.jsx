@@ -47,6 +47,7 @@ class GameRoom extends Component {
     this.assignRole = this.assignRole.bind(this);
     this.daytime = this.daytime.bind(this);
     this.detectiveAnswer = this.detectiveAnswer.bind(this);
+    this.sendVotes = this.sendVotes.bind(this);
 
     this.sessionEventHandlers = {
       sessionConnected: () => {
@@ -107,6 +108,9 @@ class GameRoom extends Component {
     });
     socket.on("myVote", dataVal => {
       this.props.releaseVote(dataVal);
+    });
+    socket.on("votesData", votedOut => {
+      this.giveVotesData(votedOut);
     });
   }
 
@@ -187,6 +191,19 @@ class GameRoom extends Component {
       gameId: this.props.game.id
     });
   }
+
+  sendVotes(votes) {
+    socket.emit("daytimeVotes", votes);
+  }
+
+  votesData(name) {
+    this.setState({
+      resultMessage: `You were wrong! ${name} is not Mafia, and is now out of the game.`
+    });
+    this.props.loadPlayers();
+    this.props.findMe();
+  }
+
   onSessionError = error => {
     this.setState({ error });
   };
@@ -284,6 +301,9 @@ class GameRoom extends Component {
               </table>
             </div>
           )}
+          {Object.keys(votes).length === players.length &&
+            user.id === +Object.keys(votes)[0] &&
+            this.sendVotes(votes)}
         </div>
         <div className="row">
           <div className="col s9">

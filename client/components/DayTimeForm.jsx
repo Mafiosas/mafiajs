@@ -24,13 +24,7 @@ export default class DayTimeForm extends Component {
     let voted = this.props.players.find(player => {
       return player.name === this.state.selected;
     });
-    console.log(
-      "Inside submit vote:",
-      userId,
-      this.state.selected,
-      voted,
-      this.props.players
-    );
+
     let votedId = voted.id;
     socket.emit("myVote", { whoVoted: userId, whoFor: votedId });
   }
