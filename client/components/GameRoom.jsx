@@ -8,6 +8,7 @@ import MafiaSelectForm from "./MafiaSelectForm.jsx";
 import DetectiveSelectForm from "./DetectiveSelectForm.jsx";
 import DoctorSelectForm from "./DoctorSelectForm.jsx";
 import DarkCiv from "./DarkCiv.jsx";
+import RoomForm from "./RoomForm.jsx";
 
 import {
   fetchGame,
@@ -36,7 +37,7 @@ class GameRoom extends Component {
     };
 
     this.gameStart = this.gameStart.bind(this);
-    this.getRoles = this.getRoles.bind(this);
+
     this.dark = this.dark.bind(this);
     this.darkOverMafia = this.darkOverMafia.bind(this);
     this.darkOverDetective = this.darkOverDetective.bind(this);
@@ -94,10 +95,10 @@ class GameRoom extends Component {
     socket.on("daytime", payload => this.daytime(payload));
     socket.on("role", payload => this.assignRole(payload));
     socket.on("DetectiveRight", () => {
-      detectiveAnswer("right");
+      this.detectiveAnswer("right");
     });
     socket.on("DetectiveWrong", () => {
-      detectiveAnswer("wrong");
+      this.detectiveAnswer("wrong");
     });
   }
 
@@ -238,6 +239,13 @@ class GameRoom extends Component {
         </div>
         <div className="row">
           <div className="col s9">
+            {time === "day" &&
+              role !== "Dead" && (
+                <div>
+                  <h3>Who do you think the Mafia is?</h3>
+                  <RoomForm players={this.props.plaers} />
+                </div>
+              )}
             {time === "dark" &&
               role === "Doctor" && (
                 <div>
