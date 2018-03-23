@@ -7,7 +7,6 @@ socket.on("connect", () => {
   console.log("Connected in the front!");
 
   socket.on("playerJoined", playerObj => {
-    console.log("this socket id is:", socket.id);
     store.dispatch(addPlayer(playerObj));
   });
 
@@ -28,9 +27,6 @@ socket.on("connect", () => {
   socket.on("gameOver", winners => {
     //change state to game over which changes page
     //winners will either be Villagers or Mafia
-  });
-  socket.on("role", payload => {
-    console.log("we got assigned!", payload);
   });
 });
 

@@ -107,7 +107,9 @@ module.exports = io => {
           isCurrent: true
         }
       }).then(round => {
-        if (!round) console.log("theres no round but we go on");
+        if (!round) {
+          return;
+        }
         return round
           .update({
             killed: killed
@@ -122,7 +124,6 @@ module.exports = io => {
               killed: actualKilled,
               isCurrent: false
             };
-            //we're creating a new round more than once, we should put this in a .then
 
             let proms = [updatedRound.update(roundUpdate)];
             if (whoDied) {
@@ -145,22 +146,16 @@ module.exports = io => {
               Game.findById(gameId)
                 .then(updatedGame => {
                   if (updatedGame.hasEnded()) {
-                    console.log("updatedGame is done here");
                     socket.broadcast
                       .to(gameId)
                       .emit("updatedGameOver", updatedGame.winner);
                   } else {
-                    console.log("we should be creating a new round");
                     Round.create({
                       gameId: gameId,
                       isCurrent: true
                     })
                       .then(round => {
                         if (round) {
-                          console.log(
-                            "were broadcasting daylight!!!! and here's the person",
-                            person
-                          );
                           io.to(gameId).emit("daytime", person);
                         }
                       })
@@ -186,26 +181,47 @@ module.exports = io => {
       }, 300000);
     });
 
+    let voteArray = [];
+    let voted = {};
     socket.on("voteData", voteData => {
-      const gameId = voteData.gameId;
-      let voteTable;
-      if (voteTable[voteData.name]) {
-        voteTable[voteData.name]++;
-      } else {
-        voteTable[voteData.name] = 1;
-      }
+      voteArray.push(voteData);
 
-      const votedOut = Object.keys(voteData).reduce(
-        (a, b) => (obj[a] > obj[b] ? a : b)
-      );
-
-      Game.findById(gameId).then(currentGame => {
-        if (currentGame.hasEnded()) {
-          socket.broadcast.to(currentGame).emit("gameOver");
-        } else {
-          socket.broadcast.to(currentGame).emit("daytime", votedOut);
+      if (io.sockets.length === voteArray.length) {
+        for (let i = 0; i < voteArray.length; i++) {
+          if (voted[voteArray[i]]) {
+            voted[voteArray[i]]++;
+          } else {
+            voted[voteArray[i]] = 1;
+          }
         }
-      });
+
+        const votedOut = Object.keys(voted).reduce(
+          (a, b) => (obj[a] > obj[b] ? a : b)
+        );
+        Player.update(
+          {
+            isAlive: false
+          },
+          {
+            where: {
+              id: votedOut
+            }
+          }
+        )
+          .then(player => {
+            Game.findById(player.gameId)
+              .then(currentGame => {
+                if (currentGame.hasEnded()) {
+                  io.to(currentGame).emit("gameOver");
+                } else {
+                  socket.broadcast.to(currentGame).emit("votesAreIn", player);
+                  //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
+                }
+              })
+              .catch(err => console.error(err));
+          })
+          .catch(err => console.error(err));
+      }
     });
   });
 };
