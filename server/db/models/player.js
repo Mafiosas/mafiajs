@@ -1,8 +1,8 @@
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const db = require("../db");
-const Game = require("./game");
-const { hasGameEnded, whoToSendBack } = require("../../game.js");
+const Game = require("./index");
+const { whoToSendBack } = require("../../game.js");
 
 const Player = db.define("player", {
   cookieId: {
@@ -34,13 +34,15 @@ Player.prototype.isMafia = function() {
 
 Player.isLeadMafiaDead = function(game) {
   console.log("we have arrived in is lead mafia method");
-  this.findAll({
+  Player.findAll({
     where: {
       role: "Lead Mafia",
       gameId: game
     }
   }).then(leadMaf => {
+    console.log("step 2 of the is lead mafia dead method");
     if (!leadMaf) {
+      console.log("Theres no more mafia, lets transfer the power");
       Player.findAll({
         where: {
           role: "Mafia",
@@ -56,6 +58,7 @@ Player.isLeadMafiaDead = function(game) {
 };
 
 Player.afterUpdate(player => {
+  console.log("this is Game model at beginning of method", Game);
   const gameId = player.gameId;
   let aliveMafias, alivePlayers;
   return Player.findAll({
@@ -83,9 +86,15 @@ Player.afterUpdate(player => {
     })
     .then(players => (alivePlayers = players.map(play => play.dataValues)))
     .then(() => {
-      if (hasGameEnded(aliveMafias, alivePlayers)) {
+      if (aliveMafias.length === 0 || alivePlayers.length === 0) {
         const winner = aliveMafias.length === 0 ? "Villagers" : "Mafias";
-        console.log("we are trying to end the game", winner, gameId);
+        console.log(
+          "we are trying to end the game",
+          winner,
+          gameId,
+          "and this is Game ",
+          Game
+        );
 
         return Game.findById(gameId)
           .then(found => {

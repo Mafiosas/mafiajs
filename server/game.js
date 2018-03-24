@@ -48,14 +48,6 @@ function assignRoles(shuffledIdArray) {
 
 //roles.mafia = []
 
-function hasGameEnded(mafias, villagers) {
-  if (mafias.length === 0 || mafias.length === villagers.length) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 function whoToSendBack(killed, saved) {
   console.log("inside who to send back, killed", killed, " and saved ", saved);
   return killed == saved
@@ -68,7 +60,6 @@ function whoToSendBack(killed, saved) {
 }
 
 module.exports = {
-  hasGameEnded,
   whoToSendBack,
   shuffle,
   assignRoles

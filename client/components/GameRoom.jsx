@@ -377,7 +377,7 @@ class GameRoom extends Component {
                 <div>
                   <h3>Who do you think the Mafia is?</h3>
 
-                  <DayTimeForm user={user.id} players={players} />
+                  <DayTimeForm user={user.id} players={this.props.players} />
                 </div>
               )}
             {time === "dark" &&
