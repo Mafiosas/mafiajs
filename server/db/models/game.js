@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 const db = require("../db");
-const Player = require("./player");
+const Player = require("./index");
 
 const Game = db.define("game", {
   roomName: {
