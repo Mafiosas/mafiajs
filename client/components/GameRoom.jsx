@@ -112,12 +112,12 @@ class GameRoom extends Component {
     socket.on("myVote", dataVal => {
       this.props.releaseVote(dataVal);
     });
-    socket.on("votesData", votedOut => {
+    socket.on("votesData", (votedOut, wasMafia) => {
       console.log(
         "inside votesData socket on front end, person voted out:",
         votedOut
       );
-      this.giveVotesData(votedOut);
+      this.giveVotesData(votedOut, wasMafia);
     });
     socket.on("resetVotes", () => {
       this.voteReset();
@@ -216,18 +216,28 @@ class GameRoom extends Component {
     this.props.resetStoreVotes();
   }
 
-  giveVotesData(name) {
+  giveVotesData(name, wasMafia) {
     console.log("inside giveVotesData func, name: ", name);
+    console.log("was mafia inside giveVotesData", wasMafia);
     this.props.loadData();
     this.setState({ time: "day2" });
-    if (user.name === name) {
+    if (this.props.user.name === name && !wasMafia) {
       this.setState({
         resultMessage:
           "The group guessed you to be the Mafia and were wrong! You are now out of the game."
       });
-    } else {
+    } else if (!this.props.user.name === name && !wasMafia) {
       this.setState({
         resultMessage: `You were wrong! ${name} is not Mafia, and is now out of the game.`
+      });
+    } else if (this.props.user.name === name && wasMafia) {
+      this.setState({
+        resultMessage:
+          "The group was right! They guessed you as Mafia and you have been voted out the game."
+      });
+    } else {
+      this.setState({
+        resultMessage: `You were right! ${name} was Mafia and is now out of the game.`
       });
     }
   }

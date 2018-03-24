@@ -185,35 +185,37 @@ module.exports = io => {
       const votedOutId = Object.keys(countedVotes).reduce(
         (a, b) => (countedVotes[a] > countedVotes[b] ? a : b)
       );
-
-      Player.update(
-        {
-          role: "Dead"
-        },
-        {
-          where: {
-            id: +votedOutId
-          },
-          returning: true
-        }
-      ).then(([numUpdated, [updated]]) => {
-        return Game.findById(updated.gameId)
-          .then(currentGame => {
-            if (currentGame.hasEnded()) {
-              console.log("game ended for real");
-              io.to(currentGame.id).emit("gameOver");
-            } else {
-              console.log("here we go again");
-              Player.isLeadMafiaDead(currentGame.id);
-              io.to(currentGame.id).emit("votesData", updated.name);
-              setTimeout(() => {
-                gameRun(currentGame.id);
-              }, 30000);
-              //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
-            }
-          })
-          .catch(err => console.error(err));
-      });
+      let wasMafia;
+      Player.findById(+votedOutId)
+        .then(foundPlayer => {
+          if (player.role === "Mafia" || player.role === "Lead Mafia") {
+            wasMafia = true;
+            return foundPlayer.update({ role: "Dead" });
+          } else {
+            wasMafia = false;
+            return foundPlayer.update({ role: "Dead" });
+          }
+        })
+        .then(updated => {
+          return Game.findById(updated.gameId)
+            .then(currentGame => {
+              if (currentGame.hasEnded()) {
+                console.log("game ended for real");
+                io.to(currentGame.id).emit("gameOver");
+              } else {
+                console.log("here we go again");
+                Player.isLeadMafiaDead(currentGame.id);
+                io
+                  .to(currentGame.id)
+                  .emit("votesData", updated.name, !!wasMafia);
+                setTimeout(() => {
+                  gameRun(currentGame.id);
+                }, 30000);
+                //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
+              }
+            })
+            .catch(err => console.error(err));
+        });
     });
   });
 };
