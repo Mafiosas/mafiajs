@@ -31,7 +31,7 @@ module.exports = io => {
       setTimeout(() => {
         console.log("dark timer oveeeer"); //this works!
         io.to(game).emit("darkOverForVillagers");
-      }, 28000);
+      }, 25000);
       setTimeout(() => {
         console.log("dark timer oveeeer"); //this works!
         io.to(game).emit("darkOverForMafia");

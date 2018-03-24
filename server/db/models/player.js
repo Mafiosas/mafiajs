@@ -32,8 +32,6 @@ Player.prototype.isMafia = function() {
   return this.role === "Mafia" || this.role === "Lead Mafia";
 };
 
-//write a prototype method that fires when lead mafia is killed, try to find another mafia to assign lead mafia, if not game is over
-
 Player.afterUpdate(player => {
   const gameId = player.gameId;
   let aliveMafias, alivePlayers;
@@ -48,8 +46,12 @@ Player.afterUpdate(player => {
     }
   })
     .then(mafias => {
-      leadMafia = mafias.find(mafia => (mafia.dataValues.role = "Lead Mafia"));
-      otherMafia = mafias.filter(mafia => (mafia.dataValues.role = "Mafia"));
+      let leadMafia = mafias.find(
+        mafia => mafia.dataValues.role === "Lead Mafia"
+      );
+      let otherMafia = mafias.filter(
+        mafia => mafia.dataValues.role === "Mafia"
+      );
       if (!leadMafia) {
         return otherMafia[0]
           .update({
@@ -57,7 +59,7 @@ Player.afterUpdate(player => {
           })
           .catch(err => console.error(err));
       }
-      aliveMafias = mafias;
+      aliveMafias = otherMafia;
     })
     .then(() => {
       return Player.findAll({
