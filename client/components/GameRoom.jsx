@@ -111,6 +111,10 @@ class GameRoom extends Component {
       this.props.releaseVote(dataVal);
     });
     socket.on("votesData", votedOut => {
+      console.log(
+        "inside votesData socket on front end, person voted out:",
+        votedOut
+      );
       this.giveVotesData(votedOut);
     });
     socket.on("resetVotes", () => {
@@ -199,12 +203,13 @@ class GameRoom extends Component {
   }
 
   voteReset() {
-    this.setState({ time: "day2" });
     this.props.resetStoreVotes();
   }
 
   giveVotesData(name) {
+    console.log("inside giveVotesData func, name: ", name);
     this.props.loadData();
+    this.setState({ time: "day2" });
     if (user.name === name) {
       this.setState({
         resultMessage:
