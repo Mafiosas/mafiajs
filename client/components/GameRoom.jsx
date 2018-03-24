@@ -273,7 +273,12 @@ class GameRoom extends Component {
           </div>
           <div className="col s6">
             {time && <h1>It's {time}!</h1>}
-            {role && time === "dark" && <h2>You're a {role}</h2>}
+            {role &&
+              time === "dark" &&
+              role !== "Dead" && <h2>You're a {role}</h2>}
+            {role &&
+              time === "dark" &&
+              role === "Dead" && <h2>Boo..you're out of the game</h2>}
           </div>
         </div>
         <div className="row">
