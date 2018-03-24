@@ -199,11 +199,20 @@ class GameRoom extends Component {
   }
 
   giveVotesData(name) {
-    this.setState({
-      resultMessage: `You were wrong! ${name} is not Mafia, and is now out of the game.`
-    });
-    this.props.loadPlayers();
-    this.props.findMe();
+    if (user.name === name) {
+      this.setState({
+        resultMessage:
+          "The group guessed you to be the Mafia and were wrong! You are now out of the game."
+      });
+      this.props.findMe();
+      this.props.loadPlayers();
+    } else {
+      this.setState({
+        resultMessage: `You were wrong! ${name} is not Mafia, and is now out of the game.`
+      });
+      this.props.findMe();
+      this.props.loadPlayers();
+    }
   }
 
   onSessionError = error => {

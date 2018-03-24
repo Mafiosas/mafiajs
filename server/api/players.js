@@ -7,7 +7,19 @@ module.exports = router;
 //api/players
 router.get("/me", (req, res, next) => {
   Player.findById(req.session.user)
-    .then(player => res.json(player))
+    .then(player => {
+      if (player.role === "Dead") {
+        return player
+          .update({
+            isAlive: false
+          })
+          .then(updated => {
+            res.json(updated);
+          });
+      } else {
+        res.json(player);
+      }
+    })
     .catch(next);
 });
 
