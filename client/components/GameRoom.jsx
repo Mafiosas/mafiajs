@@ -192,8 +192,8 @@ class GameRoom extends Component {
   }
 
   sendVotes(votes) {
-    socket.emit("daytimeVotes", votes);
     this.props.resetStoreVotes();
+    socket.emit("daytimeVotes", votes);
   }
 
   giveVotesData(name) {
@@ -253,7 +253,7 @@ class GameRoom extends Component {
       time
     } = this.state;
 
-    const newVotes = votes;
+    // const newVotes = votes;
 
     const index = Math.floor(Math.random() * Math.floor(facts.length - 1));
 
@@ -282,7 +282,7 @@ class GameRoom extends Component {
           {time === "dark" && role === "Mafia" && <h5>{messageToMafia}</h5>}
         </div>
         <div className="row">
-          {votes && (
+          {Object.keys(votes).length ? (
             <div>
               <table className="votedTable">
                 <thead>
@@ -315,18 +315,18 @@ class GameRoom extends Component {
                 </tbody>
               </table>
             </div>
-          )}
+          ) : null}
           {console.log(
             "Here is the info:",
-            Object.keys(newVotes).length,
+            Object.keys(votes).length,
             players.length,
             user.id,
-            +Object.keys(newVotes)[0]
+            +Object.keys(votes)[0]
           )}
 
-          {Object.keys(newVotes).length == players.length &&
-            user.id == +Object.keys(newVotes)[0] &&
-            this.sendVotes(newVotes)}
+          {Object.keys(votes).length == players.length &&
+            user.id == +Object.keys(votes)[0] &&
+            this.sendVotes(votes)}
         </div>
         <div className="row">
           <div className="col s9">
