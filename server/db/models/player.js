@@ -86,6 +86,7 @@ Player.afterUpdate(player => {
       if (hasGameEnded(aliveMafias, alivePlayers)) {
         const winner = aliveMafias.length === 0 ? "Villagers" : "Mafias";
         console.log("we are trying to end the game", winner, gameId);
+        //this game.update is not working, we can try finding game by ID and then updating the instance
         return Game.update(
           {
             winner: winner

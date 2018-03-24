@@ -11,6 +11,8 @@ const defaultPlayers = [];
 const getPlayers = players => ({ type: GET_PLAYERS, players });
 export const addPlayer = player => ({ type: ADD_PLAYER, player });
 /* THUNK CREATORS */
+//export const removePlayer
+//write a function that removes a player from the state after they die
 
 export const getPlayersInGame = id => dispatch =>
   axios

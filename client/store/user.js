@@ -5,12 +5,14 @@ import { getPlayersInGame } from "./players";
 
 //ACTION TYPE
 const SET_USER = "SET_USER";
+const UPDATE_USER = "UPDATE_USER";
 
 //INITIAL STATE
 const defaultUser = {};
 
 //ACTION CREATOR
 const setUser = user => ({ type: SET_USER, user });
+export const updateUser = updateData => ({ type: UPDATE_USER, updateData });
 
 //THUNK CREATORS
 export const getMe = gameId => {
@@ -52,6 +54,8 @@ export default function(state = defaultUser, action) {
   switch (action.type) {
     case SET_USER:
       return action.user;
+    case UPDATE_USER:
+      return Object.assign({}, state, action.updateData);
     default:
       return state;
   }
