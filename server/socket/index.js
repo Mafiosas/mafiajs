@@ -26,7 +26,7 @@ module.exports = io => {
       console.log(`Connection ${socket.id} is no longer connected!`);
     });
 
-    socket.on("gameStart", gameId => {
+    function gameRun(gameId) {
       io.to(game).emit("dark");
       setTimeout(() => {
         console.log("dark timer oveeeer"); //this works!
@@ -37,16 +37,12 @@ module.exports = io => {
         io.to(game).emit("darkOverForMafia");
       }, 30000);
 
-      Game.findById(gameId, {
-        include: [Player]
-      }).then(game => {
+      Game.findById(gameId, { include: [Player] }).then(game => {
         if (game.inProgress) {
           return;
         }
         return game
-          .update({
-            inProgress: true
-          })
+          .update({ inProgress: true })
           .then(updatedGame => {
             const idArray = game.players.map(el => el.id);
             const shuffledPlayers = assignRoles(shuffle(idArray));
@@ -69,6 +65,10 @@ module.exports = io => {
           })
           .catch(err => console.log(err));
       });
+    }
+
+    socket.on("gameStart", gameId => {
+      gameRun(gameId);
     });
 
     socket.on("villagerChoice", data => {
@@ -204,7 +204,7 @@ module.exports = io => {
             } else {
               io.to(currentGame.id).emit("votesData", updated.name);
               setTimeout(() => {
-                io.to(currentGame.id).emit("dark");
+                gameStart(currentGame.id);
               }, 30000);
               //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
             }
