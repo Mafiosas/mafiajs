@@ -20,7 +20,8 @@ import {
   fetchDeaths,
   addVote,
   resetVotes,
-  updateUser
+  updateUser,
+  removePlayer
 } from "../store";
 
 const tokboxApiKey = "46081452";
@@ -225,12 +226,17 @@ class GameRoom extends Component {
   giveVotesData(name, wasMafia) {
     console.log("inside giveVotesData func, name: ", name);
     console.log("was mafia inside giveVotesData", wasMafia);
-    this.props.loadData();
+    //this.props.loadData();
+    this.props.removePlayerFromStore(name);
     this.setState({ time: "day2" });
     if (this.props.user.name === name && !wasMafia) {
       this.setState({
         resultMessage:
           "The group guessed you to be the Mafia and were wrong! You are now out of the game."
+      });
+      this.props.updateUser({
+        role: "Dead",
+        isAlive: false
       });
     } else if (!this.props.user.name === name && !wasMafia) {
       this.setState({
@@ -240,6 +246,10 @@ class GameRoom extends Component {
       this.setState({
         resultMessage:
           "The group was right! They guessed you as Mafia and you have been voted out the game."
+      });
+      this.props.updateUser({
+        role: "Dead",
+        isAlive: false
       });
     } else {
       this.setState({
@@ -508,6 +518,9 @@ const mapDispatch = (dispatch, ownProps) => {
     },
     updateUser(data) {
       dispatch(updateUser(data));
+    },
+    removePlayerFromStore(player) {
+      dispatch(removePlayer(player));
     }
   };
 };

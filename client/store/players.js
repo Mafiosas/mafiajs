@@ -3,6 +3,7 @@ import axios from "axios";
 /* ACTION TYPES */
 const GET_PLAYERS = "GET_PLAYERS";
 const ADD_PLAYER = "ADD_PLAYER";
+const REMOVE_PLAYER = "REMOVE_PLAYER";
 
 /* INITIAL STATE */
 const defaultPlayers = [];
@@ -10,6 +11,7 @@ const defaultPlayers = [];
 /* ACTION CREATORS */
 const getPlayers = players => ({ type: GET_PLAYERS, players });
 export const addPlayer = player => ({ type: ADD_PLAYER, player });
+export const removePlayer = player => ({ type: REMOVE_PLAYER, player });
 /* THUNK CREATORS */
 //export const removePlayer
 //write a function that removes a player from the state after they die
@@ -27,6 +29,8 @@ export default function(state = defaultPlayers, action) {
       return action.players;
     case ADD_PLAYER:
       return [...state, action.player];
+    case REMOVE_PLAYER:
+      return state.filter(el => el.name !== action.player.name);
     default:
       return state;
   }
