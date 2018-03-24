@@ -137,7 +137,8 @@ module.exports = io => {
                     where: {
                       gameId: gameId,
                       id: whoDied
-                    }
+                    },
+                    individualHooks: true
                   }
                 )
               );

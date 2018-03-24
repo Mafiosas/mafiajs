@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const db = require("../db");
 const Game = require("./game");
-const { hasGameEnded, didMafiaWin, whoToSendBack } = require("../../game.js");
+const { hasGameEnded, whoToSendBack } = require("../../game.js");
 
 const Player = db.define("player", {
   cookieId: {
@@ -83,14 +83,9 @@ Player.afterUpdate(player => {
     })
     .then(players => (alivePlayers = players.map(play => play.dataValues)))
     .then(() => {
-      console.log(
-        "alive mafias in hook:",
-        aliveMafias,
-        " and alivePlayers in hook: ",
-        alivePlayers
-      );
       if (hasGameEnded(aliveMafias, alivePlayers)) {
-        const winner = didMafiaWin(aliveMafias) ? "Mafia" : "Villagers";
+        const winner = aliveMafias.length === 0 ? "Villagers" : "Mafias";
+        console.log("we are trying to end the game", winner, gameId);
         return Game.update(
           {
             winner: winner

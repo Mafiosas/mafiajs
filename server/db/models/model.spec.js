@@ -93,26 +93,6 @@ describe("Player model", () => {
       expect(currentGame.dataValues.winner).to.be.equal("Villagers");
     });
   });
-  // describe("simulating one round where Mafia wins", () => {
-  //   before(() => {
-  //     Player.update(
-  //       {
-  //         isAlive: "false"
-  //       },
-  //       {
-  //         where: {
-  //           [Op.ne]: "Mafia"
-  //         }
-  //       }
-  //     );
-  //   });
-  //   it("Ensures after update hook runs and ends game properly", () => {
-  //     expect(currentGame.hasEnded()).to.be.equal(true);
-  //   });
-  //   it("Winner should be mafia", () => {
-  //     expect(currentGame.winner).to.be.equal("Mafia");
-  //   });
-  // });
 });
 
 describe("Game model", () => {});
