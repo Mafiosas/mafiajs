@@ -174,6 +174,7 @@ module.exports = io => {
     });
 
     socket.on("daytimeVotes", votes => {
+      io.to(game).emit("resetVotes");
       const countedVotes = {};
 
       for (let key in votes) {
