@@ -32,10 +32,32 @@ Player.prototype.isMafia = function() {
   return this.role === "Mafia" || this.role === "Lead Mafia";
 };
 
+Player.isLeadMafiaDead = function(game) {
+  console.log("we have arrived in is lead mafia method");
+  this.findAll({
+    where: {
+      role: "Lead Mafia",
+      gameId: game
+    }
+  }).then(leadMaf => {
+    if (!leadMaf) {
+      Player.findAll({
+        where: {
+          role: "Mafia",
+          gameId: game
+        }
+      }).then(mafias => {
+        mafias[0].update({
+          role: "Lead Mafia"
+        });
+      });
+    }
+  });
+};
+
 Player.afterUpdate(player => {
   const gameId = player.gameId;
   let aliveMafias, alivePlayers;
-  //did lead mafia die?
   return Player.findAll({
     where: {
       gameId: gameId,
@@ -46,20 +68,7 @@ Player.afterUpdate(player => {
     }
   })
     .then(mafias => {
-      let leadMafia = mafias.find(
-        mafia => mafia.dataValues.role === "Lead Mafia"
-      );
-      let otherMafia = mafias.filter(
-        mafia => mafia.dataValues.role === "Mafia"
-      );
-      if (!leadMafia) {
-        return otherMafia[0]
-          .update({
-            role: "Lead Mafia"
-          })
-          .catch(err => console.error(err));
-      }
-      aliveMafias = otherMafia;
+      aliveMafias = mafias.map(maf => maf.dataValues);
     })
     .then(() => {
       return Player.findAll({
@@ -72,12 +81,19 @@ Player.afterUpdate(player => {
         }
       });
     })
-    .then(players => (alivePlayers = players))
+    .then(players => (alivePlayers = players.map(play => play.dataValues)))
     .then(() => {
+      console.log(
+        "alive mafias in hook:",
+        aliveMafias,
+        " and alivePlayers in hook: ",
+        alivePlayers
+      );
       if (hasGameEnded(aliveMafias, alivePlayers)) {
+        const winner = didMafiaWin(aliveMafias) ? "Mafia" : "Villagers";
         return Game.update(
           {
-            winner: didMafiaWin(aliveMafias) ? "Mafia" : "Villagers"
+            winner: winner
           },
           {
             where: {
