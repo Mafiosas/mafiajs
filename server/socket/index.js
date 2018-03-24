@@ -189,7 +189,10 @@ module.exports = io => {
       let wasMafia;
       Player.findById(+votedOutId)
         .then(foundPlayer => {
-          if (player.role === "Mafia" || player.role === "Lead Mafia") {
+          if (
+            foundPlayer.role === "Mafia" ||
+            foundPlayer.role === "Lead Mafia"
+          ) {
             wasMafia = true;
             return foundPlayer.update({ role: "Dead" });
           } else {

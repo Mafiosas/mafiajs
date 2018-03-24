@@ -19,7 +19,8 @@ import {
   fetchFacts,
   fetchDeaths,
   addVote,
-  resetVotes
+  resetVotes,
+  updateUser
 } from "../store";
 
 const tokboxApiKey = "46081452";
@@ -34,7 +35,6 @@ class GameRoom extends Component {
       error: null,
       connection: "Connecting",
       publishVideo: true,
-      role: "",
       resultMessage: "",
       detective: "",
       winner: ""
@@ -141,7 +141,10 @@ class GameRoom extends Component {
       });
       let num = died.id % this.props.deaths.length;
       let death = this.props.deaths[num].storyForKilled;
-      this.setState({ role: "Dead" });
+      this.props.updateUser({
+        role: "Dead",
+        isAlive: false
+      });
       this.setState({
         resultMessage: `${
           this.props.user.name
@@ -177,7 +180,10 @@ class GameRoom extends Component {
   }
 
   assignRole(role) {
-    this.setState({ role });
+    this.props.updateUser({
+      role: role,
+      isAlive: true
+    });
   }
 
   gameStart() {
@@ -300,23 +306,24 @@ class GameRoom extends Component {
           {winner && <h2>{winner} have won!</h2>}
           <div className="col s6">
             {time && <h1>It's {time}!</h1>}
-            {role &&
+            {user.role &&
               time === "dark" &&
-              role !== "Dead" && <h2>You're a {role}</h2>}
-            {role &&
+              user.role !== "Dead" && <h2>You're a {user.role}</h2>}
+            {user.role &&
               time === "dark" &&
-              role === "Dead" && <h2>Boo..you're out of the game</h2>}
+              user.role === "Dead" && <h2>Boo..you're out of the game</h2>}
           </div>
         </div>
         <div className="row">
-          {!role &&
+          {!user.role &&
             user.creator &&
             game.numPlayers === players.length && (
               <button onClick={this.gameStart}>
                 Ready? Click here to begin your game of MAFIA
               </button>
             )}
-          {time === "dark" && role === "Mafia" && <h5>{messageToMafia}</h5>}
+          {time === "dark" &&
+            user.role === "Mafia" && <h5>{messageToMafia}</h5>}
         </div>
         <div className="row">
           {Object.keys(votes).length ? (
@@ -356,7 +363,7 @@ class GameRoom extends Component {
         <div className="row">
           <div className="col s9">
             {time === "day" &&
-              role !== "Dead" && (
+              user.role !== "Dead" && (
                 <div>
                   <h3>Who do you think the Mafia is?</h3>
 
@@ -364,7 +371,7 @@ class GameRoom extends Component {
                 </div>
               )}
             {time === "dark" &&
-              role === "Doctor" && (
+              user.role === "Doctor" && (
                 <div>
                   <h1>Choose who to save</h1>
                   <DoctorSelectForm
@@ -374,7 +381,7 @@ class GameRoom extends Component {
                 </div>
               )}
             {time === "dark" &&
-              role === "Detective" &&
+              user.role === "Detective" &&
               !detective && (
                 <div>
                   <h1>Choose who you suspect is Mafia</h1>
@@ -386,10 +393,10 @@ class GameRoom extends Component {
                 </div>
               )}
             {time === "dark" &&
-              role === "Detective" &&
+              user.role === "Detective" &&
               detective && <p>Detective, you were {detective}</p>}
             {time === "dark" &&
-              role === "Lead Mafia" && (
+              user.role === "Lead Mafia" && (
                 <div>
                   <h5>{messageToMafia}</h5>
                   <h3>Lead Mafia cast your decided vote below</h3>
@@ -401,7 +408,7 @@ class GameRoom extends Component {
               )}
 
             {time === "dark" &&
-              role === "Civilian" && (
+              user.role === "Civilian" && (
                 <div>
                   <h4>{facts[index].fact}</h4>
                 </div>
@@ -436,18 +443,18 @@ class GameRoom extends Component {
                         height: 250,
                         subscribeToAudio:
                           time === "dark" &&
-                          role &&
-                          role !== "Mafia" &&
-                          role !== "Lead Mafia" &&
-                          role !== "Dead"
+                          user.role &&
+                          user.role !== "Mafia" &&
+                          user.role !== "Lead Mafia" &&
+                          user.role !== "Dead"
                             ? false
                             : true,
                         subscribeToVideo:
                           time === "dark" &&
-                          role &&
-                          role !== "Mafia" &&
-                          role !== "Lead Mafia" &&
-                          role !== "Dead"
+                          user.role &&
+                          user.role !== "Mafia" &&
+                          user.role !== "Lead Mafia" &&
+                          user.role !== "Dead"
                             ? false
                             : true
                       }}
@@ -498,6 +505,9 @@ const mapDispatch = (dispatch, ownProps) => {
 
     resetStoreVotes() {
       dispatch(resetVotes());
+    },
+    updateUser(data) {
+      dispatch(updateUser(data));
     }
   };
 };
