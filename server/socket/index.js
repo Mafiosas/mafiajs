@@ -204,7 +204,7 @@ module.exports = io => {
             } else {
               io.to(currentGame.id).emit("votesData", updated.name);
               setTimeout(() => {
-                gameStart(currentGame.id);
+                gameRun(currentGame.id);
               }, 30000);
               //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
             }
