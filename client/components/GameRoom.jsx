@@ -49,6 +49,7 @@ class GameRoom extends Component {
     this.daytime = this.daytime.bind(this);
     this.detectiveAnswer = this.detectiveAnswer.bind(this);
     this.sendVotes = this.sendVotes.bind(this);
+    this.voteReset = this.voteReset.bind(this);
 
     this.sessionEventHandlers = {
       sessionConnected: () => {
@@ -89,15 +90,14 @@ class GameRoom extends Component {
 
   componentDidMount() {
     this.props.fetchCurrentGame();
-    this.props.findMe();
-    this.props.loadPlayers();
+    this.props.loadData();
     this.props.loadFacts();
     this.props.loadDeaths();
 
     socket.on("getRoles", this.getRoles);
     socket.on("dark", this.dark);
     socket.on("daytime", payload => {
-      this.props.loadPlayers();
+      this.props.loadData();
       this.daytime(payload);
     });
     socket.on("role", payload => this.assignRole(payload));
@@ -112,6 +112,9 @@ class GameRoom extends Component {
     });
     socket.on("votesData", votedOut => {
       this.giveVotesData(votedOut);
+    });
+    socket.on("resetVotes", () => {
+      this.voteReset();
     });
   }
 
@@ -192,24 +195,25 @@ class GameRoom extends Component {
   }
 
   sendVotes(votes) {
-    this.props.resetStoreVotes();
     socket.emit("daytimeVotes", votes);
   }
 
+  voteReset() {
+    this.setState({ time: "day2" });
+    this.props.resetStoreVotes();
+  }
+
   giveVotesData(name) {
+    this.props.loadData();
     if (user.name === name) {
       this.setState({
         resultMessage:
           "The group guessed you to be the Mafia and were wrong! You are now out of the game."
       });
-      this.props.findMe();
-      this.props.loadPlayers();
     } else {
       this.setState({
         resultMessage: `You were wrong! ${name} is not Mafia, and is now out of the game.`
       });
-      this.props.findMe();
-      this.props.loadPlayers();
     }
   }
 
@@ -250,7 +254,8 @@ class GameRoom extends Component {
       connection,
       publishVideo,
       role,
-      time
+      time,
+      resultMessage
     } = this.state;
 
     // const newVotes = votes;
@@ -300,11 +305,6 @@ class GameRoom extends Component {
                     let whoForId = players.find(player => {
                       return player.id === +votes[key];
                     });
-                    console.log(
-                      "who is who after calculation",
-                      whoVotedId,
-                      whoForId
-                    );
                     return (
                       <tr key={key}>
                         <td>{whoVotedId.name}</td>
@@ -316,13 +316,6 @@ class GameRoom extends Component {
               </table>
             </div>
           ) : null}
-          {console.log(
-            "Here is the info:",
-            Object.keys(votes).length,
-            players.length,
-            user.id,
-            +Object.keys(votes)[0]
-          )}
 
           {Object.keys(votes).length == players.length &&
             user.id == +Object.keys(votes)[0] &&
@@ -383,7 +376,8 @@ class GameRoom extends Component {
               )}
           </div>
           <div className="col s3">
-            {time === "day" && <h5>{this.state.resultMessage}</h5>}
+            {time === "day" && <h5>{resultMessage}</h5>}
+            {time === "day2" && <h5>{resultMessage}</h5>}
           </div>
         </div>
         <div className="row">
@@ -454,12 +448,8 @@ const mapDispatch = (dispatch, ownProps) => {
       dispatch(fetchGame(+ownProps.match.params.gameId));
     },
 
-    findMe() {
-      dispatch(getMe());
-    },
-
-    loadPlayers() {
-      dispatch(getPlayersInGame(+ownProps.match.params.gameId));
+    loadData() {
+      dispatch(getMe(+ownProps.match.params.gameId));
     },
 
     loadDeaths() {

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { addPlayer } from "./players";
 import socket from "../socket";
+import { getPlayersInGame } from "./players";
 
 //ACTION TYPE
 const SET_USER = "SET_USER";
@@ -12,12 +13,13 @@ const defaultUser = {};
 const setUser = user => ({ type: SET_USER, user });
 
 //THUNK CREATORS
-export const getMe = () => {
+export const getMe = gameId => {
   return dispatch => {
     axios
       .get("/api/players/me")
       .then(res => {
         dispatch(setUser(res.data));
+        dispatch(getPlayersInGame(gameId));
       })
       .catch(err => console.error(err));
   };

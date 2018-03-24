@@ -41,6 +41,7 @@ const createApp = () => {
   //api routes
   app.use("/api", routes);
 
+  // `/game`
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../public/index.html"));
   }); // Send index.html for any other requests
