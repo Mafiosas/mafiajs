@@ -56,14 +56,6 @@ function hasGameEnded(mafias, villagers) {
   }
 }
 
-function didMafiaWin(mafias) {
-  if (mafias.length === 0) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
 function whoToSendBack(killed, saved) {
   console.log("inside who to send back, killed", killed, " and saved ", saved);
   return killed == saved
@@ -77,7 +69,6 @@ function whoToSendBack(killed, saved) {
 
 module.exports = {
   hasGameEnded,
-  didMafiaWin,
   whoToSendBack,
   shuffle,
   assignRoles

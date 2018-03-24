@@ -137,7 +137,8 @@ module.exports = io => {
                     where: {
                       gameId: gameId,
                       id: whoDied
-                    }
+                    },
+                    individualHooks: true
                   }
                 )
               );
@@ -194,6 +195,7 @@ module.exports = io => {
           where: {
             id: +votedOutId
           },
+          individualHooks: true,
           returning: true
         }
       ).then(([numUpdated, [updated]]) => {

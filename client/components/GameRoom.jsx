@@ -220,7 +220,7 @@ class GameRoom extends Component {
     console.log("inside giveVotesData func, name: ", name);
     this.props.loadData();
     this.setState({ time: "day2" });
-    if (user.name === name) {
+    if (this.props.user.name === name) {
       this.setState({
         resultMessage:
           "The group guessed you to be the Mafia and were wrong! You are now out of the game."
