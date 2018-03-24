@@ -251,7 +251,7 @@ class GameRoom extends Component {
         role: "Dead",
         isAlive: false
       });
-    } else {
+    } else if (!this.props.user.name === name && wasMafia) {
       this.setState({
         resultMessage: `You were right! ${name} was Mafia and is now out of the game.`
       });
