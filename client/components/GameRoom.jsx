@@ -121,6 +121,7 @@ class GameRoom extends Component {
 
   daytime(payload) {
     this.setState({ time: "day" });
+    this.setState({ detective: "" });
 
     if (+payload.killed === this.props.user.id) {
       let died = this.props.players.find(player => {
@@ -160,7 +161,6 @@ class GameRoom extends Component {
 
   assignRole(role) {
     this.setState({ role });
-    console.log("we assigned role!");
   }
 
   gameStart() {
@@ -169,13 +169,11 @@ class GameRoom extends Component {
   }
 
   dark() {
-    console.log("in dark");
     socket.emit("startDarkTimer");
     this.setState({ time: "dark" });
   }
 
   darkOverMafia(killedId) {
-    console.log("ohhhmmmyyygaaaaa dark isover for mafiaa");
     socket.emit("darkData", { killed: killedId, gameId: this.props.game.id });
   }
 
