@@ -36,7 +36,8 @@ class GameRoom extends Component {
       publishVideo: true,
       role: "",
       resultMessage: "",
-      detective: ""
+      detective: "",
+      winner: ""
     };
 
     this.gameStart = this.gameStart.bind(this);
@@ -50,6 +51,7 @@ class GameRoom extends Component {
     this.detectiveAnswer = this.detectiveAnswer.bind(this);
     this.sendVotes = this.sendVotes.bind(this);
     this.voteReset = this.voteReset.bind(this);
+    this.gameOver = this.gameOver.bind(this);
 
     this.sessionEventHandlers = {
       sessionConnected: () => {
@@ -116,6 +118,9 @@ class GameRoom extends Component {
     socket.on("resetVotes", () => {
       this.voteReset();
     });
+    socket.on("gameOver", () => {
+      this.gameOver();
+    });
   }
 
   detectiveAnswer(choice) {
@@ -160,6 +165,11 @@ class GameRoom extends Component {
         resultMessage: `Nobody died! ${saved.name} was saved by the Doctor`
       });
     }
+  }
+
+  gameOver() {
+    this.props.fetchCurrentGame();
+    this.setState({ winner: this.props.game.winner });
   }
 
   assignRole(role) {
@@ -255,7 +265,8 @@ class GameRoom extends Component {
       publishVideo,
       role,
       time,
-      resultMessage
+      resultMessage,
+      winner
     } = this.state;
 
     // const newVotes = votes;
@@ -269,8 +280,9 @@ class GameRoom extends Component {
       <div className="container">
         <div className="row">
           <div className="col s6">
-            <h1>{game.roomName}</h1>
+            <h1>Game: {game.roomName}</h1>
           </div>
+          {winner && <h2>{winner} have won!</h2>}
           <div className="col s6">
             {time && <h1>It's {time}!</h1>}
             {role &&

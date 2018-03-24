@@ -200,8 +200,10 @@ module.exports = io => {
         return Game.findById(updated.gameId)
           .then(currentGame => {
             if (currentGame.hasEnded()) {
+              console.log("game ended for real");
               io.to(currentGame.id).emit("gameOver");
             } else {
+              console.log("here we go again");
               Player.isLeadMafiaDead(currentGame.id);
               io.to(currentGame.id).emit("votesData", updated.name);
               setTimeout(() => {
