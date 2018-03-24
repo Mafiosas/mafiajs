@@ -202,6 +202,7 @@ module.exports = io => {
             if (currentGame.hasEnded()) {
               io.to(currentGame.id).emit("gameOver");
             } else {
+              Player.isLeadMafiaDead(currentGame.id);
               io.to(currentGame.id).emit("votesData", updated.name);
               setTimeout(() => {
                 io.to(currentGame.id).emit("dark");
