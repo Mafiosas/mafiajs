@@ -123,8 +123,8 @@ class GameRoom extends Component {
     socket.on("resetVotes", () => {
       this.voteReset();
     });
-    socket.on("gameOver", () => {
-      this.gameOver();
+    socket.on("gameOver", data => {
+      this.gameOver(data);
     });
   }
 
@@ -157,6 +157,12 @@ class GameRoom extends Component {
       let died = this.props.players.find(player => {
         return +payload.killed === player.id;
       });
+      console.log(
+        "what does died equal in this daytime",
+        died,
+        "and payload",
+        payload
+      );
       let num = died.id % this.props.deaths.length;
       let death = this.props.deaths[num].storyForAll;
 
@@ -175,9 +181,9 @@ class GameRoom extends Component {
     }
   }
 
-  gameOver() {
+  gameOver(data) {
     this.props.fetchCurrentGame();
-    this.setState({ winner: this.props.game.winner });
+    this.setState({ winner: data });
   }
 
   assignRole(role) {

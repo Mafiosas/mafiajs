@@ -138,33 +138,40 @@ module.exports = io => {
                       gameId: gameId,
                       id: whoDied
                     },
-                    individualHooks: true
+                    returning: true
                   }
                 )
               );
             }
-            Promise.all(proms).then(() => {
-              Game.findById(gameId)
-                .then(updatedGame => {
-                  if (updatedGame.hasEnded()) {
-                    socket.broadcast
-                      .to(gameId)
-                      .emit("updatedGameOver", updatedGame.winner);
-                  } else {
-                    Round.create({
-                      gameId: gameId,
-                      isCurrent: true
-                    })
-                      .then(round => {
-                        if (round) {
-                          io.to(gameId).emit("daytime", person);
-                        }
+            Promise.all(proms)
+              .then(resolved => {
+                if (resolved[1][1][0]) {
+                  console.log("what do proms look like", resolved[1][1][0]);
+                  resolved[1][1][0].checkGameStatus();
+                }
+              })
+              .then(() => {
+                Game.findById(gameId)
+                  .then(updatedGame => {
+                    if (updatedGame.hasEnded()) {
+                      socket.broadcast
+                        .to(gameId)
+                        .emit("gameOver", updatedGame.winner);
+                    } else {
+                      Round.create({
+                        gameId: gameId,
+                        isCurrent: true
                       })
-                      .catch(err => console.error(err));
-                  }
-                })
-                .catch(err => console.error(err));
-            });
+                        .then(round => {
+                          if (round) {
+                            io.to(gameId).emit("daytime", person);
+                          }
+                        })
+                        .catch(err => console.error(err));
+                    }
+                  })
+                  .catch(err => console.error(err));
+              });
           })
           .catch(err => console.error(err));
       });
@@ -200,12 +207,17 @@ module.exports = io => {
             return foundPlayer.update({ role: "Dead" });
           }
         })
+        .then(updatedPlayer => {
+          console.log("whats the status here?", updatedPlayer);
+          updatedPlayer.checkGameStatus();
+          return updatedPlayer;
+        })
         .then(updated => {
           return Game.findById(updated.gameId)
             .then(currentGame => {
               if (currentGame.hasEnded()) {
                 console.log("game ended for real");
-                io.to(currentGame.id).emit("gameOver");
+                io.to(currentGame.id).emit("gameOver", currentGame.winner);
               } else {
                 console.log("here we go again");
                 Player.isLeadMafiaDead(currentGame.id);

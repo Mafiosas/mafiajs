@@ -57,17 +57,16 @@ Player.isLeadMafiaDead = function(game) {
   });
 };
 
-Player.afterUpdate(player => {
-  console.log("this is Game model at beginning of method", Game);
-  const gameId = player.gameId;
+Player.prototype.checkGameStatus = function() {
+  console.log("this is db model at beginning of method", db.models);
+  const gameId = this.gameId;
   let aliveMafias, alivePlayers;
   return Player.findAll({
     where: {
       gameId: gameId,
       role: {
         [Op.or]: ["Mafia", "Lead Mafia"]
-      },
-      isAlive: true
+      }
     }
   })
     .then(mafias => {
@@ -77,14 +76,15 @@ Player.afterUpdate(player => {
       return Player.findAll({
         where: {
           gameId: gameId,
-          isAlive: true,
           role: {
             [Op.or]: ["Civilian", "Doctor", "Detective"]
           }
         }
       });
     })
-    .then(players => (alivePlayers = players.map(play => play.dataValues)))
+    .then(players => {
+      alivePlayers = players.map(play => play.dataValues);
+    })
     .then(() => {
       if (aliveMafias.length === 0 || alivePlayers.length === 0) {
         const winner = aliveMafias.length === 0 ? "Villagers" : "Mafias";
@@ -93,16 +93,17 @@ Player.afterUpdate(player => {
           winner,
           gameId,
           "and this is Game ",
-          Game
+          db.models.game
         );
 
-        return Game.findById(gameId)
+        return db.models.game
+          .findById(gameId)
           .then(found => {
             found.update({ winner: winner });
           })
           .catch(err => console.error(err));
       }
     });
-});
+};
 
 module.exports = Player;
