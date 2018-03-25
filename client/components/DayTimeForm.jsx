@@ -52,7 +52,9 @@ export default class DayTimeForm extends Component {
                 return <option key={player.id}>{player.name}</option>;
               })}
           </select>
-          <button type="submit">Submit your guess</button>
+          <button className="waves-effect waves-light btn" type="submit">
+            Submit your guess
+          </button>
         </form>
       </div>
     );

@@ -30,6 +30,18 @@ const RoomForm = props => {
           <input name="password" type="text" />
         </div>
         <div>
+          <label>Number of Players (defaults to 6)</label>
+          <select className="browser-default" name="numPlayers">
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+          </select>
+        </div>
+        <div>
           <label>Player Name:</label>
           <input name="name" />
           <button className="waves-effect waves-light btn" type="submit">
@@ -44,11 +56,15 @@ const RoomForm = props => {
 const mapCreateDispatch = (dispatch, ownProps) => {
   return {
     handleSubmit(evt) {
+      console.log("num players", evt.target.numPlayers.value);
       evt.preventDefault();
       const roomName = evt.target.roomName.value;
       const password = evt.target.password.value;
       const name = evt.target.name.value;
-      dispatch(addNewGame(roomName, password, name, ownProps.history));
+      const numPlayers = +evt.target.numPlayers.value;
+      dispatch(
+        addNewGame(roomName, password, name, numPlayers, ownProps.history)
+      );
     }
   };
 };

@@ -36,3 +36,11 @@ body {
 .votedTable {
   color: white;
 }
+
+.players {
+  font-size: 1em;
+}
+
+.role {
+  text-align: center;
+}
