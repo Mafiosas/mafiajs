@@ -13,6 +13,11 @@ const RoomForm = props => {
         loop="true"
         playStatus={Sound.status.PLAYING}
       />
+      <Sound
+        url="darkshadow.mp3"
+        loop="true"
+        playStatus={Sound.status.PLAYING}
+      />
       <form id="room-form" onSubmit={handleSubmit}>
         <h4>Let's Play A Game...</h4>
         <div>

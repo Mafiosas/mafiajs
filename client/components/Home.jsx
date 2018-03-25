@@ -30,6 +30,11 @@ class Home extends Component {
           loop="true"
           playStatus={Sound.status.PLAYING}
         />
+        <Sound
+          url="darkshadow.mp3"
+          loop="true"
+          playStatus={Sound.status.PLAYING}
+        />
         <div className="row">
           <div className="col s2" id="sidebar">
             {games.length ? (
