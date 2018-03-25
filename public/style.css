@@ -44,3 +44,7 @@ body {
 .role {
   text-align: center;
 }
+
+#rules {
+  color: black;
+}

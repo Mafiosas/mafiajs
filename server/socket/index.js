@@ -183,7 +183,7 @@ module.exports = io => {
 
     socket.on("daytimeVotes", votes => {
       io.to(game).emit("resetVotes");
-      const countedVotes = {};
+      let countedVotes = {};
 
       for (let key in votes) {
         if (!countedVotes[votes[key]]) countedVotes[votes[key]] = 1;
@@ -210,6 +210,7 @@ module.exports = io => {
         .then(updatedPlayer => {
           console.log("whats the status here?", updatedPlayer);
           updatedPlayer.checkGameStatus();
+          countedVotes = {};
           return updatedPlayer;
         })
         .then(updated => {
