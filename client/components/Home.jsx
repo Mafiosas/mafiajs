@@ -75,7 +75,7 @@ class Home extends Component {
           <div className="col s10">
             <Modal trigger={<Button waves="light">Rules</Button>}>
               <p id="rules">
-                Mafia is a thrilling game of whodunit…(more stuff here?) <br />
+                Mafia is a thrilling game of whodunit... <br />
                 <br />
                 In this game of Mafia the computer will serve as the role of
                 moderator, or ‘God’ as they are often known - assigning roles to
