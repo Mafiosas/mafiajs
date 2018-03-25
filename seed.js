@@ -22,7 +22,7 @@ const deaths = [
   },
   {
     storyForAll:
-      "went into the salon for a simple hair cut but came out with her head cut off",
+      "went into the salon for a simple hair cut but came out with their head cut off",
     storyForKilled:
       "went into the salon for a simple hair cut but came out with your head cut off"
   }
@@ -35,11 +35,11 @@ const mafiaFacts = [
   },
   {
     fact:
-      "The Sicilian word omerta, Cosa Nostra's strict code of silence, essentially means ‘men of honor.' Omerta is a way of life and a code of conduct. Along with the vow of silence in dealing with law enforcement, omerta ensures that members of the American mafia swear total devotion to the head of their family."
+      "Vincent Gigante was a Mafia boss who for 30 years wandered Greenwich Village of New York in his pajamas mumbling incoherently to himself, in an elaborate act to avoid prosecution. They called him 'The Oddfather' and 'The Enigma in the Bathrobe'"
   },
   {
     fact:
-      "Joe Pistone, the undercover FBI Agent known as Donnie Brasco, was an FBI agent for 27 years. He spent about 20 of those years as an undercover agent. When Donnie Brasco's true identity as FBI undercover agent Joe Pistone was revealed, The Bonanno crime family lost its seat on The Commission and a $500,000 open contract was placed on Pistone's head."
+      "The filming of The Godfather was disrupted by actual Mafia member Joe Colombo (head of Colombo Crime Family). Producer Al Ruddy met with him and reviewed the script, striking the word “Mafia” completely from the movie. Colombo and his pals also managed to elbow their way into casting and ended up as extras in the film. "
   },
   {
     fact:
@@ -51,7 +51,19 @@ const mafiaFacts = [
   },
   {
     fact:
+      "When Viggo Mortensen was filming “Eastern Promises”, he kept his fake tattoos on one day when going to dinner at a Russian restaurant. According to the actor, when people saw the tattoos they fell silent, presuming he was a real member of the Russian mafia"
+  },
+  {
+    fact:
       "Former Mafia associate Sal Polisi always used a white, plastic 'I LOVE NEW YORK' bag for his bank robberies."
+  },
+  {
+    fact:
+      "In the 1980s, Pablo Escobar’s Medellin Cartel was spending $2,500 a month on rubber bands just to hold all their cash."
+  },
+  {
+    fact:
+      "Pablo Escobar burnt over $1million in cash to keep his daughter warm while they were on the run."
   }
 ];
 
