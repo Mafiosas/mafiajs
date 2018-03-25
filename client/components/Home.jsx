@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { fetchGames, joinExistingGame } from "../store";
+import Sound from "react-sound";
 
 class Home extends Component {
   constructor(props) {
@@ -24,6 +25,11 @@ class Home extends Component {
     const { games, handleSubmit } = this.props;
     return (
       <div>
+        <Sound
+          url="ayasiikuuki.MP3"
+          loop="true"
+          playStatus={Sound.status.PLAYING}
+        />
         <div className="row">
           <div className="col s2" id="sidebar">
             {games.length ? (
