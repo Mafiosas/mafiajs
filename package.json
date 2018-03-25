@@ -7,12 +7,9 @@
   },
   "main": "index.js",
   "scripts": {
-    "test":
-      "mocha ./server/**/*.spec.js ./server/**/**/*.spec.js  --require @babel/polyfill --require @babel/register",
-    "start-dev":
-      "NODE_ENV='development' npm run build-client-watch & npm run start-server",
-    "start-server":
-      "nodemon server -e html,js,scss --ignore public --ignore client",
+    "test": "mocha ./server/**/*.spec.js ./server/**/**/*.spec.js  --require @babel/polyfill --require @babel/register",
+    "start-dev": "NODE_ENV='development' npm run build-client-watch & npm run start-server",
+    "start-server": "nodemon server -e html,js,scss --ignore public --ignore client",
     "build-client-watch": "webpack -w",
     "seed": "node ./seed.js",
     "start": "node server",
@@ -43,6 +40,7 @@
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
+    "react-sound": "^1.1.0",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.2.0",

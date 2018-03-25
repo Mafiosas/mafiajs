@@ -2,11 +2,17 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { addNewGame, joinExistingGame } from "../store";
+import Sound from "react-sound";
 
 const RoomForm = props => {
   const { handleSubmit } = props;
   return (
     <div className="container">
+      <Sound
+        url="ayasiikuuki.MP3"
+        loop="true"
+        playStatus={Sound.status.PLAYING}
+      />
       <form id="room-form" onSubmit={handleSubmit}>
         <h4>Let's Play A Game...</h4>
         <div>

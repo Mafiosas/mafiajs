@@ -334,7 +334,10 @@ class GameRoom extends Component {
           {!user.role &&
             user.creator &&
             game.numPlayers === players.length && (
-              <button onClick={this.gameStart}>
+              <button
+                onClick={this.gameStart}
+                className="waves-effect waves-light btn"
+              >
                 Ready? Click here to begin your game of MAFIA
               </button>
             )}
