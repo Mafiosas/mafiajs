@@ -311,7 +311,7 @@ class GameRoom extends Component {
     const index = Math.floor(Math.random() * Math.floor(facts.length - 1));
 
     const messageToMafia =
-      "Mafia, you can see and hear everyone, they cannot see you! Discuss your plans freely...";
+      "Mafia, please make yourselves known to each other! You can see and hear everyone, non-Mafia players cannot see you. Discuss your plans freely...";
 
     return (
       <div className="container">
