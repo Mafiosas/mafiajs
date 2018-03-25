@@ -315,72 +315,56 @@ class GameRoom extends Component {
 
     return (
       <div className="container">
-        <div className="row">
-          <div className="col s6">
-            <h1>Game: {game.roomName}</h1>
+        <div id="top-row" className="row">
+          <div className="col s2">
+            {!winner && time && <h5>It's {time}!</h5>}
           </div>
-          {winner && <h2>{winner} have won!</h2>}
+
           <div className="col s6">
-            {time && <h1>It's {time}!</h1>}
+            {!user.role &&
+              user.creator &&
+              game.numPlayers === players.length && (
+                <button
+                  onClick={this.gameStart}
+                  className="waves-effect waves-light btn"
+                >
+                  Ready? Click here to begin your game of MAFIA
+                </button>
+              )}
+            {time === "day" && <h5>{resultMessage}</h5>}
+            {time === "day2" && <h5>{resultMessage}</h5>}
+
+            {winner && <h2>{winner} have won!</h2>}
+            {!winner &&
+              user.role &&
+              time === "dark" &&
+              user.role !== "Dead" && <h2 id="role">You're a {user.role}</h2>}
+            {time === "dark" &&
+              user.role === "Detective" &&
+              detective && <h3>Detective, you were {detective}</h3>}
+          </div>
+
+          <div className="col s4">
+            <h5>Room Name: </h5>
+            <h6>{game.roomName}</h6>
             {user.role &&
               time === "dark" &&
-              user.role !== "Dead" && <h2>You're a {user.role}</h2>}
-            {user.role &&
-              time === "dark" &&
-              user.role === "Dead" && <h2>Boo..you're out of the game</h2>}
+              user.role === "Dead" && <h3>Boo..you're out of the game</h3>}
+            {players.length ? <h5>List of Alive Players:</h5> : null}
+            {players.length ? (
+              <ul>
+                {players.map(player => (
+                  <li className="players" key={player.id}>
+                    {player.name}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
         </div>
-        <div className="row">
-          {!user.role &&
-            user.creator &&
-            game.numPlayers === players.length && (
-              <button
-                onClick={this.gameStart}
-                className="waves-effect waves-light btn"
-              >
-                Ready? Click here to begin your game of MAFIA
-              </button>
-            )}
-          {time === "dark" &&
-            user.role === "Mafia" && <h5>{messageToMafia}</h5>}
-        </div>
-        <div className="row">
-          {Object.keys(votes).length ? (
-            <div>
-              <table className="votedTable">
-                <thead>
-                  <tr>
-                    <th>Who Voted</th>
-                    <th>For Who?</th>
-                  </tr>
-                </thead>
 
-                <tbody>
-                  {Object.keys(votes).map(key => {
-                    let whoVotedId = players.find(player => {
-                      return player.id === +key;
-                    });
-                    let whoForId = players.find(player => {
-                      return player.id === +votes[key];
-                    });
-                    return (
-                      <tr key={key}>
-                        <td>{whoVotedId.name}</td>
-                        <td>{whoForId.name}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          ) : null}
-
-          {Object.keys(votes).length == players.length &&
-            user.id == +Object.keys(votes)[0] &&
-            this.sendVotes(votes)}
-        </div>
         <div className="row">
-          <div className="col s9">
+          <div className="col s10 offset-s2">
             {time === "day" &&
               user.role !== "Dead" && (
                 <div>
@@ -392,7 +376,7 @@ class GameRoom extends Component {
             {time === "dark" &&
               user.role === "Doctor" && (
                 <div>
-                  <h1>Choose who to save</h1>
+                  <h4>Choose who to save</h4>
                   <DoctorSelectForm
                     players={this.props.players}
                     darkOverDoctor={this.darkOverDoctor}
@@ -403,7 +387,7 @@ class GameRoom extends Component {
               user.role === "Detective" &&
               !detective && (
                 <div>
-                  <h1>Choose who you suspect is Mafia</h1>
+                  <h4>Choose who you suspect is Mafia</h4>
                   <DetectiveSelectForm
                     user={user.id}
                     players={this.props.players}
@@ -411,33 +395,71 @@ class GameRoom extends Component {
                   />
                 </div>
               )}
-            {time === "dark" &&
-              user.role === "Detective" &&
-              detective && <p>Detective, you were {detective}</p>}
+
             {time === "dark" &&
               user.role === "Lead Mafia" && (
                 <div>
                   <h5>{messageToMafia}</h5>
-                  <h3>Lead Mafia cast your decided vote below</h3>
+                  <h4>Lead Mafia cast your decided vote below</h4>
                   <MafiaSelectForm
                     players={this.props.players}
                     darkOverMafia={this.darkOverMafia}
                   />
                 </div>
               )}
+            {time === "dark" &&
+              user.role === "Mafia" && (
+                <div>
+                  <h5>{messageToMafia}</h5>
+                </div>
+              )}
 
             {time === "dark" &&
               user.role === "Civilian" && (
                 <div>
-                  <h4>{facts[index].fact}</h4>
+                  <p>{facts[index].fact}</p>
                 </div>
               )}
           </div>
-          <div className="col s3">
-            {time === "day" && <h5>{resultMessage}</h5>}
-            {time === "day2" && <h5>{resultMessage}</h5>}
+        </div>
+
+        <div className="row">
+          <div className="col s10 offset-s2">
+            {Object.keys(votes).length == players.length &&
+              user.id == +Object.keys(votes)[0] &&
+              this.sendVotes(votes)}
+            {Object.keys(votes).length ? (
+              <div>
+                <table className="votedTable">
+                  <thead>
+                    <tr>
+                      <th>Who Voted</th>
+                      <th>For Who?</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {Object.keys(votes).map(key => {
+                      let whoVotedId = players.find(player => {
+                        return player.id === +key;
+                      });
+                      let whoForId = players.find(player => {
+                        return player.id === +votes[key];
+                      });
+                      return (
+                        <tr key={key}>
+                          <td>{whoVotedId.name}</td>
+                          <td>{whoForId.name}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : null}
           </div>
         </div>
+
         <div className="row">
           {game.id &&
             user.id && (

@@ -24,9 +24,15 @@ export const fetchGame = id => {
   };
 };
 
-export const addNewGame = (roomName, password, name, history) => dispatch => {
+export const addNewGame = (
+  roomName,
+  password,
+  name,
+  numPlayers,
+  history
+) => dispatch => {
   axios
-    .post("/api/game/new", { roomName, password, name })
+    .post("/api/game/new", { roomName, password, name, numPlayers })
     .then(res => {
       return res.data;
     })
