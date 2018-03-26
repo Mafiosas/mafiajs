@@ -10,13 +10,13 @@ const deaths = [
   },
   {
     storyForAll:
-      "were found on the kitchen floor, covered in blood and chocolate cake",
+      "was found on the kitchen floor, covered in blood and chocolate cake",
     storyForKilled:
       "were found on the kitchen floor, covered in blood and chocolate cake"
   },
   {
     storyForAll:
-      "were last seen ordering a coffee, but never came to pick it up",
+      "was last seen ordering a coffee, but never came to pick it up",
     storyForKilled:
       "were last seen ordering a coffee, but never came to pick it up"
   },
