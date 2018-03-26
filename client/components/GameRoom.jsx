@@ -25,8 +25,8 @@ import {
   removePlayer
 } from "../store";
 
-const tokboxApiKey = "46081452";
-const tokboxSecret = "3d9f569b114ccfa5ae1e545230656c6adb5465d3";
+const tokboxApiKey = "46085992";
+const tokboxSecret = "06b37a1f205fa56ddf7231f07889c585cbc1abb2";
 
 class GameRoom extends Component {
   constructor(props) {
@@ -295,7 +295,7 @@ class GameRoom extends Component {
 
     const token = user.token;
 
-    const apiKey = "46081452";
+    const apiKey = "46085992";
     const {
       detective,
       error,
