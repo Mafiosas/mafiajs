@@ -21,6 +21,9 @@ module.exports = io => {
         id
       });
     });
+    socket.on("addGameToServer", createdGame => {
+      socket.broadcast.emit("newGameAdded", createdGame);
+    });
 
     socket.on("disconnect", () => {
       console.log(`Connection ${socket.id} is no longer connected!`);

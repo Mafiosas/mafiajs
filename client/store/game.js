@@ -1,5 +1,6 @@
 import axios from "axios";
 import { addPlayer } from "./players";
+import { addGame } from "./games";
 import socket from "../socket";
 
 /* ACTION TYPES */
@@ -43,8 +44,11 @@ export const addNewGame = (
         gameId: createdGame.id
       });
 
+      socket.emit("addGameToServer", createdGame);
+
       dispatch(createGame(createdGame));
       dispatch(addPlayer(newPlayer));
+      dispatch(addGame(createdGame));
       history.push(`/game/${createdGame.id}`);
     })
 
