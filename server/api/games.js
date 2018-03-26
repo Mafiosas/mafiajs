@@ -26,8 +26,8 @@ router.get("/:gameId", (req, res, next) => {
 
 router.post("/new", (req, res, next) => {
   let opentok = new OpenTok(
-    "46081452",
-    "3d9f569b114ccfa5ae1e545230656c6adb5465d3"
+    "46085992",
+    "06b37a1f205fa56ddf7231f07889c585cbc1abb2"
   );
 
   opentok.createSession({ mediaMode: "routed" }, function(err, session) {
