@@ -316,41 +316,45 @@ class GameRoom extends Component {
 
     return (
       <div className="container">
-        <div id="top-row" className="row">
-          <div className="col s2">
-            {!winner && time && <h4>Time:</h4>}
-            {!winner && time && <h5>It's {time}!</h5>}
-            {!winner && time && <Timer time={this.state.timerToggle} />}
-          </div>
+        {!winner ? (
+          <div>
+            <div id="top-row" className="row">
+              <div className="col s2">
+                {!winner && time && <h4>Time:</h4>}
+                {!winner && time && <h5>It's {time}!</h5>}
+                {!winner && time && <Timer time={30} />}
+              </div>
 
-          <div className="col s10">
-            {!user.role &&
-              user.creator &&
-              game.numPlayers === players.length && (
-                <button
-                  onClick={this.gameStart}
-                  className="waves-effect waves-light btn"
-                >
-                  Ready? Click here to begin your game of MAFIA
-                </button>
-              )}
-            {time === "day" && <h5>{resultMessage}</h5>}
-            {time === "day2" && <h5>{resultMessage}</h5>}
+              <div className="col s10">
+                {!user.role &&
+                  user.creator &&
+                  game.numPlayers === players.length && (
+                    <button
+                      onClick={this.gameStart}
+                      className="waves-effect waves-light btn"
+                    >
+                      Ready? Click here to begin your game of MAFIA
+                    </button>
+                  )}
+                {time === "day" && <h5>{resultMessage}</h5>}
+                {time === "day2" && <h5>{resultMessage}</h5>}
 
-            {winner && <h2>{winner} have won!</h2>}
-            {!winner &&
-              user.role &&
-              time === "dark" &&
-              user.role !== "Dead" && <h2 id="role">You're a {user.role}</h2>}
-            {user.role &&
-              time === "dark" &&
-              user.role === "Dead" && <h3>Boo..you're out of the game</h3>}
-            {time === "dark" &&
-              user.role === "Detective" &&
-              detective && <h3>Detective, you were {detective}</h3>}
-          </div>
+                {winner && <h2>{winner} have won!</h2>}
+                {!winner &&
+                  user.role &&
+                  time === "dark" &&
+                  user.role !== "Dead" && (
+                    <h2 id="role">You're a {user.role}</h2>
+                  )}
+                {user.role &&
+                  time === "dark" &&
+                  user.role === "Dead" && <h3>Boo..you're out of the game</h3>}
+                {time === "dark" &&
+                  user.role === "Detective" &&
+                  detective && <h3>Detective, you were {detective}</h3>}
+              </div>
 
-          {/* <div className="col s4">
+              {/* <div className="col s4">
             <h5>Room Name: </h5>
             <h6>{game.roomName}</h6>
             {user.role &&
@@ -367,104 +371,111 @@ class GameRoom extends Component {
               </ul>
             ) : null}
           </div> */}
-        </div>
+            </div>
 
-        <div className="row">
-          <div className="col s10 offset-s2">
-            {time === "day" &&
-              user.role !== "Dead" && (
-                <div>
-                  <h3>Who do you think the Mafia is?</h3>
+            <div className="row">
+              <div className="col s10 offset-s2">
+                {time === "day" &&
+                  user.role !== "Dead" && (
+                    <div>
+                      <h3>Who do you think the Mafia is?</h3>
 
-                  <DayTimeForm user={user.id} players={this.props.players} />
-                </div>
-              )}
-            {time === "dark" &&
-              user.role === "Doctor" && (
-                <div>
-                  <h4>Choose who to save</h4>
-                  <DoctorSelectForm
-                    players={this.props.players}
-                    darkOverDoctor={this.darkOverDoctor}
-                  />
-                </div>
-              )}
-            {time === "dark" &&
-              user.role === "Detective" &&
-              !detective && (
-                <div>
-                  <h4>Choose who you suspect is Mafia</h4>
-                  <DetectiveSelectForm
-                    user={user.id}
-                    players={this.props.players}
-                    darkOverDetective={this.darkOverDetective}
-                  />
-                </div>
-              )}
+                      <DayTimeForm
+                        user={user.id}
+                        players={this.props.players}
+                      />
+                    </div>
+                  )}
+                {time === "dark" &&
+                  user.role === "Doctor" && (
+                    <div>
+                      <h4>Choose who to save</h4>
+                      <DoctorSelectForm
+                        players={this.props.players}
+                        darkOverDoctor={this.darkOverDoctor}
+                      />
+                    </div>
+                  )}
+                {time === "dark" &&
+                  user.role === "Detective" &&
+                  !detective && (
+                    <div>
+                      <h4>Choose who you suspect is Mafia</h4>
+                      <DetectiveSelectForm
+                        user={user.id}
+                        players={this.props.players}
+                        darkOverDetective={this.darkOverDetective}
+                      />
+                    </div>
+                  )}
 
-            {time === "dark" &&
-              user.role === "Lead Mafia" && (
-                <div>
-                  <h5>{messageToMafia}</h5>
-                  <h4>Lead Mafia cast your decided vote below</h4>
-                  <MafiaSelectForm
-                    players={this.props.players}
-                    darkOverMafia={this.darkOverMafia}
-                  />
-                </div>
-              )}
-            {time === "dark" &&
-              user.role === "Mafia" && (
-                <div>
-                  <h5>{messageToMafia}</h5>
-                </div>
-              )}
+                {time === "dark" &&
+                  user.role === "Lead Mafia" && (
+                    <div>
+                      <h5>{messageToMafia}</h5>
+                      <h4>Lead Mafia cast your decided vote below</h4>
+                      <MafiaSelectForm
+                        players={this.props.players}
+                        darkOverMafia={this.darkOverMafia}
+                      />
+                    </div>
+                  )}
+                {time === "dark" &&
+                  user.role === "Mafia" && (
+                    <div>
+                      <h5>{messageToMafia}</h5>
+                    </div>
+                  )}
 
-            {time === "dark" &&
-              user.role === "Civilian" && (
-                <div>
-                  <p>{facts[index].fact}</p>
-                </div>
-              )}
-          </div>
-        </div>
-
-        <div className="row">
-          <div className="col s10 offset-s2">
-            {Object.keys(votes).length == players.length &&
-              user.id == +Object.keys(votes)[0] &&
-              this.sendVotes(votes)}
-            {Object.keys(votes).length ? (
-              <div>
-                <table className="votedTable">
-                  <thead>
-                    <tr>
-                      <th>Who Voted</th>
-                      <th>For Who?</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {Object.keys(votes).map(key => {
-                      let whoVotedId = players.find(player => {
-                        return player.id === +key;
-                      });
-                      let whoForId = players.find(player => {
-                        return player.id === +votes[key];
-                      });
-                      return (
-                        <tr key={key}>
-                          <td>{whoVotedId.name}</td>
-                          <td>{whoForId.name}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                {time === "dark" &&
+                  user.role === "Civilian" && (
+                    <div>
+                      <p>{facts[index].fact}</p>
+                    </div>
+                  )}
               </div>
-            ) : null}
+            </div>
+
+            <div className="row">
+              <div className="col s10 offset-s2">
+                {Object.keys(votes).length == players.length &&
+                  user.id == +Object.keys(votes)[0] &&
+                  this.sendVotes(votes)}
+                {Object.keys(votes).length ? (
+                  <div>
+                    <table className="votedTable">
+                      <thead>
+                        <tr>
+                          <th>Who Voted</th>
+                          <th>For Who?</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {Object.keys(votes).map(key => {
+                          let whoVotedId = players.find(player => {
+                            return player.id === +key;
+                          });
+                          let whoForId = players.find(player => {
+                            return player.id === +votes[key];
+                          });
+                          return (
+                            <tr key={key}>
+                              <td>{whoVotedId.name}</td>
+                              <td>{whoForId.name}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : null}
+              </div>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div> {winner} </div>
+        )}
 
         <div className="row">
           {game.id &&
