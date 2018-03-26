@@ -4,9 +4,7 @@ import socket from "../socket";
 export default class DetectiveSelectForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      selected: ""
-    };
+    this.state = { selected: "" };
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -19,8 +17,14 @@ export default class DetectiveSelectForm extends Component {
     });
   }
 
+  componentWillUnmount() {
+    socket.removeListener("darkOverForVillagers");
+  }
+
   handleChange(event) {
-    this.setState({ selected: event.target.value });
+    this.setState({
+      selected: event.target.value
+    });
   }
 
   render() {
