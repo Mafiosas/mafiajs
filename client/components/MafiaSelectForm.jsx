@@ -4,10 +4,12 @@ import socket from "../socket";
 export default class MafiaSelectForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      selected: ""
-    };
+    this.state = { selected: "" };
     this.handleChange = this.handleChange.bind(this);
+  }
+
+  componentDidMount() {
+    console.log("mafia component has mounted");
     socket.on("darkOverForMafia", () => {
       console.log("dark is over for mafia");
       this.props.darkOverMafia(this.state.selected);
@@ -15,12 +17,14 @@ export default class MafiaSelectForm extends Component {
     });
   }
 
-  componentDidMount() {
-    console.log("mafia component has mounted");
+  componentWillUnmount() {
+    socket.removeListener("darkOverForMafia");
   }
 
   handleChange(event) {
-    this.setState({ selected: event.target.value });
+    this.setState({
+      selected: event.target.value
+    });
   }
 
   render() {
