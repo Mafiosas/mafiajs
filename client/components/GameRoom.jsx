@@ -140,7 +140,11 @@ class GameRoom extends Component {
   }
 
   daytime(payload) {
+<<<<<<< HEAD
+    this.setState({ time: "Day" });
+=======
     this.setState({ time: "day", timerToggle: 60 });
+>>>>>>> master
     this.setState({ detective: "" });
 
     if (+payload.killed === this.props.user.id) {
@@ -204,7 +208,11 @@ class GameRoom extends Component {
 
   dark() {
     socket.emit("startDarkTimer");
+<<<<<<< HEAD
+    this.setState({ time: "Night" });
+=======
     this.setState({ time: "dark", timerToggle: 30 });
+>>>>>>> master
   }
 
   darkOverMafia(killedId) {
@@ -320,9 +328,23 @@ class GameRoom extends Component {
           <div>
             <div id="top-row" className="row">
               <div className="col s2">
-                {!winner && time && <h4>Time:</h4>}
-                {!winner && time && <h5>It's {time}!</h5>}
                 {!winner && time && <Timer time={30} />}
+                {!winner &&
+                  time &&
+                  time !== "day2" && (
+                    <div>
+                      <h4>Time:</h4>
+                      <h6>{time}</h6>
+                    </div>
+                  )}
+                {!winner &&
+                  time &&
+                  time === "day2" && (
+                    <div>
+                      <h4>Time:</h4>
+                      <h6>Day</h6>
+                    </div>
+                  )}
               </div>
 
               <div className="col s10">
@@ -336,20 +358,20 @@ class GameRoom extends Component {
                       Ready? Click here to begin your game of MAFIA
                     </button>
                   )}
-                {time === "day" && <h5>{resultMessage}</h5>}
+                {time === "Day" && <h5>{resultMessage}</h5>}
                 {time === "day2" && <h5>{resultMessage}</h5>}
 
                 {winner && <h2>{winner} have won!</h2>}
                 {!winner &&
                   user.role &&
-                  time === "dark" &&
+                  time === "Night" &&
                   user.role !== "Dead" && (
                     <h2 id="role">You're a {user.role}</h2>
                   )}
                 {user.role &&
-                  time === "dark" &&
+                  time === "Night" &&
                   user.role === "Dead" && <h3>Boo..you're out of the game</h3>}
-                {time === "dark" &&
+                {time === "Night" &&
                   user.role === "Detective" &&
                   detective && <h3>Detective, you were {detective}</h3>}
               </div>
@@ -374,8 +396,23 @@ class GameRoom extends Component {
             </div>
 
             <div className="row">
-              <div className="col s10 offset-s2">
-                {time === "day" &&
+              <div className="col s3">
+                <h5>Room Name: </h5>
+                <h6>{game.roomName}</h6>
+
+                {players.length ? <h5>List of Alive Players:</h5> : null}
+                {players.length ? (
+                  <ul>
+                    {players.map(player => (
+                      <li className="players" key={player.id}>
+                        {player.name}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+              <div className="col s9">
+                {time === "Day" &&
                   user.role !== "Dead" && (
                     <div>
                       <h3>Who do you think the Mafia is?</h3>
@@ -386,7 +423,7 @@ class GameRoom extends Component {
                       />
                     </div>
                   )}
-                {time === "dark" &&
+                {time === "Night" &&
                   user.role === "Doctor" && (
                     <div>
                       <h4>Choose who to save</h4>
@@ -396,7 +433,7 @@ class GameRoom extends Component {
                       />
                     </div>
                   )}
-                {time === "dark" &&
+                {time === "Night" &&
                   user.role === "Detective" &&
                   !detective && (
                     <div>
@@ -409,7 +446,7 @@ class GameRoom extends Component {
                     </div>
                   )}
 
-                {time === "dark" &&
+                {time === "Night" &&
                   user.role === "Lead Mafia" && (
                     <div>
                       <h5>{messageToMafia}</h5>
@@ -420,14 +457,14 @@ class GameRoom extends Component {
                       />
                     </div>
                   )}
-                {time === "dark" &&
+                {time === "Night" &&
                   user.role === "Mafia" && (
                     <div>
                       <h5>{messageToMafia}</h5>
                     </div>
                   )}
 
-                {time === "dark" &&
+                {time === "Night" &&
                   user.role === "Civilian" && (
                     <div>
                       <p>{facts[index].fact}</p>
@@ -500,7 +537,7 @@ class GameRoom extends Component {
                         width: 250,
                         height: 250,
                         subscribeToAudio:
-                          time === "dark" &&
+                          time === "Night" &&
                           user.role &&
                           user.role !== "Mafia" &&
                           user.role !== "Lead Mafia" &&
@@ -508,7 +545,7 @@ class GameRoom extends Component {
                             ? false
                             : true,
                         subscribeToVideo:
-                          time === "dark" &&
+                          time === "Night" &&
                           user.role &&
                           user.role !== "Mafia" &&
                           user.role !== "Lead Mafia" &&
@@ -524,21 +561,6 @@ class GameRoom extends Component {
                 </OTSession>
               </div>
             )}
-          <div className="col s4">
-            <h5>Room Name: </h5>
-            <h6>{game.roomName}</h6>
-
-            {players.length ? <h5>List of Alive Players:</h5> : null}
-            {players.length ? (
-              <ul>
-                {players.map(player => (
-                  <li className="players" key={player.id}>
-                    {player.name}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
         </div>
       </div>
     );
