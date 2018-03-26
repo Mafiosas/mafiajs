@@ -145,7 +145,7 @@ module.exports = io => {
             }
             Promise.all(proms)
               .then(resolved => {
-                if (resolved[1][1][0]) {
+                if (resolved[1]) {
                   console.log("what do proms look like", resolved[1][1][0]);
                   resolved[1][1][0].checkGameStatus();
                 }
