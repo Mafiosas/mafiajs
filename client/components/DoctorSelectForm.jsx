@@ -8,6 +8,10 @@ export default class DoctorSelectForm extends Component {
       selected: ""
     };
     this.handleChange = this.handleChange.bind(this);
+  }
+
+  componentDidMount() {
+    console.log("doctor component has mounted");
     socket.on("darkOverForVillagers", () => {
       console.log("dark is over for doctor");
 
@@ -16,8 +20,8 @@ export default class DoctorSelectForm extends Component {
     });
   }
 
-  componentDidMount() {
-    console.log("doctor component has mounted");
+  componentWillUnmount() {
+    socket.removeListener("darkOverForVillagers");
   }
 
   handleChange(event) {
