@@ -39,7 +39,6 @@ export default class DayTimeForm extends Component {
     return (
       <div>
         <form onSubmit={this.submitVote}>
-          <label>Who do you think is Mafia?</label>
           <select
             onChange={this.handleChange}
             className="browser-default"
