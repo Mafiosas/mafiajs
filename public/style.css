@@ -58,7 +58,10 @@ button {
   align-items: flex-start;
 }
 
-form option {
+label {
+  font-size: 1.5em;
+}
+
+select {
   color: black;
-  background-color: white;
 }

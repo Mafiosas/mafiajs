@@ -1521,12 +1521,10 @@ function (_Component) {
         onSubmit: handleSubmit
       }, _react.default.createElement("div", null, _react.default.createElement("label", null, "Room Name:"), _react.default.createElement("input", {
         name: "roomName",
-        type: "text",
-        placeholder: "Enter a room name"
+        type: "text"
       })), _react.default.createElement("div", null, _react.default.createElement("label", null, "Password (optional):"), _react.default.createElement("input", {
         name: "password",
-        type: "text",
-        placeholder: "Enter a password"
+        type: "text"
       })), _react.default.createElement("div", null, _react.default.createElement("label", null, "Number of Players (defaults to 6)"), _react.default.createElement("select", {
         className: "browser-default",
         name: "numPlayers"
@@ -1544,10 +1542,9 @@ function (_Component) {
         value: "11"
       }, "11"), _react.default.createElement("option", {
         value: "12"
-      }, "12"))), _react.default.createElement("div", null, _react.default.createElement("label", null, "Player Name:"), _react.default.createElement("input", {
+      }, "12"))), _react.default.createElement("br", null), _react.default.createElement("div", null, _react.default.createElement("label", null, "Player Name:"), _react.default.createElement("input", {
         name: "name",
-        onChange: this.handleChange,
-        placeholder: "Enter your name"
+        onChange: this.handleChange
       }), _react.default.createElement("button", {
         className: "waves-effect waves-light btn",
         type: "submit",

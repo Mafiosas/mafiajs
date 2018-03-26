@@ -42,16 +42,12 @@ class RoomForm extends Component {
         <form id="room-form" onSubmit={handleSubmit}>
           <div>
             <label>Room Name:</label>
-            <input
-              name="roomName"
-              type="text"
-              placeholder="Enter a room name"
-            />
+            <input name="roomName" type="text" />
           </div>
 
           <div>
             <label>Password (optional):</label>
-            <input name="password" type="text" placeholder="Enter a password" />
+            <input name="password" type="text" />
           </div>
           <div>
             <label>Number of Players (defaults to 6)</label>
@@ -65,13 +61,10 @@ class RoomForm extends Component {
               <option value="12">12</option>
             </select>
           </div>
+          <br />
           <div>
             <label>Player Name:</label>
-            <input
-              name="name"
-              onChange={this.handleChange}
-              placeholder="Enter your name"
-            />
+            <input name="name" onChange={this.handleChange} />
             <button
               className="waves-effect waves-light btn"
               type="submit"
