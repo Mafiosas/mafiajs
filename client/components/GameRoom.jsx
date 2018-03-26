@@ -140,11 +140,7 @@ class GameRoom extends Component {
   }
 
   daytime(payload) {
-<<<<<<< HEAD
     this.setState({ time: "Day" });
-=======
-    this.setState({ time: "day", timerToggle: 60 });
->>>>>>> master
     this.setState({ detective: "" });
 
     if (+payload.killed === this.props.user.id) {
@@ -208,11 +204,7 @@ class GameRoom extends Component {
 
   dark() {
     socket.emit("startDarkTimer");
-<<<<<<< HEAD
-    this.setState({ time: "Night" });
-=======
-    this.setState({ time: "dark", timerToggle: 30 });
->>>>>>> master
+    this.setState({ time: "Night", timerToggle: 30 });
   }
 
   darkOverMafia(killedId) {
@@ -328,7 +320,10 @@ class GameRoom extends Component {
           <div>
             <div id="top-row" className="row">
               <div className="col s2">
-                {!winner && time && <Timer time={30} />}
+                {!winner &&
+                  (time === "Dark" || time === "day2") && (
+                    <Timer timer={this.state.timerToggle} />
+                  )}
                 {!winner &&
                   time &&
                   time !== "day2" && (

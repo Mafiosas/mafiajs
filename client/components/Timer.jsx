@@ -3,7 +3,7 @@ import React, { Component } from "react";
 export default class Timer extends Component {
   constructor(props) {
     super(props);
-    this.state = { time: {}, seconds: props.time };
+    this.state = { time: {}, seconds: props.timer };
     this.timer = 0;
     this.startTimer = this.startTimer.bind(this);
     this.countDown = this.countDown.bind(this);
