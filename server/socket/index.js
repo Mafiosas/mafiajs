@@ -27,52 +27,54 @@ module.exports = io => {
     });
 
     function gameRun(gameId) {
-      io.to(game).emit("dark");
+      io.to(gameId).emit("dark");
+      console.log("we are running game run");
       setTimeout(() => {
-        console.log("dark timer oveeeer"); //this works!
-        io.to(game).emit("darkOverForVillagers");
+        console.log("dark timer over for villagers"); //this works!
+        io.to(gameId).emit("darkOverForVillagers");
       }, 25000);
       setTimeout(() => {
-        console.log("dark timer oveeeer"); //this works!
-        io.to(game).emit("darkOverForMafia");
+        console.log("dark timer over for mafia"); //this works!
+        io.to(gameId).emit("darkOverForMafia");
       }, 30000);
-
-      Game.findById(gameId, { include: [Player] }).then(game => {
-        if (game.inProgress) {
-          return;
-        }
-        return game
-          .update({ inProgress: true })
-          .then(updatedGame => {
-            const idArray = game.players.map(el => el.id);
-            const shuffledPlayers = assignRoles(shuffle(idArray));
-            const creatingPlayers = game.players.map(player =>
-              player.update(shuffledPlayers[player.id])
-            );
-            const newRound = Round.create({
-              gameId: updatedGame.id,
-              number: 1
-            });
-            return Promise.all([...creatingPlayers, newRound]);
-          })
-          .then(players => {
-            players.pop();
-            players.forEach(player => {
-              if (clients[player.id]) {
-                io.to(clients[player.id]).emit("role", player.role);
-              }
-            });
-          })
-          .catch(err => console.log(err));
-      });
     }
 
     socket.on("gameStart", gameId => {
-      gameRun(gameId);
+      Game.findById(gameId, { include: [Player] })
+        .then(game => {
+          if (game.inProgress) {
+            return;
+          }
+          return game
+            .update({ inProgress: true })
+            .then(updatedGame => {
+              const idArray = game.players.map(el => el.id);
+              const shuffledPlayers = assignRoles(shuffle(idArray));
+              const creatingPlayers = game.players.map(player =>
+                player.update(shuffledPlayers[player.id])
+              );
+              const newRound = Round.create({
+                gameId: updatedGame.id,
+                number: 1
+              });
+              return Promise.all([...creatingPlayers, newRound]);
+            })
+            .then(players => {
+              players.pop();
+              players.forEach(player => {
+                if (clients[player.id]) {
+                  io.to(clients[player.id]).emit("role", player.role);
+                }
+              });
+              gameRun(gameId);
+            });
+        })
+        .catch(err => console.log(err));
     });
 
     socket.on("villagerChoice", data => {
       const { gameId, saved, guess } = data;
+      console.log("who got saved on the back end socket?", data);
       if (guess) {
         Player.findById(guess)
           .then(foundPlayer => {
@@ -101,6 +103,7 @@ module.exports = io => {
 
     socket.on("darkData", darkData => {
       let { killed, gameId } = darkData;
+      console.log("who got killed on the back end socket?", darkData);
       Round.findOne({
         where: {
           gameId: gameId,
@@ -110,67 +113,56 @@ module.exports = io => {
         if (!round) {
           return;
         }
-        return round
-          .update({
-            killed: killed
-          })
-          .then(updatedRound => {
-            let actualKilled = updatedRound.killed;
-            let actualSaved = updatedRound.saved;
-            let person = whoToSendBack(actualKilled, actualSaved);
-            const whoDied = person.saved ? null : person.killed;
-            const roundUpdate = {
-              died: whoDied,
-              killed: actualKilled,
-              isCurrent: false
-            };
+        let actualSaved = round.saved;
+        let person = whoToSendBack(killed, actualSaved);
+        const whoDied = person.saved ? null : person.killed;
+        const roundUpdate = {
+          died: whoDied,
+          killed,
+          isCurrent: false
+        };
 
-            let proms = [updatedRound.update(roundUpdate)];
-            if (whoDied) {
-              proms.push(
-                Player.update(
-                  {
-                    isAlive: false,
-                    role: "Dead"
-                  },
-                  {
-                    where: {
-                      gameId: gameId,
-                      id: whoDied
-                    },
-                    returning: true
-                  }
-                )
-              );
+        let proms = [round.update(roundUpdate)];
+        if (whoDied) {
+          proms.push(
+            Player.update(
+              {
+                isAlive: false,
+                role: "Dead"
+              },
+              {
+                where: {
+                  gameId: gameId,
+                  id: whoDied
+                },
+                returning: true
+              }
+            )
+          );
+        }
+        return Promise.all(proms)
+          .then(resolved => {
+            if (resolved[1]) {
+              return resolved[1][1][0].checkGameStatus();
             }
-            Promise.all(proms)
-              .then(resolved => {
-                if (resolved[1]) {
-                  resolved[1][1][0].checkGameStatus();
+          })
+          .then(() => {
+            return Game.findById(gameId);
+          })
+          .then(updatedGame => {
+            if (updatedGame.winner) {
+              io.to(gameId).emit("gameOver", updatedGame.winner);
+            } else {
+              console.log("creating a round right now!");
+              return Round.create({
+                gameId: gameId,
+                isCurrent: true
+              }).then(round => {
+                if (round) {
+                  io.to(gameId).emit("daytime", person);
                 }
-              })
-              .then(() => {
-                Game.findById(gameId)
-                  .then(updatedGame => {
-                    if (updatedGame.dataValues.winner) {
-                      io
-                        .to(gameId)
-                        .emit("gameOver", updatedGame.dataValues.winner);
-                    } else {
-                      Round.create({
-                        gameId: gameId,
-                        isCurrent: true
-                      })
-                        .then(round => {
-                          if (round) {
-                            io.to(gameId).emit("daytime", person);
-                          }
-                        })
-                        .catch(err => console.error(err));
-                    }
-                  })
-                  .catch(err => console.error(err));
               });
+            }
           })
           .catch(err => console.error(err));
       });
@@ -181,6 +173,7 @@ module.exports = io => {
     });
 
     socket.on("daytimeVotes", votes => {
+      console.log("here is day time votes");
       let promsArray = [];
       io.to(game).emit("resetVotes");
       let countedVotes = {};
@@ -196,43 +189,41 @@ module.exports = io => {
       let wasMafia;
       Player.findById(+votedOutId)
         .then(foundPlayer => {
+          if (foundPlayer.role === "Lead Mafia") {
+            promsArray.push(Player.isLeadMafiaDead(foundPlayer.gameId));
+          }
           if (
             foundPlayer.role === "Mafia" ||
             foundPlayer.role === "Lead Mafia"
           ) {
             wasMafia = true;
-            promsArray.push(foundPlayer.update({ role: "Dead" }));
           } else {
             wasMafia = false;
-            promsArray.push(foundPlayer.update({ role: "Dead" }));
           }
-          promsArray.push(Player.isLeadMafiaDead(foundPlayer.gameId));
-          promsArray.push(foundPlayer.checkGameStatus());
-          Promise.all(promsArray).then(resolvedProms => {
-            //[player, isLeadMafia, checkGameStatus]
-            console.log("what do resolvedProms look like:", resolvedProms);
-            Game.findById(resolvedProms[0].gameId)
-              .then(foundGame => {
-                console.log("did we find a game??", foundGame);
-                if (foundGame.winner) {
-                  console.log("game ended for real");
-                  io.to(foundGame.id).emit("gameOver", foundGame.winner);
-                } else {
-                  io
-                    .to(foundGame.id)
-                    .emit("votesData", resolvedProms[0].name, !!wasMafia);
-                  io.to(foundGame.id).emit("getRoles");
-                  setTimeout(() => {
-                    gameRun(foundGame.id);
-                  }, 30000);
-                  console.log("here we go again");
-                }
-              })
-              .catch(err => console.error(err));
-          });
+          promsArray.push(foundPlayer.update({ role: "Dead" }));
+          return Promise.all(promsArray)
+            .then(() => {
+              return foundPlayer.checkGameStatus();
+            })
+            .then(foundGame => {
+              if (foundGame.winner) {
+                console.log("game ended for real");
+                io.to(foundGame.id).emit("gameOver", foundGame.winner);
+              } else {
+                io
+                  .to(foundGame.id)
+                  .emit("votesData", foundPlayer.name, !!wasMafia);
+                io.to(foundGame.id).emit("getRoles");
+                setTimeout(() => {
+                  gameRun(foundGame.id);
+                }, 30000);
+                console.log("here we go again");
+              }
+            });
         })
-        //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
         .catch(err => console.error(err));
     });
+
+    //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
   });
 };

@@ -203,25 +203,30 @@ class GameRoom extends Component {
   }
 
   dark() {
-    socket.emit("startDarkTimer");
     this.setState({ time: "Night", timerToggle: 30 });
   }
 
   darkOverMafia(killedId) {
-    socket.emit("darkData", { killed: killedId, gameId: this.props.game.id });
+    socket.emit("darkData", {
+      killed: killedId,
+      gameId: this.props.game.id,
+      user: this.props.user
+    });
   }
 
   darkOverDetective(guessId) {
     socket.emit("villagerChoice", {
       guess: guessId,
-      gameId: this.props.game.id
+      gameId: this.props.game.id,
+      user: this.props.user
     });
   }
 
   darkOverDoctor(savedId) {
     socket.emit("villagerChoice", {
       saved: savedId,
-      gameId: this.props.game.id
+      gameId: this.props.game.id,
+      user: this.props.user
     });
   }
 

@@ -59,8 +59,8 @@ router.post("/new", (req, res, next) => {
   });
 });
 
-router.post("/newRound/:gameId", (req, res, next) => {
-  Round.create()
-    .then(round => round.setGame(req.params.gameId))
-    .then(currentRound => res.json(currentRound));
-});
+// router.post("/newRound/:gameId", (req, res, next) => {
+//   Round.create()
+//     .then(round => round.setGame(req.params.gameId))
+//     .then(currentRound => res.json(currentRound));
+// });

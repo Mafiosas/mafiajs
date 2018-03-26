@@ -8,15 +8,15 @@ export default class MafiaSelectForm extends Component {
       selected: ""
     };
     this.handleChange = this.handleChange.bind(this);
+    socket.on("darkOverForMafia", () => {
+      console.log("dark is over for mafia");
+      this.props.darkOverMafia(this.state.selected);
+      this.setState({ selected: "" });
+    });
   }
 
   componentDidMount() {
     console.log("mafia component has mounted");
-
-    socket.on("darkOverForMafia", () => {
-      console.log("dark is over for mafia");
-      this.props.darkOverMafia(this.state.selected);
-    });
   }
 
   handleChange(event) {

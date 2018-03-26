@@ -50,7 +50,6 @@ function assignRoles(shuffledIdArray) {
 //roles.mafia = []
 
 function whoToSendBack(killed, saved) {
-  console.log("inside who to send back, killed", killed, " and saved ", saved);
   return killed == saved
     ? {
         saved: saved

@@ -413,8 +413,14 @@ function (_Component) {
     };
     _this.handleChange = _this.handleChange.bind(_assertThisInitialized(_this));
 
-    _socket.default.on("darkOver", function () {
+    _socket.default.on("darkOverForVillagers", function () {
+      console.log("dark is over for detective");
+
       _this.props.darkOverDetective(_this.state.selected);
+
+      _this.setState({
+        selected: ""
+      });
     });
 
     return _this;
@@ -423,15 +429,7 @@ function (_Component) {
   _createClass(DetectiveSelectForm, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this2 = this;
-
       console.log("detective component has mounted");
-
-      _socket.default.on("darkOverForVillagers", function () {
-        console.log("dark is over for detective");
-
-        _this2.props.darkOverDetective(_this2.state.selected);
-      });
     }
   }, {
     key: "handleChange",
@@ -516,21 +514,24 @@ function (_Component) {
       selected: ""
     };
     _this.handleChange = _this.handleChange.bind(_assertThisInitialized(_this));
+
+    _socket.default.on("darkOverForVillagers", function () {
+      console.log("dark is over for doctor");
+
+      _this.props.darkOverDoctor(_this.state.selected);
+
+      _this.setState({
+        selected: ""
+      });
+    });
+
     return _this;
   }
 
   _createClass(DoctorSelectForm, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this2 = this;
-
       console.log("doctor component has mounted");
-
-      _socket.default.on("darkOverForVillagers", function () {
-        console.log("dark is over for doctor");
-
-        _this2.props.darkOverDoctor(_this2.state.selected);
-      });
     }
   }, {
     key: "handleChange",
@@ -897,8 +898,6 @@ function (_Component) {
   }, {
     key: "dark",
     value: function dark() {
-      _socket.default.emit("startDarkTimer");
-
       this.setState({
         time: "Night",
         timerToggle: 30
@@ -909,7 +908,8 @@ function (_Component) {
     value: function darkOverMafia(killedId) {
       _socket.default.emit("darkData", {
         killed: killedId,
-        gameId: this.props.game.id
+        gameId: this.props.game.id,
+        user: this.props.user
       });
     }
   }, {
@@ -917,7 +917,8 @@ function (_Component) {
     value: function darkOverDetective(guessId) {
       _socket.default.emit("villagerChoice", {
         guess: guessId,
-        gameId: this.props.game.id
+        gameId: this.props.game.id,
+        user: this.props.user
       });
     }
   }, {
@@ -925,7 +926,8 @@ function (_Component) {
     value: function darkOverDoctor(savedId) {
       _socket.default.emit("villagerChoice", {
         saved: savedId,
-        gameId: this.props.game.id
+        gameId: this.props.game.id,
+        user: this.props.user
       });
     }
   }, {
@@ -1370,21 +1372,24 @@ function (_Component) {
       selected: ""
     };
     _this.handleChange = _this.handleChange.bind(_assertThisInitialized(_this));
+
+    _socket.default.on("darkOverForMafia", function () {
+      console.log("dark is over for mafia");
+
+      _this.props.darkOverMafia(_this.state.selected);
+
+      _this.setState({
+        selected: ""
+      });
+    });
+
     return _this;
   }
 
   _createClass(MafiaSelectForm, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this2 = this;
-
       console.log("mafia component has mounted");
-
-      _socket.default.on("darkOverForMafia", function () {
-        console.log("dark is over for mafia");
-
-        _this2.props.darkOverMafia(_this2.state.selected);
-      });
     }
   }, {
     key: "handleChange",
@@ -1689,21 +1694,26 @@ socket.on("connect", function () {
   console.log("Connected in the front!");
   socket.on("playerJoined", function (playerObj) {
     _store.default.dispatch((0, _store.addPlayer)(playerObj));
-  });
-  socket.on("daytime", function (dataFromDark) {
-    socket.emit("startDayTimerPreVotes");
-  }); // socket.on("getVotes",  => {
+  }); // socket.on("darkOverForVillagers", () => {
+  //   console.log("dark is over for detective");
+  //   // this.props.darkOverDetective(this.state.selected);
+  //   // this.setState({ selected: "" });
+  // });
+  // socket.on("daytime", dataFromDark => {
+  //   socket.emit("startDayTimerPreVotes");
+  // });
+  // socket.on("getVotes",  => {
   //   socket.broadcast.emit("voteData", voteData);
   // });
-
-  socket.on("dayVoteResults", function (dayVoteResults) {
-    //tell them the results
-    //this gets the string name of someone
-    socket.emit("startDayTimerPostVotes");
-  });
-  socket.on("gameOver", function (winners) {//change state to game over which changes page
-    //winners will either be Villagers or Mafia
-  });
+  // socket.on("dayVoteResults", dayVoteResults => {
+  //   //tell them the results
+  //   //this gets the string name of someone
+  //   socket.emit("startDayTimerPostVotes");
+  // });
+  // socket.on("gameOver", winners => {
+  //   //change state to game over which changes page
+  //   //winners will either be Villagers or Mafia
+  // });
 });
 var _default = socket;
 exports.default = _default;

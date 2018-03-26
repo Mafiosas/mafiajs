@@ -32,29 +32,30 @@ Player.prototype.isMafia = function() {
   return this.role === "Mafia" || this.role === "Lead Mafia";
 };
 
-Player.isLeadMafiaDead = function(game) {
-  Player.findAll({
+//change this to changeLeadMafia
+Player.isLeadMafiaDead = function(gameId) {
+  console.log("welcome to my database", gameId);
+  // Player.findAll({
+  //   where: {
+  //     role: "Lead Mafia",
+  //     gameId: game
+  //   }
+  // })
+  //   .then(leadMaf => {
+  // if (!leadMaf.length) {
+  return Player.findAll({
     where: {
-      role: "Lead Mafia",
-      gameId: game
+      role: "Mafia",
+      gameId
     }
   })
-    .then(leadMaf => {
-      if (!leadMaf.length) {
-        Player.findAll({
-          where: {
-            role: "Mafia",
-            gameId: game
-          }
-        })
-          .then(mafias => {
-            if (mafias.length) {
-              mafias[0].update({
-                role: "Lead Mafia"
-              });
-            }
-          })
-          .catch(err => console.error(err));
+    .then(mafias => {
+      console.log("is anyone home in this if statements??", mafias.length);
+      if (mafias.length) {
+        console.log("we have arrived for drinks", mafias[0]);
+        return mafias[0].update({
+          role: "Lead Mafia"
+        });
       }
     })
     .catch(err => console.error(err));
@@ -72,9 +73,7 @@ Player.prototype.checkGameStatus = function() {
     }
   })
     .then(mafias => {
-      aliveMafias = mafias.map(maf => maf.dataValues);
-    })
-    .then(() => {
+      aliveMafias = mafias;
       return Player.findAll({
         where: {
           gameId: gameId,
@@ -85,25 +84,24 @@ Player.prototype.checkGameStatus = function() {
       });
     })
     .then(players => {
-      alivePlayers = players.map(play => play.dataValues);
-    })
-    .then(() => {
+      alivePlayers = players;
       console.log(
         "right before the if statement to check who won",
         aliveMafias.length,
         alivePlayers.length
       );
+      return db.models.game.findById(gameId);
+    })
+    .then(found => {
       if (aliveMafias.length === 0 || alivePlayers.length === 0) {
-        const winner = aliveMafias.length === 0 ? "Villagers" : "Mafias";
+        const winner = aliveMafias.length === 0 ? "Villagers" : "Mafia";
 
-        return db.models.game
-          .findById(gameId)
-          .then(found => {
-            return found.update({ winner: winner });
-          })
-          .catch(err => console.error(err));
+        return found.update({ winner: winner });
+      } else {
+        return found;
       }
-    });
+    })
+    .catch(err => console.error(err));
 };
 
 module.exports = Player;

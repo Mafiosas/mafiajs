@@ -10,24 +10,31 @@ socket.on("connect", () => {
     store.dispatch(addPlayer(playerObj));
   });
 
-  socket.on("daytime", dataFromDark => {
-    socket.emit("startDayTimerPreVotes");
-  });
+  // socket.on("darkOverForVillagers", () => {
+  //   console.log("dark is over for detective");
+
+  //   // this.props.darkOverDetective(this.state.selected);
+  //   // this.setState({ selected: "" });
+  // });
+
+  // socket.on("daytime", dataFromDark => {
+  //   socket.emit("startDayTimerPreVotes");
+  // });
 
   // socket.on("getVotes",  => {
   //   socket.broadcast.emit("voteData", voteData);
   // });
 
-  socket.on("dayVoteResults", dayVoteResults => {
-    //tell them the results
-    //this gets the string name of someone
-    socket.emit("startDayTimerPostVotes");
-  });
+  // socket.on("dayVoteResults", dayVoteResults => {
+  //   //tell them the results
+  //   //this gets the string name of someone
+  //   socket.emit("startDayTimerPostVotes");
+  // });
 
-  socket.on("gameOver", winners => {
-    //change state to game over which changes page
-    //winners will either be Villagers or Mafia
-  });
+  // socket.on("gameOver", winners => {
+  //   //change state to game over which changes page
+  //   //winners will either be Villagers or Mafia
+  // });
 });
 
 export default socket;
