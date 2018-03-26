@@ -40,7 +40,7 @@ Player.isLeadMafiaDead = function(game) {
       gameId: game
     }
   }).then(leadMaf => {
-    console.log("step 2 of the is lead mafia dead method");
+    console.log("step 2 of the is lead mafia dead method", leadMaf);
     if (!leadMaf) {
       console.log("Theres no more mafia, lets transfer the power");
       Player.findAll({
@@ -71,6 +71,7 @@ Player.prototype.checkGameStatus = function() {
   })
     .then(mafias => {
       aliveMafias = mafias.map(maf => maf.dataValues);
+      console.log("alive mafias in check game status", aliveMafias);
     })
     .then(() => {
       return Player.findAll({
@@ -84,17 +85,16 @@ Player.prototype.checkGameStatus = function() {
     })
     .then(players => {
       alivePlayers = players.map(play => play.dataValues);
+      console.log("alive players in check game method:", alivePlayers);
     })
     .then(() => {
+      console.log(
+        "right before the if statement to check who won",
+        aliveMafias.length,
+        alivePlayers.length
+      );
       if (aliveMafias.length === 0 || alivePlayers.length === 0) {
         const winner = aliveMafias.length === 0 ? "Villagers" : "Mafias";
-        console.log(
-          "we are trying to end the game",
-          winner,
-          gameId,
-          "and this is Game ",
-          db.models.game
-        );
 
         return db.models.game
           .findById(gameId)
