@@ -39,7 +39,8 @@ class GameRoom extends Component {
       publishVideo: true,
       resultMessage: "",
       detective: "",
-      winner: ""
+      winner: "",
+      timerToggle: 0
     };
 
     this.gameStart = this.gameStart.bind(this);
@@ -54,6 +55,7 @@ class GameRoom extends Component {
     this.sendVotes = this.sendVotes.bind(this);
     this.voteReset = this.voteReset.bind(this);
     this.gameOver = this.gameOver.bind(this);
+    this.getRoles = this.getRoles.bind(this);
 
     this.sessionEventHandlers = {
       sessionConnected: () => {
@@ -129,12 +131,16 @@ class GameRoom extends Component {
     });
   }
 
+  getRoles() {
+    this.props.loadData();
+  }
+
   detectiveAnswer(choice) {
     this.setState({ detective: choice });
   }
 
   daytime(payload) {
-    this.setState({ time: "day" });
+    this.setState({ time: "day", timerToggle: 60 });
     this.setState({ detective: "" });
 
     if (+payload.killed === this.props.user.id) {
@@ -198,7 +204,7 @@ class GameRoom extends Component {
 
   dark() {
     socket.emit("startDarkTimer");
-    this.setState({ time: "dark" });
+    this.setState({ time: "dark", timerToggle: 30 });
   }
 
   darkOverMafia(killedId) {
@@ -228,11 +234,8 @@ class GameRoom extends Component {
   }
 
   giveVotesData(name, wasMafia) {
-    console.log("inside giveVotesData func, name: ", name);
-    console.log("was mafia inside giveVotesData", wasMafia);
-    //this.props.loadData();
     this.props.removePlayerFromStore(name);
-    this.setState({ time: "day2" });
+    this.setState({ time: "day2", timerToggle: 30 });
     if (this.props.user.name === name && !wasMafia) {
       this.setState({
         resultMessage:

@@ -41,7 +41,7 @@ Player.isLeadMafiaDead = function(game) {
     }
   }).then(leadMaf => {
     console.log("step 2 of the is lead mafia dead method", leadMaf);
-    if (!leadMaf) {
+    if (!leadMaf.length) {
       console.log("Theres no more mafia, lets transfer the power");
       Player.findAll({
         where: {
@@ -49,7 +49,7 @@ Player.isLeadMafiaDead = function(game) {
           gameId: game
         }
       }).then(mafias => {
-        mafias[0].update({
+        return mafias[0].update({
           role: "Lead Mafia"
         });
       });

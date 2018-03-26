@@ -703,7 +703,8 @@ function (_Component) {
       publishVideo: true,
       resultMessage: "",
       detective: "",
-      winner: ""
+      winner: "",
+      timerToggle: 0
     };
     _this.gameStart = _this.gameStart.bind(_assertThisInitialized(_this));
     _this.dark = _this.dark.bind(_assertThisInitialized(_this));
@@ -716,6 +717,7 @@ function (_Component) {
     _this.sendVotes = _this.sendVotes.bind(_assertThisInitialized(_this));
     _this.voteReset = _this.voteReset.bind(_assertThisInitialized(_this));
     _this.gameOver = _this.gameOver.bind(_assertThisInitialized(_this));
+    _this.getRoles = _this.getRoles.bind(_assertThisInitialized(_this));
     _this.sessionEventHandlers = {
       sessionConnected: function sessionConnected() {
         _this.setState({
@@ -812,6 +814,11 @@ function (_Component) {
       });
     }
   }, {
+    key: "getRoles",
+    value: function getRoles() {
+      this.props.loadData();
+    }
+  }, {
     key: "detectiveAnswer",
     value: function detectiveAnswer(choice) {
       this.setState({
@@ -822,7 +829,8 @@ function (_Component) {
     key: "daytime",
     value: function daytime(payload) {
       this.setState({
-        time: "day"
+        time: "day",
+        timerToggle: 60
       });
       this.setState({
         detective: ""
@@ -893,7 +901,8 @@ function (_Component) {
       _socket.default.emit("startDarkTimer");
 
       this.setState({
-        time: "dark"
+        time: "dark",
+        timerToggle: 30
       });
     }
   }, {
@@ -933,12 +942,10 @@ function (_Component) {
   }, {
     key: "giveVotesData",
     value: function giveVotesData(name, wasMafia) {
-      console.log("inside giveVotesData func, name: ", name);
-      console.log("was mafia inside giveVotesData", wasMafia); //this.props.loadData();
-
       this.props.removePlayerFromStore(name);
       this.setState({
-        time: "day2"
+        time: "day2",
+        timerToggle: 30
       });
 
       if (this.props.user.name === name && !wasMafia) {
@@ -999,7 +1006,7 @@ function (_Component) {
       }, _react.default.createElement("div", {
         className: "col s2"
       }, !winner && time && _react.default.createElement("h4", null, "Time:"), !winner && time && _react.default.createElement("h5", null, "It's ", time, "!"), !winner && time && _react.default.createElement(_Timer.default, {
-        time: 30
+        time: this.state.timerToggle
       })), _react.default.createElement("div", {
         className: "col s10"
       }, !user.role && user.creator && game.numPlayers === players.length && _react.default.createElement("button", {
@@ -2228,7 +2235,6 @@ function _default() {
       return _toConsumableArray(state).concat([action.player]);
 
     case REMOVE_PLAYER:
-      console.log("this is our state", state, "and player name is", action.player);
       return state.filter(function (el) {
         return el.name !== action.player;
       });

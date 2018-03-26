@@ -225,6 +225,7 @@ module.exports = io => {
                 io
                   .to(currentGame.id)
                   .emit("votesData", updated.name, !!wasMafia);
+                io.to(currentGame.id).emit("getRoles");
                 setTimeout(() => {
                   gameRun(currentGame.id);
                 }, 30000);
