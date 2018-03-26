@@ -371,7 +371,22 @@ class GameRoom extends Component {
             </div>
 
             <div className="row">
-              <div className="col s10 offset-s2">
+              <div className="col s2">
+                <h5>Room Name: </h5>
+                <h6>{game.roomName}</h6>
+
+                {players.length ? <h5>List of Alive Players:</h5> : null}
+                {players.length ? (
+                  <ul>
+                    {players.map(player => (
+                      <li className="players" key={player.id}>
+                        {player.name}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+              <div className="col s10">
                 {time === "day" &&
                   user.role !== "Dead" && (
                     <div>
@@ -521,21 +536,6 @@ class GameRoom extends Component {
                 </OTSession>
               </div>
             )}
-          <div className="col s4">
-            <h5>Room Name: </h5>
-            <h6>{game.roomName}</h6>
-
-            {players.length ? <h5>List of Alive Players:</h5> : null}
-            {players.length ? (
-              <ul>
-                {players.map(player => (
-                  <li className="players" key={player.id}>
-                    {player.name}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
         </div>
       </div>
     );
