@@ -156,7 +156,7 @@ class GameRoom extends Component {
       this.setState({
         resultMessage: `${
           this.props.user.name
-        } the Mafia got you in the night!! You ${death}`
+        } the Mafia got you in the night! You ${death}`
       });
     }
 
@@ -169,9 +169,9 @@ class GameRoom extends Component {
       let death = this.props.deaths[num].storyForAll;
 
       this.setState({
-        resultMessage: `${
+        resultMessage: ` The Mafia struck again in the night! ${
           died.name
-        } was killed by the Mafia in the night! They ${death}`
+        } ${death}`
       });
     }
 
@@ -312,14 +312,14 @@ class GameRoom extends Component {
     const index = Math.floor(Math.random() * Math.floor(facts.length - 1));
 
     const messageToMafia =
-      "Mafia, please make yourselves known to each other! You can see and hear everyone, non-Mafia players cannot see you. Discuss your plans freely...";
+      "Mafia, please make yourselves known to each other! You can see and hear everyone, they cannot see you. Discuss your plans freely...";
 
     return (
       <div className="container">
         {!winner ? (
           <div>
             <div id="top-row" className="row">
-              <div className="col s2">
+              <div className="col s3">
                 {time === "day2" && <Timer timer={this.state.timerToggle} />}
                 {time === "Night" && <Timer timer={this.state.timerToggle} />}
                 {time &&
@@ -338,7 +338,7 @@ class GameRoom extends Component {
                   )}
               </div>
 
-              <div className="col s10">
+              <div className="col s9">
                 {!user.role &&
                   user.creator &&
                   game.numPlayers === players.length && (
