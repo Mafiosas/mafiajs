@@ -58,7 +58,6 @@ button {
   align-items: flex-start;
 }
 
-form option {
+form {
   color: black;
-  background-color: white;
 }
