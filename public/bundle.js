@@ -839,7 +839,7 @@ function (_Component) {
           isAlive: false
         });
         this.setState({
-          resultMessage: "".concat(this.props.user.name, " the Mafia got you!! You ").concat(death)
+          resultMessage: "".concat(this.props.user.name, " the Mafia got you in the night!! You ").concat(death)
         });
       }
 
@@ -848,13 +848,11 @@ function (_Component) {
           return +payload.killed === player.id;
         });
 
-        console.log("what does died equal in this daytime", _died, "and payload", payload);
-
         var _num = _died.id % this.props.deaths.length;
 
         var _death = this.props.deaths[_num].storyForAll;
         this.setState({
-          resultMessage: "".concat(_died.name, " ").concat(_death)
+          resultMessage: "".concat(_died.name, " was killed by the Mafia in the night! They ").concat(_death)
         });
       }
 
@@ -1009,7 +1007,7 @@ function (_Component) {
         className: "waves-effect waves-light btn"
       }, "Ready? Click here to begin your game of MAFIA"), time === "day" && _react.default.createElement("h5", null, resultMessage), time === "day2" && _react.default.createElement("h5", null, resultMessage), winner && _react.default.createElement("h2", null, winner, " have won!"), !winner && user.role && time === "dark" && user.role !== "Dead" && _react.default.createElement("h2", {
         id: "role"
-      }, "You're a ", user.role), time === "dark" && user.role === "Detective" && detective && _react.default.createElement("h3", null, "Detective, you were ", detective))), _react.default.createElement("div", {
+      }, "You're a ", user.role), user.role && time === "dark" && user.role === "Dead" && _react.default.createElement("h3", null, "Boo..you're out of the game"), time === "dark" && user.role === "Detective" && detective && _react.default.createElement("h3", null, "Detective, you were ", detective))), _react.default.createElement("div", {
         className: "row"
       }, _react.default.createElement("div", {
         className: "col s10 offset-s2"
@@ -1073,7 +1071,7 @@ function (_Component) {
         eventHandlers: this.subscriberEventHandlers
       })))), _react.default.createElement("div", {
         className: "col s4"
-      }, _react.default.createElement("h5", null, "Room Name: "), _react.default.createElement("h6", null, game.roomName), user.role && time === "dark" && user.role === "Dead" && _react.default.createElement("h3", null, "Boo..you're out of the game"), players.length ? _react.default.createElement("h5", null, "List of Alive Players:") : null, players.length ? _react.default.createElement("ul", null, players.map(function (player) {
+      }, _react.default.createElement("h5", null, "Room Name: "), _react.default.createElement("h6", null, game.roomName), players.length ? _react.default.createElement("h5", null, "List of Alive Players:") : null, players.length ? _react.default.createElement("ul", null, players.map(function (player) {
         return _react.default.createElement("li", {
           className: "players",
           key: player.id
