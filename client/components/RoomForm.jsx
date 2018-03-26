@@ -4,54 +4,80 @@ import PropTypes from "prop-types";
 import { addNewGame, joinExistingGame } from "../store";
 import Sound from "react-sound";
 
-const RoomForm = props => {
-  const { handleSubmit } = props;
-  return (
-    <div className="container">
-      <Sound
-        url="ayasiikuuki.MP3"
-        loop="true"
-        playStatus={Sound.status.PLAYING}
-      />
-      <Sound
-        url="darkshadow.mp3"
-        loop="true"
-        playStatus={Sound.status.PLAYING}
-      />
-      <form id="room-form" onSubmit={handleSubmit}>
-        <h4>Let's Play A Game...</h4>
-        <div>
-          <label>Room Name:</label>
-          <input name="roomName" type="text" />
-        </div>
+class RoomForm extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      input: "",
+      disabled: true
+    };
+    this.handleChange = this.handleChange.bind(this);
+  }
 
-        <div>
-          <label>Password (optional):</label>
-          <input name="password" type="text" />
-        </div>
-        <div>
-          <label>Number of Players (defaults to 6)</label>
-          <select className="browser-default" name="numPlayers">
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-          </select>
-        </div>
-        <div>
-          <label>Player Name:</label>
-          <input name="name" />
-          <button className="waves-effect waves-light btn" type="submit">
-            Create Game
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-};
+  handleChange(event) {
+    let target = event.target.value.length;
+    if (target > 0)
+      this.setState({
+        disabled: false
+      });
+    else this.setState({ disabled: true });
+    this.setState({ input: event.target.value });
+  }
+
+  render() {
+    const { handleSubmit } = this.props;
+    return (
+      <div className="container">
+        <Sound
+          url="ayasiikuuki.MP3"
+          loop="true"
+          playStatus={Sound.status.PLAYING}
+        />
+        <Sound
+          url="darkshadow.mp3"
+          loop="true"
+          playStatus={Sound.status.PLAYING}
+        />
+        <h2>Let's Play A Game...</h2>
+        <form id="room-form" onSubmit={handleSubmit}>
+          <div>
+            <label>Room Name:</label>
+            <input name="roomName" type="text" />
+          </div>
+
+          <div>
+            <label>Password (optional):</label>
+            <input name="password" type="text" />
+          </div>
+          <div>
+            <label>Number of Players (defaults to 6)</label>
+            <select className="browser-default" name="numPlayers">
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+            </select>
+          </div>
+          <br />
+          <div>
+            <label>Player Name:</label>
+            <input name="name" onChange={this.handleChange} />
+            <button
+              className="waves-effect waves-light btn"
+              type="submit"
+              disabled={this.state.disabled}
+            >
+              Create Game
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+}
 
 const mapCreateDispatch = (dispatch, ownProps) => {
   return {
