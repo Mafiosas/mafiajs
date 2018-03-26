@@ -207,21 +207,27 @@ module.exports = io => {
             return foundPlayer.update({ role: "Dead" });
           }
         })
-        .then(updatedPlayer => {
-          console.log("whats the status here?", updatedPlayer);
-          updatedPlayer.checkGameStatus();
-          countedVotes = {};
-          return updatedPlayer;
-        })
+        // .then(updatedPlayer => {
+        //   console.log("whats the status here?", updatedPlayer);
+        //   updatedPlayer.checkGameStatus();
+        //   countedVotes = {};
+        //   return updatedPlayer;
+        // })
         .then(updated => {
           return Game.findById(updated.gameId)
             .then(currentGame => {
-              if (currentGame.hasEnded()) {
+              Player.isLeadMafiaDead(currentGame.id);
+              return currentGame;
+            })
+            .then(currentGame => {
+              console.log(
+                "this is what game looks like on line 223, before we check for winner",
+                currentGame
+              );
+              if (currentGame.winner) {
                 console.log("game ended for real");
                 io.to(currentGame.id).emit("gameOver", currentGame.winner);
               } else {
-                console.log("here we go again");
-                Player.isLeadMafiaDead(currentGame.id);
                 io
                   .to(currentGame.id)
                   .emit("votesData", updated.name, !!wasMafia);
@@ -229,11 +235,12 @@ module.exports = io => {
                 setTimeout(() => {
                   gameRun(currentGame.id);
                 }, 30000);
-                //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
+                console.log("here we go again");
               }
-            })
-            .catch(err => console.error(err));
-        });
+            });
+          //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
+        })
+        .catch(err => console.error(err));
     });
   });
 };

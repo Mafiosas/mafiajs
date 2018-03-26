@@ -319,9 +319,7 @@ class GameRoom extends Component {
         {!winner ? (
           <div>
             <div id="top-row" className="row">
-              <div className="col s2">
-                {time === "day2" && <Timer timer={this.state.timerToggle} />}
-                {time === "Night" && <Timer timer={this.state.timerToggle} />}
+              <div className="col s3">
                 {time &&
                   time !== "day2" && (
                     <div>
@@ -336,9 +334,12 @@ class GameRoom extends Component {
                       <h6>Day</h6>
                     </div>
                   )}
+                <h4>Time until end of round:</h4>
+                {time === "day2" && <Timer timer={this.state.timerToggle} />}
+                {time === "Night" && <Timer timer={this.state.timerToggle} />}
               </div>
 
-              <div className="col s10">
+              <div className="col s9">
                 {!user.role &&
                   user.creator &&
                   game.numPlayers === players.length && (
