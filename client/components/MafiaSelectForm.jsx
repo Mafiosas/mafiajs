@@ -31,7 +31,6 @@ export default class MafiaSelectForm extends Component {
     return (
       <div>
         <form>
-          <label>Pick A Player To Kill:</label>
           <select
             onChange={this.handleChange}
             className="browser-default"

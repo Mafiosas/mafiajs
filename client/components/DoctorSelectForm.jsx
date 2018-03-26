@@ -32,7 +32,6 @@ export default class DoctorSelectForm extends Component {
     return (
       <div>
         <form>
-          <label>Pick A Player To Save:</label>
           <select
             onChange={this.handleChange}
             className="browser-default"

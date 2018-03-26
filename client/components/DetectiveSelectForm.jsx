@@ -30,7 +30,6 @@ export default class DetectiveSelectForm extends Component {
     return (
       <div>
         <form>
-          <label>Pick A Player Who You Think Is Mafia:</label>
           <select
             onChange={this.handleChange}
             className="browser-default"
