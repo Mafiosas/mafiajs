@@ -1,4 +1,5 @@
 //as players join the room they are pushed to playersArray = []
+//const io = require("./socket");
 
 //fisher yates shuffle:
 function shuffle(playersArray) {

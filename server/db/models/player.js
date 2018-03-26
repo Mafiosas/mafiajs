@@ -38,26 +38,31 @@ Player.isLeadMafiaDead = function(game) {
       role: "Lead Mafia",
       gameId: game
     }
-  }).then(leadMaf => {
-    if (!leadMaf.length) {
-      Player.findAll({
-        where: {
-          role: "Mafia",
-          gameId: game
-        }
-      })
-        .then(mafias => {
-          if (mafias.length) {
-            return mafias[0].update({
-              role: "Lead Mafia"
-            });
-          } else {
-            //end the game, villagers won
+  })
+    .then(leadMaf => {
+      if (!leadMaf.length) {
+        Player.findAll({
+          where: {
+            role: "Mafia",
+            gameId: game
           }
         })
-        .catch(err => console.error(err));
-    }
-  });
+          .then(mafias => {
+            if (mafias.length) {
+              mafias[0].update({
+                role: "Lead Mafia"
+              });
+            } else {
+              db.models.game.update(
+                { winner: "Villagers" },
+                { where: { id: game } }
+              );
+            }
+          })
+          .catch(err => console.error(err));
+      }
+    })
+    .catch(err => console.error(err));
 };
 
 Player.prototype.checkGameStatus = function() {
@@ -73,7 +78,6 @@ Player.prototype.checkGameStatus = function() {
   })
     .then(mafias => {
       aliveMafias = mafias.map(maf => maf.dataValues);
-      console.log("alive mafias in check game status", aliveMafias);
     })
     .then(() => {
       return Player.findAll({
@@ -87,7 +91,6 @@ Player.prototype.checkGameStatus = function() {
     })
     .then(players => {
       alivePlayers = players.map(play => play.dataValues);
-      console.log("alive players in check game method:", alivePlayers);
     })
     .then(() => {
       console.log(
