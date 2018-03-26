@@ -52,11 +52,6 @@ Player.isLeadMafiaDead = function(game) {
               mafias[0].update({
                 role: "Lead Mafia"
               });
-            } else {
-              db.models.game.update(
-                { winner: "Villagers" },
-                { where: { id: game } }
-              );
             }
           })
           .catch(err => console.error(err));
@@ -104,7 +99,7 @@ Player.prototype.checkGameStatus = function() {
         return db.models.game
           .findById(gameId)
           .then(found => {
-            found.update({ winner: winner });
+            return found.update({ winner: winner });
           })
           .catch(err => console.error(err));
       }

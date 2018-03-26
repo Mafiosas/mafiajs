@@ -846,7 +846,7 @@ function (_Component) {
           isAlive: false
         });
         this.setState({
-          resultMessage: "".concat(this.props.user.name, " the Mafia got you in the night!! You ").concat(death)
+          resultMessage: "".concat(this.props.user.name, " the Mafia got you in the night! You ").concat(death)
         });
       }
 
@@ -859,7 +859,7 @@ function (_Component) {
 
         var _death = this.props.deaths[_num].storyForAll;
         this.setState({
-          resultMessage: "".concat(_died.name, " was killed by the Mafia in the night! They ").concat(_death)
+          resultMessage: " The Mafia struck again in the night! ".concat(_died.name, " ").concat(_death)
         });
       }
 
@@ -996,7 +996,7 @@ function (_Component) {
           winner = _state.winner; // const newVotes = votes;
 
       var index = Math.floor(Math.random() * Math.floor(facts.length - 1));
-      var messageToMafia = "Mafia, please make yourselves known to each other! You can see and hear everyone, non-Mafia players cannot see you. Discuss your plans freely...";
+      var messageToMafia = "Mafia, please make yourselves known to each other! You can see and hear everyone, they cannot see you. Discuss your plans freely...";
       return _react.default.createElement("div", {
         className: "container"
       }, !winner ? _react.default.createElement("div", null, _react.default.createElement("div", {
@@ -1004,11 +1004,11 @@ function (_Component) {
         className: "row"
       }, _react.default.createElement("div", {
         className: "col s3"
-      }, time === "day2" && _react.default.createElement(_Timer.default, {
+      }, time && time !== "day2" && _react.default.createElement("div", null, _react.default.createElement("h5", null, "Time:"), _react.default.createElement("h6", null, time)), _react.default.createElement("br", null), time && time === "day2" && _react.default.createElement("div", null, _react.default.createElement("h4", null, "Time:"), _react.default.createElement("h6", null, "Day")), time === "day2" && _react.default.createElement("div", null, _react.default.createElement("h5", null, "Countdown: "), _react.default.createElement(_Timer.default, {
         timer: this.state.timerToggle
-      }), time === "Night" && _react.default.createElement(_Timer.default, {
+      })), time === "Night" && _react.default.createElement("div", null, _react.default.createElement("h5", null, "Countdown: "), _react.default.createElement(_Timer.default, {
         timer: this.state.timerToggle
-      }), time && time !== "day2" && _react.default.createElement("div", null, _react.default.createElement("h5", null, "Time:"), _react.default.createElement("h6", null, time)), time && time === "day2" && _react.default.createElement("div", null, _react.default.createElement("h4", null, "Time:"), _react.default.createElement("h6", null, "Day"))), _react.default.createElement("div", {
+      }))), _react.default.createElement("div", {
         className: "col s9"
       }, !user.role && user.creator && game.numPlayers === players.length && _react.default.createElement("button", {
         onClick: this.gameStart,

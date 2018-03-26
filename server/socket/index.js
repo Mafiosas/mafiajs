@@ -146,17 +146,16 @@ module.exports = io => {
             Promise.all(proms)
               .then(resolved => {
                 if (resolved[1]) {
-                  console.log("what do proms look like", resolved[1][1][0]);
                   resolved[1][1][0].checkGameStatus();
                 }
               })
               .then(() => {
                 Game.findById(gameId)
                   .then(updatedGame => {
-                    if (updatedGame.hasEnded()) {
-                      socket.broadcast
+                    if (updatedGame.dataValues.winner) {
+                      io
                         .to(gameId)
-                        .emit("gameOver", updatedGame.winner);
+                        .emit("gameOver", updatedGame.dataValues.winner);
                     } else {
                       Round.create({
                         gameId: gameId,
@@ -182,6 +181,7 @@ module.exports = io => {
     });
 
     socket.on("daytimeVotes", votes => {
+      let promsArray = [];
       io.to(game).emit("resetVotes");
       let countedVotes = {};
 
@@ -201,45 +201,37 @@ module.exports = io => {
             foundPlayer.role === "Lead Mafia"
           ) {
             wasMafia = true;
-            return foundPlayer.update({ role: "Dead" });
+            promsArray.push(foundPlayer.update({ role: "Dead" }));
           } else {
             wasMafia = false;
-            return foundPlayer.update({ role: "Dead" });
+            promsArray.push(foundPlayer.update({ role: "Dead" }));
           }
+          promsArray.push(Player.isLeadMafiaDead(foundPlayer.gameId));
+          promsArray.push(foundPlayer.checkGameStatus());
+          Promise.all(promsArray).then(resolvedProms => {
+            //[player, isLeadMafia, checkGameStatus]
+            console.log("what do resolvedProms look like:", resolvedProms);
+            Game.findById(resolvedProms[0].gameId)
+              .then(foundGame => {
+                console.log("did we find a game??", foundGame);
+                if (foundGame.winner) {
+                  console.log("game ended for real");
+                  io.to(foundGame.id).emit("gameOver", foundGame.winner);
+                } else {
+                  io
+                    .to(foundGame.id)
+                    .emit("votesData", resolvedProms[0].name, !!wasMafia);
+                  io.to(foundGame.id).emit("getRoles");
+                  setTimeout(() => {
+                    gameRun(foundGame.id);
+                  }, 30000);
+                  console.log("here we go again");
+                }
+              })
+              .catch(err => console.error(err));
+          });
         })
-        // .then(updatedPlayer => {
-        //   console.log("whats the status here?", updatedPlayer);
-        //   updatedPlayer.checkGameStatus();
-        //   countedVotes = {};
-        //   return updatedPlayer;
-        // })
-        .then(updated => {
-          return Game.findById(updated.gameId)
-            .then(currentGame => {
-              Player.isLeadMafiaDead(currentGame.id);
-              return currentGame;
-            })
-            .then(currentGame => {
-              console.log(
-                "this is what game looks like on line 223, before we check for winner",
-                currentGame
-              );
-              if (currentGame.winner) {
-                console.log("game ended for real");
-                io.to(currentGame.id).emit("gameOver", currentGame.winner);
-              } else {
-                io
-                  .to(currentGame.id)
-                  .emit("votesData", updated.name, !!wasMafia);
-                io.to(currentGame.id).emit("getRoles");
-                setTimeout(() => {
-                  gameRun(currentGame.id);
-                }, 30000);
-                console.log("here we go again");
-              }
-            });
-          //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
-        })
+        //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
         .catch(err => console.error(err));
     });
   });
