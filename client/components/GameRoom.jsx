@@ -9,6 +9,7 @@ import DetectiveSelectForm from "./DetectiveSelectForm.jsx";
 import DoctorSelectForm from "./DoctorSelectForm.jsx";
 import DarkCiv from "./DarkCiv.jsx";
 import DayTimeForm from "./DayTimeForm.jsx";
+import Timer from "./Timer.jsx";
 
 import {
   fetchGame,
@@ -317,10 +318,12 @@ class GameRoom extends Component {
       <div className="container">
         <div id="top-row" className="row">
           <div className="col s2">
+            {!winner && time && <h4>Time:</h4>}
             {!winner && time && <h5>It's {time}!</h5>}
+            {!winner && time && <Timer time={30} />}
           </div>
 
-          <div className="col s6">
+          <div className="col s10">
             {!user.role &&
               user.creator &&
               game.numPlayers === players.length && (
@@ -344,7 +347,7 @@ class GameRoom extends Component {
               detective && <h3>Detective, you were {detective}</h3>}
           </div>
 
-          <div className="col s4">
+          {/* <div className="col s4">
             <h5>Room Name: </h5>
             <h6>{game.roomName}</h6>
             {user.role &&
@@ -360,7 +363,7 @@ class GameRoom extends Component {
                 ))}
               </ul>
             ) : null}
-          </div>
+          </div> */}
         </div>
 
         <div className="row">
@@ -463,7 +466,7 @@ class GameRoom extends Component {
         <div className="row">
           {game.id &&
             user.id && (
-              <div>
+              <div className="col s8">
                 <OTSession
                   apiKey={apiKey}
                   sessionId={sessionId}
@@ -507,6 +510,23 @@ class GameRoom extends Component {
                 </OTSession>
               </div>
             )}
+          <div className="col s4">
+            <h5>Room Name: </h5>
+            <h6>{game.roomName}</h6>
+            {user.role &&
+              time === "dark" &&
+              user.role === "Dead" && <h3>Boo..you're out of the game</h3>}
+            {players.length ? <h5>List of Alive Players:</h5> : null}
+            {players.length ? (
+              <ul>
+                {players.map(player => (
+                  <li className="players" key={player.id}>
+                    {player.name}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
         </div>
       </div>
     );

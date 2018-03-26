@@ -49,7 +49,6 @@ router.post("/new", (req, res, next) => {
         Player.create(req.body)
           .then(player => {
             req.session.user = player.id;
-
             return player;
           })
           .then(newPlayer => {

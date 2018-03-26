@@ -48,3 +48,12 @@ body {
 #rules {
   color: black;
 }
+
+button {
+  margin-top: 1em;
+}
+
+#top-row {
+  display: flex;
+  align-items: flex-start;
+}
