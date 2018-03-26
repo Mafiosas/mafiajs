@@ -822,7 +822,7 @@ function (_Component) {
     key: "daytime",
     value: function daytime(payload) {
       this.setState({
-        time: "day"
+        time: "Day"
       });
       this.setState({
         detective: ""
@@ -893,7 +893,7 @@ function (_Component) {
       _socket.default.emit("startDarkTimer");
 
       this.setState({
-        time: "dark"
+        time: "Night"
       });
     }
   }, {
@@ -993,38 +993,45 @@ function (_Component) {
       var messageToMafia = "Mafia, please make yourselves known to each other! You can see and hear everyone, non-Mafia players cannot see you. Discuss your plans freely...";
       return _react.default.createElement("div", {
         className: "container"
-      }, _react.default.createElement("div", {
+      }, !winner ? _react.default.createElement("div", null, _react.default.createElement("div", {
         id: "top-row",
         className: "row"
       }, _react.default.createElement("div", {
         className: "col s2"
-      }, !winner && time && _react.default.createElement("h4", null, "Time:"), !winner && time && _react.default.createElement("h5", null, "It's ", time, "!"), !winner && time && _react.default.createElement(_Timer.default, {
+      }, !winner && time && _react.default.createElement(_Timer.default, {
         time: 30
-      })), _react.default.createElement("div", {
+      }), !winner && time && time !== "day2" && _react.default.createElement("div", null, _react.default.createElement("h4", null, "Time:"), _react.default.createElement("h6", null, time)), !winner && time && time === "day2" && _react.default.createElement("div", null, _react.default.createElement("h4", null, "Time:"), _react.default.createElement("h6", null, "Day"))), _react.default.createElement("div", {
         className: "col s10"
       }, !user.role && user.creator && game.numPlayers === players.length && _react.default.createElement("button", {
         onClick: this.gameStart,
         className: "waves-effect waves-light btn"
-      }, "Ready? Click here to begin your game of MAFIA"), time === "day" && _react.default.createElement("h5", null, resultMessage), time === "day2" && _react.default.createElement("h5", null, resultMessage), winner && _react.default.createElement("h2", null, winner, " have won!"), !winner && user.role && time === "dark" && user.role !== "Dead" && _react.default.createElement("h2", {
+      }, "Ready? Click here to begin your game of MAFIA"), time === "Day" && _react.default.createElement("h5", null, resultMessage), time === "day2" && _react.default.createElement("h5", null, resultMessage), winner && _react.default.createElement("h2", null, winner, " have won!"), !winner && user.role && time === "Night" && user.role !== "Dead" && _react.default.createElement("h2", {
         id: "role"
-      }, "You're a ", user.role), user.role && time === "dark" && user.role === "Dead" && _react.default.createElement("h3", null, "Boo..you're out of the game"), time === "dark" && user.role === "Detective" && detective && _react.default.createElement("h3", null, "Detective, you were ", detective))), _react.default.createElement("div", {
+      }, "You're a ", user.role), user.role && time === "Night" && user.role === "Dead" && _react.default.createElement("h3", null, "Boo..you're out of the game"), time === "Night" && user.role === "Detective" && detective && _react.default.createElement("h3", null, "Detective, you were ", detective))), _react.default.createElement("div", {
         className: "row"
       }, _react.default.createElement("div", {
-        className: "col s10 offset-s2"
-      }, time === "day" && user.role !== "Dead" && _react.default.createElement("div", null, _react.default.createElement("h3", null, "Who do you think the Mafia is?"), _react.default.createElement(_DayTimeForm.default, {
+        className: "col s3"
+      }, _react.default.createElement("h5", null, "Room Name: "), _react.default.createElement("h6", null, game.roomName), players.length ? _react.default.createElement("h5", null, "List of Alive Players:") : null, players.length ? _react.default.createElement("ul", null, players.map(function (player) {
+        return _react.default.createElement("li", {
+          className: "players",
+          key: player.id
+        }, player.name);
+      })) : null), _react.default.createElement("div", {
+        className: "col s9"
+      }, time === "Day" && user.role !== "Dead" && _react.default.createElement("div", null, _react.default.createElement("h3", null, "Who do you think the Mafia is?"), _react.default.createElement(_DayTimeForm.default, {
         user: user.id,
         players: this.props.players
-      })), time === "dark" && user.role === "Doctor" && _react.default.createElement("div", null, _react.default.createElement("h4", null, "Choose who to save"), _react.default.createElement(_DoctorSelectForm.default, {
+      })), time === "Night" && user.role === "Doctor" && _react.default.createElement("div", null, _react.default.createElement("h4", null, "Choose who to save"), _react.default.createElement(_DoctorSelectForm.default, {
         players: this.props.players,
         darkOverDoctor: this.darkOverDoctor
-      })), time === "dark" && user.role === "Detective" && !detective && _react.default.createElement("div", null, _react.default.createElement("h4", null, "Choose who you suspect is Mafia"), _react.default.createElement(_DetectiveSelectForm.default, {
+      })), time === "Night" && user.role === "Detective" && !detective && _react.default.createElement("div", null, _react.default.createElement("h4", null, "Choose who you suspect is Mafia"), _react.default.createElement(_DetectiveSelectForm.default, {
         user: user.id,
         players: this.props.players,
         darkOverDetective: this.darkOverDetective
-      })), time === "dark" && user.role === "Lead Mafia" && _react.default.createElement("div", null, _react.default.createElement("h5", null, messageToMafia), _react.default.createElement("h4", null, "Lead Mafia cast your decided vote below"), _react.default.createElement(_MafiaSelectForm.default, {
+      })), time === "Night" && user.role === "Lead Mafia" && _react.default.createElement("div", null, _react.default.createElement("h5", null, messageToMafia), _react.default.createElement("h4", null, "Lead Mafia cast your decided vote below"), _react.default.createElement(_MafiaSelectForm.default, {
         players: this.props.players,
         darkOverMafia: this.darkOverMafia
-      })), time === "dark" && user.role === "Mafia" && _react.default.createElement("div", null, _react.default.createElement("h5", null, messageToMafia)), time === "dark" && user.role === "Civilian" && _react.default.createElement("div", null, _react.default.createElement("p", null, facts[index].fact)))), _react.default.createElement("div", {
+      })), time === "Night" && user.role === "Mafia" && _react.default.createElement("div", null, _react.default.createElement("h5", null, messageToMafia)), time === "Night" && user.role === "Civilian" && _react.default.createElement("div", null, _react.default.createElement("p", null, facts[index].fact)))), _react.default.createElement("div", {
         className: "row"
       }, _react.default.createElement("div", {
         className: "col s10 offset-s2"
@@ -1040,7 +1047,7 @@ function (_Component) {
         return _react.default.createElement("tr", {
           key: key
         }, _react.default.createElement("td", null, whoVotedId.name), _react.default.createElement("td", null, whoForId.name));
-      })))) : null)), _react.default.createElement("div", {
+      })))) : null))) : _react.default.createElement("div", null, " ", winner, " "), _react.default.createElement("div", {
         className: "row"
       }, game.id && user.id && _react.default.createElement("div", {
         className: "col s8"
@@ -1063,20 +1070,13 @@ function (_Component) {
         properties: {
           width: 250,
           height: 250,
-          subscribeToAudio: time === "dark" && user.role && user.role !== "Mafia" && user.role !== "Lead Mafia" && user.role !== "Dead" ? false : true,
-          subscribeToVideo: time === "dark" && user.role && user.role !== "Mafia" && user.role !== "Lead Mafia" && user.role !== "Dead" ? false : true
+          subscribeToAudio: time === "Night" && user.role && user.role !== "Mafia" && user.role !== "Lead Mafia" && user.role !== "Dead" ? false : true,
+          subscribeToVideo: time === "Night" && user.role && user.role !== "Mafia" && user.role !== "Lead Mafia" && user.role !== "Dead" ? false : true
         },
         onSubscribe: this.onSubscribe,
         onError: this.onSubscribeError,
         eventHandlers: this.subscriberEventHandlers
-      })))), _react.default.createElement("div", {
-        className: "col s4"
-      }, _react.default.createElement("h5", null, "Room Name: "), _react.default.createElement("h6", null, game.roomName), players.length ? _react.default.createElement("h5", null, "List of Alive Players:") : null, players.length ? _react.default.createElement("ul", null, players.map(function (player) {
-        return _react.default.createElement("li", {
-          className: "players",
-          key: player.id
-        }, player.name);
-      })) : null)));
+      }))))));
     }
   }]);
 
