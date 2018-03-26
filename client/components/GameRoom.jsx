@@ -150,7 +150,7 @@ class GameRoom extends Component {
       this.setState({
         resultMessage: `${
           this.props.user.name
-        } the Mafia got you!! You ${death}`
+        } the Mafia got you in the night!! You ${death}`
       });
     }
 
@@ -158,17 +158,14 @@ class GameRoom extends Component {
       let died = this.props.players.find(player => {
         return +payload.killed === player.id;
       });
-      console.log(
-        "what does died equal in this daytime",
-        died,
-        "and payload",
-        payload
-      );
+
       let num = died.id % this.props.deaths.length;
       let death = this.props.deaths[num].storyForAll;
 
       this.setState({
-        resultMessage: `${died.name} ${death}`
+        resultMessage: `${
+          died.name
+        } was killed by the Mafia in the night! They ${death}`
       });
     }
 
@@ -342,6 +339,9 @@ class GameRoom extends Component {
               user.role &&
               time === "dark" &&
               user.role !== "Dead" && <h2 id="role">You're a {user.role}</h2>}
+            {user.role &&
+              time === "dark" &&
+              user.role === "Dead" && <h3>Boo..you're out of the game</h3>}
             {time === "dark" &&
               user.role === "Detective" &&
               detective && <h3>Detective, you were {detective}</h3>}
@@ -513,9 +513,7 @@ class GameRoom extends Component {
           <div className="col s4">
             <h5>Room Name: </h5>
             <h6>{game.roomName}</h6>
-            {user.role &&
-              time === "dark" &&
-              user.role === "Dead" && <h3>Boo..you're out of the game</h3>}
+
             {players.length ? <h5>List of Alive Players:</h5> : null}
             {players.length ? (
               <ul>
