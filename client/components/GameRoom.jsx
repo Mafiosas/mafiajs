@@ -156,7 +156,7 @@ class GameRoom extends Component {
       this.setState({
         resultMessage: `${
           this.props.user.name
-        } the Mafia got you in the night! You ${death}`
+        }, the Mafia got you in the night! You ${death}`
       });
     }
 
@@ -340,6 +340,7 @@ class GameRoom extends Component {
                       <h6>Day</h6>
                     </div>
                   )}
+                <br />
                 {time === "day2" && (
                   <div>
                     <h5>Countdown: </h5>
@@ -438,6 +439,7 @@ class GameRoom extends Component {
                   user.role === "Lead Mafia" && (
                     <div>
                       <h5>{messageToMafia}</h5>
+                      <br />
                       <h4>Lead Mafia cast your decided vote below</h4>
                       <MafiaSelectForm
                         players={this.props.players}

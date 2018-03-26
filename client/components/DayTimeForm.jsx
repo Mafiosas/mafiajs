@@ -18,6 +18,10 @@ export default class DayTimeForm extends Component {
     });
   }
 
+  componentWillUnmount() {
+    socket.removeListene("getVotes");
+  }
+
   submitVote(evt) {
     evt.preventDefault();
     let userId = this.props.user;
