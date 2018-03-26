@@ -320,20 +320,16 @@ class GameRoom extends Component {
           <div>
             <div id="top-row" className="row">
               <div className="col s2">
-                {!winner &&
-                  (time === "Dark" || time === "day2") && (
-                    <Timer timer={this.state.timerToggle} />
-                  )}
-                {!winner &&
-                  time &&
+                {time === "day2" && <Timer timer={this.state.timerToggle} />}
+                {time === "Night" && <Timer timer={this.state.timerToggle} />}
+                {time &&
                   time !== "day2" && (
                     <div>
-                      <h4>Time:</h4>
+                      <h5>Time:</h5>
                       <h6>{time}</h6>
                     </div>
                   )}
-                {!winner &&
-                  time &&
+                {time &&
                   time === "day2" && (
                     <div>
                       <h4>Time:</h4>
@@ -356,9 +352,7 @@ class GameRoom extends Component {
                 {time === "Day" && <h5>{resultMessage}</h5>}
                 {time === "day2" && <h5>{resultMessage}</h5>}
 
-                {winner && <h2>{winner} have won!</h2>}
-                {!winner &&
-                  user.role &&
+                {user.role &&
                   time === "Night" &&
                   user.role !== "Dead" && (
                     <h2 id="role">You're a {user.role}</h2>
@@ -370,32 +364,15 @@ class GameRoom extends Component {
                   user.role === "Detective" &&
                   detective && <h3>Detective, you were {detective}</h3>}
               </div>
-
-              {/* <div className="col s4">
-            <h5>Room Name: </h5>
-            <h6>{game.roomName}</h6>
-            {user.role &&
-              time === "dark" &&
-              user.role === "Dead" && <h3>Boo..you're out of the game</h3>}
-            {players.length ? <h5>List of Alive Players:</h5> : null}
-            {players.length ? (
-              <ul>
-                {players.map(player => (
-                  <li className="players" key={player.id}>
-                    {player.name}
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </div> */}
             </div>
 
             <div className="row">
               <div className="col s3">
                 <h5>Room Name: </h5>
                 <h6>{game.roomName}</h6>
+                <br />
 
-                {players.length ? <h5>List of Alive Players:</h5> : null}
+                {players.length ? <h5>Alive Players:</h5> : null}
                 {players.length ? (
                   <ul>
                     {players.map(player => (
@@ -506,7 +483,7 @@ class GameRoom extends Component {
             </div>
           </div>
         ) : (
-          <div> {winner} </div>
+          <h2>{winner} have won!</h2>
         )}
 
         <div className="row">
