@@ -1000,13 +1000,13 @@ function (_Component) {
       var messageToMafia = "Mafia, please make yourselves known to each other! You can see and hear everyone, non-Mafia players cannot see you. Discuss your plans freely...";
       return _react.default.createElement("div", {
         className: "container"
-      }, _react.default.createElement("div", {
+      }, !winner ? _react.default.createElement("div", null, _react.default.createElement("div", {
         id: "top-row",
         className: "row"
       }, _react.default.createElement("div", {
         className: "col s2"
       }, !winner && time && _react.default.createElement("h4", null, "Time:"), !winner && time && _react.default.createElement("h5", null, "It's ", time, "!"), !winner && time && _react.default.createElement(_Timer.default, {
-        time: this.state.timerToggle
+        time: 30
       })), _react.default.createElement("div", {
         className: "col s10"
       }, !user.role && user.creator && game.numPlayers === players.length && _react.default.createElement("button", {
@@ -1047,7 +1047,7 @@ function (_Component) {
         return _react.default.createElement("tr", {
           key: key
         }, _react.default.createElement("td", null, whoVotedId.name), _react.default.createElement("td", null, whoForId.name));
-      })))) : null)), _react.default.createElement("div", {
+      })))) : null))) : _react.default.createElement("div", null, " ", winner, " "), _react.default.createElement("div", {
         className: "row"
       }, game.id && user.id && _react.default.createElement("div", {
         className: "col s8"

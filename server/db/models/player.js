@@ -33,32 +33,34 @@ Player.prototype.isMafia = function() {
 };
 
 Player.isLeadMafiaDead = function(game) {
-  console.log("we have arrived in is lead mafia method");
   Player.findAll({
     where: {
       role: "Lead Mafia",
       gameId: game
     }
   }).then(leadMaf => {
-    console.log("step 2 of the is lead mafia dead method", leadMaf);
     if (!leadMaf.length) {
-      console.log("Theres no more mafia, lets transfer the power");
       Player.findAll({
         where: {
           role: "Mafia",
           gameId: game
         }
-      }).then(mafias => {
-        return mafias[0].update({
-          role: "Lead Mafia"
-        });
-      });
+      })
+        .then(mafias => {
+          if (mafias.length) {
+            return mafias[0].update({
+              role: "Lead Mafia"
+            });
+          } else {
+            //end the game, villagers won
+          }
+        })
+        .catch(err => console.error(err));
     }
   });
 };
 
 Player.prototype.checkGameStatus = function() {
-  console.log("this is db model at beginning of method", db.models);
   const gameId = this.gameId;
   let aliveMafias, alivePlayers;
   return Player.findAll({
