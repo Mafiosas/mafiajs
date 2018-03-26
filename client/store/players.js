@@ -30,12 +30,6 @@ export default function(state = defaultPlayers, action) {
     case ADD_PLAYER:
       return [...state, action.player];
     case REMOVE_PLAYER:
-      console.log(
-        "this is our state",
-        state,
-        "and player name is",
-        action.player
-      );
       return state.filter(el => el.name !== action.player);
     default:
       return state;
