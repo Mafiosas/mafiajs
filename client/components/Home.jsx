@@ -10,9 +10,11 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      password: ""
+      password: "",
+      name: ""
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleNameChange = this.handleNameChange.bind(this);
   }
 
   componentDidMount() {
@@ -21,6 +23,10 @@ class Home extends Component {
 
   handleChange(event) {
     this.setState({ password: event.target.value });
+  }
+
+  handleNameChange(event) {
+    this.setState({ name: event.target.value });
   }
   render() {
     const { games, handleSubmit } = this.props;
@@ -46,6 +52,7 @@ class Home extends Component {
                     <form onSubmit={event => handleSubmit(event, game.id)}>
                       <input
                         type="text"
+                        onChange={this.handleNameChange}
                         name="name"
                         placeholder="enter your first name"
                       />
@@ -59,7 +66,10 @@ class Home extends Component {
                       )}
                       <button
                         className="waves-effect waves-light btn"
-                        disabled={this.state.password !== game.password}
+                        disabled={
+                          this.state.password !== game.password ||
+                          !this.state.name
+                        }
                       >
                         Join Game
                       </button>

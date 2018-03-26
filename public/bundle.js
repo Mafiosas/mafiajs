@@ -1212,9 +1212,11 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, (Home.__proto__ || Object.getPrototypeOf(Home)).call(this, props));
     _this.state = {
-      password: ""
+      password: "",
+      name: ""
     };
     _this.handleChange = _this.handleChange.bind(_assertThisInitialized(_this));
+    _this.handleNameChange = _this.handleNameChange.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -1228,6 +1230,13 @@ function (_Component) {
     value: function handleChange(event) {
       this.setState({
         password: event.target.value
+      });
+    }
+  }, {
+    key: "handleNameChange",
+    value: function handleNameChange(event) {
+      this.setState({
+        name: event.target.value
       });
     }
   }, {
@@ -1261,6 +1270,7 @@ function (_Component) {
           }
         }, _react.default.createElement("input", {
           type: "text",
+          onChange: _this2.handleNameChange,
           name: "name",
           placeholder: "enter your first name"
         }), game.password && _react.default.createElement("input", {
@@ -1270,7 +1280,7 @@ function (_Component) {
           placeholder: "enter password"
         }), _react.default.createElement("button", {
           className: "waves-effect waves-light btn",
-          disabled: _this2.state.password !== game.password
+          disabled: _this2.state.password !== game.password || !_this2.state.name
         }, "Join Game")));
       }) : _react.default.createElement("div", null, " No active games ")), _react.default.createElement("div", {
         className: "col s10"
