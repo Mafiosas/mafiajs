@@ -93,7 +93,11 @@ Player.prototype.checkGameStatus = function() {
       return db.models.game.findById(gameId);
     })
     .then(found => {
-      if (aliveMafias.length === 0 || alivePlayers.length === 0) {
+      if (
+        aliveMafias.length === 0 ||
+        alivePlayers.length === 0 ||
+        (alivePlayers.length === 1 && aliveMafias.length === 1)
+      ) {
         const winner = aliveMafias.length === 0 ? "Villagers" : "Mafia";
 
         return found.update({ winner: winner });
