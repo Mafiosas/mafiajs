@@ -317,6 +317,7 @@ class GameRoom extends Component {
 
     return (
       <div className="container">
+        <spacebar />
         {!winner ? (
           <div>
             <div id="top-row" className="row">

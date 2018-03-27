@@ -56,9 +56,13 @@ button {
 #top-row {
   display: flex;
   align-items: flex-start;
+  margin-top: 1em;
 }
 
-label {
+label#create-room {
+  font-size: 1.5em;
+}
+label#front-page {
   font-size: 1em;
 }
 
@@ -67,7 +71,7 @@ select {
 }
 
 #roomTitle {
-  margin: 0.2em;
+  margin: 0.1em;
 }
 
 .rooms {
@@ -76,4 +80,14 @@ select {
   border-style: solid;
   padding: 1em;
   margin: 0.2em;
+}
+
+#sidebar {
+  margin-top: 1em;
+}
+
+spacebar {
+  margin: 5em;
+  padding: 5em;
+  width: 100%;
 }

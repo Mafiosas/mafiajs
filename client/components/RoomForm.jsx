@@ -41,16 +41,18 @@ class RoomForm extends Component {
         <h2>Let's Play A Game...</h2>
         <form id="room-form" onSubmit={handleSubmit}>
           <div>
-            <label>Room Name:</label>
+            <label id="create-room">Room Name:</label>
             <input name="roomName" type="text" />
           </div>
 
           <div>
-            <label>Password (optional):</label>
+            <label label id="create-room">
+              Password (optional):
+            </label>
             <input name="password" type="text" />
           </div>
           <div>
-            <label>Number of Players (defaults to 6)</label>
+            <label id="create-room">Number of Players (defaults to 6)</label>
             <select className="browser-default" name="numPlayers">
               <option value="6">6</option>
               <option value="7">7</option>
@@ -63,7 +65,7 @@ class RoomForm extends Component {
           </div>
           <br />
           <div>
-            <label>Player Name:</label>
+            <label id="create-room">Player Name:</label>
             <input name="name" onChange={this.handleChange} />
             <button
               className="waves-effect waves-light btn"
