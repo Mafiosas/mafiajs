@@ -9,9 +9,7 @@ export default class DetectiveSelectForm extends Component {
   }
 
   componentDidMount() {
-    console.log("detective component has mounted");
     socket.on("darkOverForVillagers", () => {
-      console.log("dark is over for detective");
       this.props.darkOverDetective(this.state.selected);
       this.setState({ selected: "" });
     });

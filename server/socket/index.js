@@ -31,13 +31,10 @@ module.exports = io => {
 
     function gameRun(gameId) {
       io.to(gameId).emit("dark");
-      console.log("we are running game run");
       setTimeout(() => {
-        console.log("dark timer over for villagers"); //this works!
         io.to(gameId).emit("darkOverForVillagers");
       }, 25000);
       setTimeout(() => {
-        console.log("dark timer over for mafia"); //this works!
         io.to(gameId).emit("darkOverForMafia");
       }, 30000);
     }
@@ -186,7 +183,7 @@ module.exports = io => {
       Player.findById(+votedOutId)
         .then(foundPlayer => {
           if (foundPlayer.role === "Lead Mafia") {
-            promsArray.push(Player.isLeadMafiaDead(foundPlayer.gameId));
+            promsArray.push(Player.changeLeadMafia(foundPlayer.gameId));
           }
           if (
             foundPlayer.role === "Mafia" ||

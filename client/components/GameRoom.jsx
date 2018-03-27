@@ -479,7 +479,6 @@ class GameRoom extends Component {
                 {Object.keys(votes).length == players.length &&
                   user.id == +Object.keys(votes)[0] &&
                   this.sendVotes(votes)}
-                {console.log(Object.keys(votes))}
                 {Object.keys(votes).length ? (
                   <div>
                     <table className="votedTable">
