@@ -17,7 +17,6 @@ import {
   joinExistingGame,
   getMe,
   getOnlyMe,
-  getPlayersInGame,
   fetchFacts,
   fetchDeaths,
   addVote,
