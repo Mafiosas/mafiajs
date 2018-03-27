@@ -60,10 +60,10 @@ button {
 }
 
 label#create-room {
-  font-size: 1.5em;
+  font-size: 1.2em;
 }
 label#front-page {
-  font-size: 1em;
+  font-size: 0.8em;
 }
 
 select {
@@ -72,6 +72,7 @@ select {
 
 #roomTitle {
   margin: 0.1em;
+  font-size: 1.2em;
 }
 
 .rooms {
@@ -80,8 +81,15 @@ select {
   border-style: solid;
   padding: 1em;
   margin: 0.2em;
+  display: flex;
+  flex-direction: column;
 }
 
 #sidebar {
   margin-top: 1em;
+}
+
+div.roomName {
+  font-size: 2em;
+  flex-shrink: 2;
 }
