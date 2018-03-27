@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const { Player, Game } = require("../db/models");
 const OpenTok = require("opentok");
-const { opentokApiKey, opentokSecret } = require("../../secrets");
 
 module.exports = router;
 
