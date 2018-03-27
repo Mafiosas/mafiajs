@@ -51,19 +51,21 @@ class Home extends Component {
                   <div className="rooms" key={game.id}>
                     <h3>{game.roomName}</h3>
                     <form onSubmit={event => handleSubmit(event, game.id)}>
+                      <label>Enter your first name:</label>
                       <input
                         type="text"
                         onChange={this.handleNameChange}
                         name="name"
-                        placeholder="enter your first name"
                       />
                       {game.password && (
-                        <input
-                          type="text"
-                          onChange={this.handleChange}
-                          name="password"
-                          placeholder="enter password"
-                        />
+                        <div>
+                          <label>Enter the password:</label>
+                          <input
+                            type="text"
+                            onChange={this.handleChange}
+                            name="password"
+                          />
+                        </div>
                       )}
                       <button
                         className="waves-effect waves-light btn"
