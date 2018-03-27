@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { fetchFacts } from "../store";
+import PropTypes from "prop-types";
 
 class DarkCiv extends Component {
   constructor(props) {
@@ -34,3 +35,8 @@ const mapDispatch = dispatch => {
 };
 
 export default connect(mapState, mapDispatch)(DarkCiv);
+
+/* PROP TYPES */
+DarkCiv.propTypes = {
+  getFacts: PropTypes.func
+};

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import socket from "../socket";
+import PropTypes from "prop-types";
 
 export default class DayTimeForm extends Component {
   constructor(props) {
@@ -62,3 +63,8 @@ export default class DayTimeForm extends Component {
     );
   }
 }
+
+/* PROP TYPES */
+DayTimeForm.propTypes = {
+  players: PropTypes.array
+};
