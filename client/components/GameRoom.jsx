@@ -106,20 +106,14 @@ class GameRoom extends Component {
       this.daytime(payload);
     });
     socket.on("role", payload => this.assignRole(payload));
-    socket.on("DetectiveRight", () => {
-      this.detectiveAnswer("right");
-    });
-    socket.on("DetectiveWrong", () => {
-      this.detectiveAnswer("wrong");
+    socket.on("DetectiveChoice", choice => {
+      const answer = choice ? "right" : "wrong";
+      this.detectiveAnswer(choice);
     });
     socket.on("myVote", dataVal => {
       this.props.releaseVote(dataVal);
     });
     socket.on("votesData", (votedOut, wasMafia) => {
-      console.log(
-        "inside votesData socket on front end, person voted out:",
-        votedOut
-      );
       this.giveVotesData(votedOut, wasMafia);
     });
     socket.on("resetVotes", () => {
@@ -198,7 +192,6 @@ class GameRoom extends Component {
 
   gameStart() {
     socket.emit("gameStart", this.props.game.id);
-    //only the creator will have access to this start button
   }
 
   dark() {

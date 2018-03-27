@@ -85,11 +85,7 @@ Player.prototype.checkGameStatus = function() {
     })
     .then(players => {
       alivePlayers = players;
-      console.log(
-        "right before the if statement to check who won",
-        aliveMafias.length,
-        alivePlayers.length
-      );
+
       return db.models.game.findById(gameId);
     })
     .then(found => {
