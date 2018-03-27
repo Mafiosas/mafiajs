@@ -27,6 +27,17 @@ export const getMe = gameId => {
   };
 };
 
+export const getOnlyMe = gameId => {
+  return dispatch => {
+    axios
+      .get("/api/players/me")
+      .then(res => {
+        dispatch(setUser(res.data));
+      })
+      .catch(err => console.error(err));
+  };
+};
+
 export const joinExistingGame = (gameId, name, history) => dispatch => {
   axios
     .post(`/api/players`, { gameId, name }) // back route needs to post to Player and associate the gameId
