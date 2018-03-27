@@ -1,4 +1,3 @@
-const should = require("should");
 const assert = require("assert");
 const io = require("socket.io-client"),
   server = require("./index");
