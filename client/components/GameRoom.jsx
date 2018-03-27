@@ -524,8 +524,8 @@ class GameRoom extends Component {
                   <OTStreams>
                     <OTSubscriber
                       properties={{
-                        width: 250,
-                        height: 250,
+                        width: 200,
+                        height: 200,
                         subscribeToAudio:
                           time === "Night" &&
                           user.role &&
