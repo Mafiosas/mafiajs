@@ -45,40 +45,45 @@ class Home extends Component {
         <div className="row">
           <div className="col s2" id="sidebar">
             {games.length ? (
-              games.map(game => {
-                return (
-                  <div className="rooms" key={game.id}>
-                    <h3>{game.roomName}</h3>
-                    <form onSubmit={event => handleSubmit(event, game.id)}>
-                      <input
-                        type="text"
-                        onChange={this.handleNameChange}
-                        name="name"
-                        placeholder="enter your first name"
-                      />
-                      {game.password && (
+              <div>
+                <h5 id="roomTitle">Existing Rooms:</h5>
+                {games.map(game => {
+                  return (
+                    <div className="rooms" key={game.id}>
+                      <h3>{game.roomName}</h3>
+                      <form onSubmit={event => handleSubmit(event, game.id)}>
+                        <label id="front-page">Enter your first name:</label>
                         <input
                           type="text"
-                          onChange={this.handleChange}
-                          name="password"
-                          placeholder="enter password"
+                          onChange={this.handleNameChange}
+                          name="name"
                         />
-                      )}
-                      <button
-                        className="waves-effect waves-light btn"
-                        disabled={
-                          this.state.password !== game.password ||
-                          !this.state.name
-                        }
-                      >
-                        Join Game
-                      </button>
-                    </form>
-                  </div>
-                );
-              })
+                        {game.password && (
+                          <div>
+                            <label id="front-page">Enter the password:</label>
+                            <input
+                              type="text"
+                              onChange={this.handleChange}
+                              name="password"
+                            />
+                          </div>
+                        )}
+                        <button
+                          className="waves-effect waves-light btn"
+                          disabled={
+                            this.state.password !== game.password ||
+                            !this.state.name
+                          }
+                        >
+                          Join Game
+                        </button>
+                      </form>
+                    </div>
+                  );
+                })}{" "}
+              </div>
             ) : (
-              <div> No active games </div>
+              <div id="roomTitle"> No active games </div>
             )}
           </div>
 
