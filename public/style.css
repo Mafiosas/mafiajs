@@ -66,6 +66,10 @@ select {
   color: black;
 }
 
+#roomTitle {
+  margin: 0.2em;
+}
+
 .rooms {
   border: white;
   border-width: 0.2em;

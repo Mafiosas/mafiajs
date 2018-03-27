@@ -44,6 +44,7 @@ class Home extends Component {
         />
         <div className="row">
           <div className="col s2" id="sidebar">
+            <h5 id="roomTitle">Existing Rooms:</h5>
             {games.length ? (
               games.map(game => {
                 return (
