@@ -65,3 +65,11 @@ label {
 select {
   color: black;
 }
+
+.rooms {
+  border: white;
+  border-width: 0.2em;
+  border-style: solid;
+  padding: 1em;
+  margin: 0.2em;
+}
