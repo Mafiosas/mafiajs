@@ -25,9 +25,6 @@ import {
   removePlayer
 } from "../store";
 
-const tokboxApiKey = "46085992";
-const tokboxSecret = "06b37a1f205fa56ddf7231f07889c585cbc1abb2";
-
 class GameRoom extends Component {
   constructor(props) {
     super(props);

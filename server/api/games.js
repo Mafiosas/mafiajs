@@ -3,6 +3,7 @@ const { Game, Round, Player } = require("../db/models");
 const { Op } = require("sequelize");
 const { hasGameEnded, didMafiaWin, whoToSendBack } = require("../game.js");
 const OpenTok = require("opentok");
+const { opentokApiKey, opentokSecret } = require("../../secrets");
 
 module.exports = router;
 
@@ -25,10 +26,7 @@ router.get("/:gameId", (req, res, next) => {
 });
 
 router.post("/new", (req, res, next) => {
-  let opentok = new OpenTok(
-    "46085992",
-    "06b37a1f205fa56ddf7231f07889c585cbc1abb2"
-  );
+  let opentok = new OpenTok(opentokApiKey, opentokSecret);
 
   opentok.createSession({ mediaMode: "routed" }, function(err, session) {
     if (err) {
@@ -58,9 +56,3 @@ router.post("/new", (req, res, next) => {
       .catch(next);
   });
 });
-
-// router.post("/newRound/:gameId", (req, res, next) => {
-//   Round.create()
-//     .then(round => round.setGame(req.params.gameId))
-//     .then(currentRound => res.json(currentRound));
-// });
