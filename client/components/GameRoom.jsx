@@ -340,7 +340,7 @@ class GameRoom extends Component {
                       <h6>Day</h6>
                     </div>
                   )}
-                <br />
+
                 {time === "day2" && (
                   <div>
                     <h5>Countdown: </h5>
