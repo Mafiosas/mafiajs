@@ -97,3 +97,8 @@ const mapCreateDispatch = (dispatch, ownProps) => {
 };
 
 export default connect(null, mapCreateDispatch)(RoomForm);
+
+/* PROP TYPES */
+RoomForm.propTypes = {
+  handleSubmit: PropTypes.func
+};

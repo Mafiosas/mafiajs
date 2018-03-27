@@ -152,11 +152,7 @@ class Home extends Component {
   }
 }
 
-const mapState = (state, ownProps) => {
-  return {
-    games: state.games
-  };
-};
+const mapState = ({ games }) => ({ games });
 
 const mapDispatch = (dispatch, ownProps) => {
   return {
@@ -172,3 +168,10 @@ const mapDispatch = (dispatch, ownProps) => {
 };
 
 export default connect(mapState, mapDispatch)(Home);
+
+/* PROP TYPES */
+Home.propTypes = {
+  games: PropTypes.array,
+  getGames: PropTypes.func,
+  handleSubmit: PropTypes.func
+};
