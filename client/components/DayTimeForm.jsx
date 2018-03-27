@@ -19,7 +19,7 @@ export default class DayTimeForm extends Component {
   }
 
   componentWillUnmount() {
-    socket.removeListene("getVotes");
+    socket.removeListener("getVotes");
   }
 
   submitVote(evt) {
