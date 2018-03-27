@@ -106,9 +106,9 @@ class Home extends Component {
                   The Roles:
                   <br />
                   <br />MAFIA: <br />Lead Mafia - you are head of the Mafia,
-                  every round you will choose who to kill. <br />Mafia - you are
-                  a part of the Mafia and will decide on who to kill along with
-                  the Lead Mafia.<br />
+                  every round you will submit who the Mafia have chosen to kill.{" "}
+                  <br />Mafia - you are a part of the Mafia and will decide on
+                  who to kill along with the Lead Mafia.<br />
                   <br /> VILLAGERS: <br />Doctor - every round you will be given
                   the chance to ‘save’ one person you think the Mafia are about
                   to kill. <br /> Detective - every round you will be given the

@@ -130,6 +130,28 @@ class GameRoom extends Component {
     });
   }
 
+  componentWillUnmount() {
+    this.setState({
+      time: "",
+      error: null,
+      connection: "Connecting",
+      publishVideo: true,
+      resultMessage: "",
+      detective: "",
+      winner: "",
+      timerToggle: 0
+    });
+    socket.removeListener("getRoles");
+    socket.removeListener("dark");
+    socket.removeListener("daytime");
+    socket.removeListener("role");
+    socket.removeListener("DetectiveRight");
+    socket.removeListener("DetectiveWrong");
+    socket.removeListener("myVote");
+    socket.removeListener("votesData");
+    socket.removeListener("resetVotes");
+    socket.removeListener("gameOver");
+  }
   getRoles() {
     this.props.loadData();
   }
@@ -328,7 +350,7 @@ class GameRoom extends Component {
                       <h6>{time}</h6>
                     </div>
                   )}
-                <br />
+
                 {time &&
                   time === "day2" && (
                     <div>
@@ -336,7 +358,7 @@ class GameRoom extends Component {
                       <h6>Day</h6>
                     </div>
                   )}
-
+                <br />
                 {time === "day2" && (
                   <div>
                     <h5>Countdown: </h5>
@@ -350,7 +372,7 @@ class GameRoom extends Component {
                   </div>
                 )}
               </div>
-
+              <br />
               <div className="col s9">
                 {!user.role &&
                   user.creator &&
@@ -464,6 +486,7 @@ class GameRoom extends Component {
                 {Object.keys(votes).length == players.length &&
                   user.id == +Object.keys(votes)[0] &&
                   this.sendVotes(votes)}
+                {console.log(Object.keys(votes))}
                 {Object.keys(votes).length ? (
                   <div>
                     <table className="votedTable">
