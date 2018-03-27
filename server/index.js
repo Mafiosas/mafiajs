@@ -13,6 +13,8 @@ const routes = require("./api");
 const OpenTok = require("opentok");
 const Game = require("./db/models/game");
 
+if (process.env.NODE_ENV !== "production") require("../secrets");
+
 // logging middleware
 const createApp = () => {
   app.use(morgan("dev"));

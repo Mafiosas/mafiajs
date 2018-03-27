@@ -40,7 +40,10 @@ router.get("/:gameId", (req, res, next) => {
 router.post("/", (req, res, next) => {
   Game.findById(req.body.gameId) //make sure to include gameId in the req.body!
     .then(game => {
-      let opentok = new OpenTok(opentokApiKey, opentokSecret);
+      let opentok = new OpenTok(
+        process.env.opentokApiKey,
+        process.env.opentokSecret
+      );
       let token = opentok.generateToken(game.sessionId);
       req.body.token = token;
       return Player.create(req.body);
