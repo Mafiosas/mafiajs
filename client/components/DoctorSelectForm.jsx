@@ -11,10 +11,7 @@ export default class DoctorSelectForm extends Component {
   }
 
   componentDidMount() {
-    console.log("doctor component has mounted");
     socket.on("darkOverForVillagers", () => {
-      console.log("dark is over for doctor");
-
       this.props.darkOverDoctor(this.state.selected);
       this.setState({ selected: "" });
     });
@@ -30,9 +27,6 @@ export default class DoctorSelectForm extends Component {
 
   render() {
     const { darkOver, players } = this.props;
-    console.log("players inside form", players);
-    console.log("selected", this.state.selected);
-
     return (
       <div>
         <form>

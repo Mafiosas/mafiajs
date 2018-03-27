@@ -25,9 +25,6 @@ import {
   removePlayer
 } from "../store";
 
-const tokboxApiKey = "46085992";
-const tokboxSecret = "06b37a1f205fa56ddf7231f07889c585cbc1abb2";
-
 class GameRoom extends Component {
   constructor(props) {
     super(props);
@@ -479,7 +476,6 @@ class GameRoom extends Component {
                 {Object.keys(votes).length == players.length &&
                   user.id == +Object.keys(votes)[0] &&
                   this.sendVotes(votes)}
-                {console.log(Object.keys(votes))}
                 {Object.keys(votes).length ? (
                   <div>
                     <table className="votedTable">

@@ -30,11 +30,6 @@ const createApp = () => {
     })
   );
 
-  // app.use(function(req, res, next) {
-  //   console.log("SESSION: ", req.session);
-  //   next();
-  // });
-
   // static file-serving middleware
   app.use(express.static(path.join(__dirname, "..", "public")));
 
@@ -89,7 +84,3 @@ if (require.main === module) {
 }
 
 module.exports = { app, startListening };
-// //to disconnect participant from OpenTok session
-// opentok.forceDisconnect(sessionId, connectionId, function(error) {
-//   if (error) return console.log("error:", error);
-// });

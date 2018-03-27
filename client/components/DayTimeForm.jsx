@@ -13,7 +13,6 @@ export default class DayTimeForm extends Component {
 
   componentDidMount() {
     socket.on("getVotes", () => {
-      console.log("sending back our vote", this.state.selected);
       socket.emit("voteData", this.state.selected);
     });
   }

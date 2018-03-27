@@ -84,7 +84,6 @@ class RoomForm extends Component {
 const mapCreateDispatch = (dispatch, ownProps) => {
   return {
     handleSubmit(evt) {
-      console.log("num players", evt.target.numPlayers.value);
       evt.preventDefault();
       const roomName = evt.target.roomName.value;
       const password = evt.target.password.value;

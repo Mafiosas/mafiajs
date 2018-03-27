@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { Player, Game } = require("../db/models");
 const OpenTok = require("opentok");
+const { opentokApiKey, opentokSecret } = require("../../secrets");
 
 module.exports = router;
 
@@ -39,10 +40,7 @@ router.get("/:gameId", (req, res, next) => {
 router.post("/", (req, res, next) => {
   Game.findById(req.body.gameId) //make sure to include gameId in the req.body!
     .then(game => {
-      let opentok = new OpenTok(
-        "46085992",
-        "06b37a1f205fa56ddf7231f07889c585cbc1abb2"
-      );
+      let opentok = new OpenTok(opentokApiKey, opentokSecret);
       let token = opentok.generateToken(game.sessionId);
       req.body.token = token;
       return Player.create(req.body);
