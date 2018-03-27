@@ -147,7 +147,6 @@ class GameRoom extends Component {
     socket.removeListener("gameOver");
   }
   getRoles() {
-    // this.props.loadData();
     this.props.loadMe();
   }
 
@@ -161,15 +160,12 @@ class GameRoom extends Component {
       let died = this.props.players.find(player => {
         return +payload.killed === player.id;
       });
+      let num = this.state.died.id % this.props.deaths.length;
       this.setState({ died });
       this.props.removePlayerFromStore(+payload.killed);
     }
 
     if (+payload.killed === this.props.user.id) {
-      // let died = this.props.players.find(player => {
-      //   return +payload.killed === player.id;
-      // });
-      let num = this.state.died.id % this.props.deaths.length;
       let death = this.props.deaths[num].storyForKilled;
       this.props.updateUser({
         role: "Dead",
@@ -183,11 +179,6 @@ class GameRoom extends Component {
     }
 
     if (payload.killed && +payload.killed !== this.props.user.id) {
-      // let died = this.props.players.find(player => {
-      //   return +payload.killed === player.id;
-      // });
-
-      let num = this.state.died.id % this.props.deaths.length;
       let death = this.props.deaths[num].storyForAll;
       this.setState({
         resultMessage: ` The Mafia struck again in the night! ${
