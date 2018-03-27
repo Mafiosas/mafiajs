@@ -99,7 +99,6 @@ class GameRoom extends Component {
     this.props.loadData();
     this.props.loadFacts();
     this.props.loadDeaths();
-
     socket.on("getRoles", this.getRoles);
     socket.on("dark", this.dark);
     socket.on("daytime", payload => {
@@ -306,13 +305,10 @@ class GameRoom extends Component {
       error,
       connection,
       publishVideo,
-      role,
       time,
       resultMessage,
       winner
     } = this.state;
-
-    // const newVotes = votes;
 
     const index = Math.floor(Math.random() * Math.floor(facts.length - 1));
 
@@ -516,7 +512,12 @@ class GameRoom extends Component {
                   eventHandlers={this.sessionEventHandlers}
                 >
                   <OTPublisher
-                    properties={{ publishVideo, width: 150, height: 150 }}
+                    properties={{
+                      publishVideo,
+                      width: 150,
+                      height: 150,
+                      name: user.name
+                    }}
                     onPublish={this.onPublish}
                     onError={this.onPublishError}
                     eventHandlers={this.publisherEventHandlers}
