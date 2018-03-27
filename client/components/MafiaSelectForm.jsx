@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import socket from "../socket";
+import PropTypes from "prop-types";
 
 export default class MafiaSelectForm extends Component {
   constructor(props) {
@@ -50,3 +51,8 @@ export default class MafiaSelectForm extends Component {
     );
   }
 }
+
+/* PROP TYPES */
+MafiaSelectForm.propTypes = {
+  players: PropTypes.array
+};

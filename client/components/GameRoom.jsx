@@ -17,7 +17,6 @@ import {
   joinExistingGame,
   getMe,
   getOnlyMe,
-  getPlayersInGame,
   fetchFacts,
   fetchDeaths,
   addVote,
@@ -624,6 +623,8 @@ export default withRouter(connect(mapState, mapDispatch)(GameRoom));
 GameRoom.propTypes = {
   user: PropTypes.object,
   game: PropTypes.object,
-  fetchGame: PropTypes.func,
-  getUser: PropTypes.func
+  players: PropTypes.array,
+  deaths: PropTypes.array,
+  facts: PropTypes.array,
+  votes: PropTypes.object
 };

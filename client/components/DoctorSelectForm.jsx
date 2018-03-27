@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import socket from "../socket";
+import PropTypes from "prop-types";
 
 export default class DoctorSelectForm extends Component {
   constructor(props) {
@@ -26,7 +27,7 @@ export default class DoctorSelectForm extends Component {
   }
 
   render() {
-    const { darkOver, players } = this.props;
+    const { players } = this.props;
     return (
       <div>
         <form>
@@ -50,3 +51,8 @@ export default class DoctorSelectForm extends Component {
     );
   }
 }
+
+/* PROP TYPES */
+DoctorSelectForm.propTypes = {
+  players: PropTypes.array
+};
