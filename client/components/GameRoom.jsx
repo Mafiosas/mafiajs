@@ -16,6 +16,7 @@ import {
   user,
   joinExistingGame,
   getMe,
+  getOnlyMe,
   getPlayersInGame,
   fetchFacts,
   fetchDeaths,
@@ -37,7 +38,8 @@ class GameRoom extends Component {
       resultMessage: "",
       detective: "",
       winner: "",
-      timerToggle: 0
+      timerToggle: 0,
+      died: {}
     };
 
     this.gameStart = this.gameStart.bind(this);
@@ -99,13 +101,14 @@ class GameRoom extends Component {
     socket.on("getRoles", this.getRoles);
     socket.on("dark", this.dark);
     socket.on("daytime", payload => {
-      this.props.loadData();
+      // this.props.loadData();
+      this.props.loadMe();
       this.daytime(payload);
     });
     socket.on("role", payload => this.assignRole(payload));
     socket.on("DetectiveChoice", choice => {
       const answer = choice ? "right" : "wrong";
-      this.detectiveAnswer(choice);
+      this.detectiveAnswer(answer);
     });
     socket.on("myVote", dataVal => {
       this.props.releaseVote(dataVal);
@@ -144,7 +147,7 @@ class GameRoom extends Component {
     socket.removeListener("gameOver");
   }
   getRoles() {
-    this.props.loadData();
+    this.props.loadMe();
   }
 
   detectiveAnswer(choice) {
@@ -152,14 +155,17 @@ class GameRoom extends Component {
   }
 
   daytime(payload) {
-    this.setState({ time: "Day" });
-    this.setState({ detective: "" });
-
-    if (+payload.killed === this.props.user.id) {
+    this.setState({ time: "Day", detective: "" });
+    if (payload.killed) {
       let died = this.props.players.find(player => {
         return +payload.killed === player.id;
       });
-      let num = died.id % this.props.deaths.length;
+      let num = this.state.died.id % this.props.deaths.length;
+      this.setState({ died });
+      this.props.removePlayerFromStore(+payload.killed);
+    }
+
+    if (+payload.killed === this.props.user.id) {
       let death = this.props.deaths[num].storyForKilled;
       this.props.updateUser({
         role: "Dead",
@@ -173,16 +179,10 @@ class GameRoom extends Component {
     }
 
     if (payload.killed && +payload.killed !== this.props.user.id) {
-      let died = this.props.players.find(player => {
-        return +payload.killed === player.id;
-      });
-
-      let num = died.id % this.props.deaths.length;
       let death = this.props.deaths[num].storyForAll;
-
       this.setState({
         resultMessage: ` The Mafia struck again in the night! ${
-          died.name
+          this.state.died.name
         } ${death}`
       });
     }
@@ -250,7 +250,8 @@ class GameRoom extends Component {
   }
 
   giveVotesData(name, wasMafia) {
-    this.props.removePlayerFromStore(name);
+    const player = this.props.players.find(el => el.name === name);
+    this.props.removePlayerFromStore(player.id);
     this.setState({ time: "day2", timerToggle: 30 });
     if (this.props.user.name === name && !wasMafia) {
       this.setState({
@@ -587,6 +588,10 @@ const mapDispatch = (dispatch, ownProps) => {
 
     loadData() {
       dispatch(getMe(+ownProps.match.params.gameId));
+    },
+
+    loadMe() {
+      dispatch(getOnlyMe());
     },
 
     loadDeaths() {
