@@ -27,7 +27,7 @@ export const getMe = gameId => {
   };
 };
 
-export const getOnlyMe = gameId => {
+export const getOnlyMe = () => {
   return dispatch => {
     axios
       .get("/api/players/me")

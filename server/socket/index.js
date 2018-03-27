@@ -77,11 +77,6 @@ module.exports = io => {
       if (guess) {
         Player.findById(guess)
           .then(foundPlayer => {
-            console.log("detective choice socket.id", socket.id);
-            console.log(
-              "detective choice foundPlayer is mafia?",
-              foundPlayer.isMafia()
-            );
             io.to(socket.id).emit("DetectiveChoice", foundPlayer.isMafia());
           })
           .catch(err => console.error(err));
