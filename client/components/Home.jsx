@@ -46,11 +46,11 @@ class Home extends Component {
           <div className="col s2" id="sidebar">
             {games.length ? (
               <div>
-                <h5 id="roomTitle">Existing Rooms:</h5>
+                <div id="roomTitle">Existing Rooms:</div>
                 {games.map(game => {
                   return (
                     <div className="rooms" key={game.id}>
-                      <h3>{game.roomName}</h3>
+                      <div className="roomName">{game.roomName}</div>
                       <form onSubmit={event => handleSubmit(event, game.id)}>
                         <label id="front-page">Enter your first name:</label>
                         <input
@@ -137,7 +137,8 @@ class Home extends Component {
                   the group. The computer will then prompt everyone to vote for
                   who they think is the Mafia. Once all votes are in, you will
                   find out if you were correct or not and the person who
-                  received the most votes will be out of the game. <br />
+                  received the most votes will be out of the game. In the event
+                  of a tie, the all-knowing computer will break the tie. <br />
                   <br />The game ends when there are no Mafia left (Villagers
                   win) or when the mafia have killed off all other players
                   (Mafia win).
