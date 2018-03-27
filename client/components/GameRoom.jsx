@@ -105,7 +105,11 @@ class GameRoom extends Component {
     socket.on("role", payload => this.assignRole(payload));
     socket.on("DetectiveChoice", choice => {
       const answer = choice ? "right" : "wrong";
-      this.detectiveAnswer(choice);
+      console.log(
+        "did we get to detective choice on the front? answer = ",
+        answer
+      );
+      this.detectiveAnswer(answer);
     });
     socket.on("myVote", dataVal => {
       this.props.releaseVote(dataVal);
