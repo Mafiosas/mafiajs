@@ -408,7 +408,7 @@ class GameRoom extends Component {
                   {user.role &&
                     time === "Night" &&
                     user.role !== "Dead" && (
-                      <h2 id="role">You're a {user.role}</h2>
+                      <h2 id="role">You're {user.role}</h2>
                     )}
                   {user.role &&
                     time === "Night" &&
@@ -478,7 +478,10 @@ class GameRoom extends Component {
                       <div>
                         <h5>{messageToMafia}</h5>
                         <br />
-                        <h4>Lead Mafia cast your decided vote below</h4>
+                        <h4>
+                          Lead Mafia, cast your decided vote below...select from
+                          the dropdown before time runs out!
+                        </h4>
                         <MafiaSelectForm
                           players={this.props.players}
                           darkOverMafia={this.darkOverMafia}
