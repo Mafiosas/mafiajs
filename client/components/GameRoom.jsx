@@ -504,10 +504,10 @@ class GameRoom extends Component {
                       <div>
                         <h5>{messageToMafia}</h5>
                         <br />
-                        <h4>
+                        <h6>
                           Lead Mafia, cast your decided vote below...select from
                           the dropdown before time runs out!
-                        </h4>
+                        </h6>
                         <MafiaSelectForm
                           players={this.props.players}
                           darkOverMafia={this.darkOverMafia}
