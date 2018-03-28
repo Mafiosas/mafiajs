@@ -65,3 +65,9 @@ label {
 select {
   color: black;
 }
+
+#owl {
+  height: 14%;
+  width: 14%;
+  border-radius: 50%;
+}

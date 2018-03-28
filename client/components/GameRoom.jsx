@@ -7,9 +7,10 @@ import { OTSession, OTPublisher, OTStreams, OTSubscriber } from "opentok-react";
 import MafiaSelectForm from "./MafiaSelectForm.jsx";
 import DetectiveSelectForm from "./DetectiveSelectForm.jsx";
 import DoctorSelectForm from "./DoctorSelectForm.jsx";
-import DarkCiv from "./DarkCiv.jsx";
 import DayTimeForm from "./DayTimeForm.jsx";
+import NightSound from "./sound.jsx";
 import Timer from "./Timer.jsx";
+import Sound from "react-sound";
 
 import {
   fetchGame,
@@ -40,7 +41,9 @@ class GameRoom extends Component {
       resultMessage: "",
       detective: "",
       winner: "",
-      timerToggle: 0
+      timerToggle: 0,
+      playStatusNight: "STOPPED",
+      playStatusDay: "STOPPED"
     };
 
     this.gameStart = this.gameStart.bind(this);
@@ -161,7 +164,11 @@ class GameRoom extends Component {
   }
 
   daytime(payload) {
-    this.setState({ time: "Day" });
+    this.setState({
+      time: "Day",
+      playStatusDay: "PLAYING",
+      playStatusNight: "STOPPED"
+    });
     this.setState({ detective: "" });
 
     if (+payload.killed === this.props.user.id) {
@@ -224,7 +231,12 @@ class GameRoom extends Component {
   }
 
   dark() {
-    this.setState({ time: "Night", timerToggle: 30 });
+    this.setState({
+      time: "Night",
+      timerToggle: 30,
+      playStatusNight: "PLAYING",
+      playStatusDay: "STOPPED"
+    });
   }
 
   darkOverMafia(killedId) {
@@ -329,7 +341,9 @@ class GameRoom extends Component {
       publishVideo,
       time,
       resultMessage,
-      winner
+      winner,
+      playStatusNight,
+      playStatusDay
     } = this.state;
 
     const index = Math.floor(Math.random() * Math.floor(facts.length - 1));
@@ -338,243 +352,249 @@ class GameRoom extends Component {
       "Mafia, please make yourselves known to each other! You can see and hear everyone, they cannot see you. Discuss your plans freely...";
 
     return (
-      <div className="container">
-        {!winner ? (
-          <div>
-            <div id="top-row" className="row">
-              <div className="col s3">
-                {time &&
-                  time !== "day2" && (
-                    <div>
-                      <h5>Time:</h5>
-                      <h6>{time}</h6>
-                    </div>
-                  )}
+      <div>
+        <img id="owl" src="/wideMoon.gif" />
 
-                {time &&
-                  time === "day2" && (
+        <div className="container">
+          {!winner ? (
+            <div>
+              <div id="top-row" className="row">
+                <div className="col s3">
+                  {time &&
+                    time !== "day2" && (
+                      <div>
+                        <h5>Time:</h5>
+                        <h6>{time}</h6>
+                      </div>
+                    )}
+
+                  {time &&
+                    time === "day2" && (
+                      <div>
+                        <h4>Time:</h4>
+                        <h6>Day</h6>
+                      </div>
+                    )}
+                  <br />
+                  {time === "day2" && (
                     <div>
-                      <h4>Time:</h4>
-                      <h6>Day</h6>
+                      <h5>Countdown: </h5>
+                      <Timer timer={this.state.timerToggle} />
                     </div>
                   )}
+                  {time === "Night" && (
+                    <div>
+                      <h5>Countdown: </h5>
+                      <Timer timer={this.state.timerToggle} />
+                    </div>
+                  )}
+                </div>
                 <br />
-                {time === "day2" && (
-                  <div>
-                    <h5>Countdown: </h5>
-                    <Timer timer={this.state.timerToggle} />
-                  </div>
-                )}
-                {time === "Night" && (
-                  <div>
-                    <h5>Countdown: </h5>
-                    <Timer timer={this.state.timerToggle} />
-                  </div>
-                )}
+                <div className="col s9">
+                  {!user.role &&
+                    user.creator &&
+                    game.numPlayers === players.length && (
+                      <button
+                        onClick={this.gameStart}
+                        className="waves-effect waves-light btn"
+                      >
+                        Ready? Click here to begin your game of MAFIA
+                      </button>
+                    )}
+                  {time === "Day" && <h5>{resultMessage}</h5>}
+                  {time === "day2" && <h5>{resultMessage}</h5>}
+
+                  {user.role &&
+                    time === "Night" &&
+                    user.role !== "Dead" && (
+                      <h2 id="role">You're a {user.role}</h2>
+                    )}
+                  {user.role &&
+                    time === "Night" &&
+                    user.role === "Dead" && (
+                      <h3>Boo..you're out of the game</h3>
+                    )}
+                  {time === "Night" &&
+                    user.role === "Detective" &&
+                    detective && <h3>Detective, you were {detective}</h3>}
+                </div>
               </div>
-              <br />
-              <div className="col s9">
-                {!user.role &&
-                  user.creator &&
-                  game.numPlayers === players.length && (
-                    <button
-                      onClick={this.gameStart}
-                      className="waves-effect waves-light btn"
-                    >
-                      Ready? Click here to begin your game of MAFIA
-                    </button>
-                  )}
-                {time === "Day" && <h5>{resultMessage}</h5>}
-                {time === "day2" && <h5>{resultMessage}</h5>}
 
-                {user.role &&
-                  time === "Night" &&
-                  user.role !== "Dead" && (
-                    <h2 id="role">You're a {user.role}</h2>
-                  )}
-                {user.role &&
-                  time === "Night" &&
-                  user.role === "Dead" && <h3>Boo..you're out of the game</h3>}
-                {time === "Night" &&
-                  user.role === "Detective" &&
-                  detective && <h3>Detective, you were {detective}</h3>}
+              <div className="row">
+                <div className="col s3">
+                  <h5>Room Name: </h5>
+                  <h6>{game.roomName}</h6>
+                  <br />
+
+                  {players.length ? <h5>Alive Players:</h5> : null}
+                  {players.length ? (
+                    <ul>
+                      {players.map(player => (
+                        <li className="players" key={player.id}>
+                          {player.name}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </div>
+                <div className="col s9">
+                  {time === "Day" &&
+                    user.role !== "Dead" && (
+                      <div>
+                        <h3>Who do you think the Mafia is?</h3>
+
+                        <DayTimeForm
+                          user={user.id}
+                          players={this.props.players}
+                        />
+                      </div>
+                    )}
+                  {time === "Night" &&
+                    user.role === "Doctor" && (
+                      <div>
+                        <h4>Choose who to save</h4>
+                        <DoctorSelectForm
+                          players={this.props.players}
+                          darkOverDoctor={this.darkOverDoctor}
+                        />
+                      </div>
+                    )}
+                  {time === "Night" &&
+                    user.role === "Detective" &&
+                    !detective && (
+                      <div>
+                        <h4>Choose who you suspect is Mafia</h4>
+                        <DetectiveSelectForm
+                          user={user.id}
+                          players={this.props.players}
+                          darkOverDetective={this.darkOverDetective}
+                        />
+                      </div>
+                    )}
+
+                  {time === "Night" &&
+                    user.role === "Lead Mafia" && (
+                      <div>
+                        <h5>{messageToMafia}</h5>
+                        <br />
+                        <h4>Lead Mafia cast your decided vote below</h4>
+                        <MafiaSelectForm
+                          players={this.props.players}
+                          darkOverMafia={this.darkOverMafia}
+                        />
+                      </div>
+                    )}
+                  {time === "Night" &&
+                    user.role === "Mafia" && (
+                      <div>
+                        <h5>{messageToMafia}</h5>
+                      </div>
+                    )}
+
+                  {time === "Night" &&
+                    user.role === "Civilian" && (
+                      <div>
+                        <p>{facts[index].fact}</p>
+                      </div>
+                    )}
+                </div>
               </div>
-            </div>
 
-            <div className="row">
-              <div className="col s3">
-                <h5>Room Name: </h5>
-                <h6>{game.roomName}</h6>
-                <br />
-
-                {players.length ? <h5>Alive Players:</h5> : null}
-                {players.length ? (
-                  <ul>
-                    {players.map(player => (
-                      <li className="players" key={player.id}>
-                        {player.name}
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-              </div>
-              <div className="col s9">
-                {time === "Day" &&
-                  user.role !== "Dead" && (
+              <div className="row">
+                <div className="col s10 offset-s2">
+                  {Object.keys(votes).length == players.length &&
+                    user.id == +Object.keys(votes)[0] &&
+                    this.sendVotes(votes)}
+                  {console.log(Object.keys(votes))}
+                  {Object.keys(votes).length ? (
                     <div>
-                      <h3>Who do you think the Mafia is?</h3>
+                      <table className="votedTable">
+                        <thead>
+                          <tr>
+                            <th>Who Voted</th>
+                            <th>For Who?</th>
+                          </tr>
+                        </thead>
 
-                      <DayTimeForm
-                        user={user.id}
-                        players={this.props.players}
-                      />
+                        <tbody>
+                          {Object.keys(votes).map(key => {
+                            let whoVotedId = players.find(player => {
+                              return player.id === +key;
+                            });
+                            let whoForId = players.find(player => {
+                              return player.id === +votes[key];
+                            });
+                            return (
+                              <tr key={key}>
+                                <td>{whoVotedId.name}</td>
+                                <td>{whoForId.name}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
                     </div>
-                  )}
-                {time === "Night" &&
-                  user.role === "Doctor" && (
-                    <div>
-                      <h4>Choose who to save</h4>
-                      <DoctorSelectForm
-                        players={this.props.players}
-                        darkOverDoctor={this.darkOverDoctor}
-                      />
-                    </div>
-                  )}
-                {time === "Night" &&
-                  user.role === "Detective" &&
-                  !detective && (
-                    <div>
-                      <h4>Choose who you suspect is Mafia</h4>
-                      <DetectiveSelectForm
-                        user={user.id}
-                        players={this.props.players}
-                        darkOverDetective={this.darkOverDetective}
-                      />
-                    </div>
-                  )}
-
-                {time === "Night" &&
-                  user.role === "Lead Mafia" && (
-                    <div>
-                      <h5>{messageToMafia}</h5>
-                      <br />
-                      <h4>Lead Mafia cast your decided vote below</h4>
-                      <MafiaSelectForm
-                        players={this.props.players}
-                        darkOverMafia={this.darkOverMafia}
-                      />
-                    </div>
-                  )}
-                {time === "Night" &&
-                  user.role === "Mafia" && (
-                    <div>
-                      <h5>{messageToMafia}</h5>
-                    </div>
-                  )}
-
-                {time === "Night" &&
-                  user.role === "Civilian" && (
-                    <div>
-                      <p>{facts[index].fact}</p>
-                    </div>
-                  )}
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col s10 offset-s2">
-                {Object.keys(votes).length == players.length &&
-                  user.id == +Object.keys(votes)[0] &&
-                  this.sendVotes(votes)}
-                {console.log(Object.keys(votes))}
-                {Object.keys(votes).length ? (
-                  <div>
-                    <table className="votedTable">
-                      <thead>
-                        <tr>
-                          <th>Who Voted</th>
-                          <th>For Who?</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {Object.keys(votes).map(key => {
-                          let whoVotedId = players.find(player => {
-                            return player.id === +key;
-                          });
-                          let whoForId = players.find(player => {
-                            return player.id === +votes[key];
-                          });
-                          return (
-                            <tr key={key}>
-                              <td>{whoVotedId.name}</td>
-                              <td>{whoForId.name}</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : null}
+                  ) : null}
+                </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <h2>{winner} have won!</h2>
-        )}
+          ) : (
+            <h2>{winner} have won!</h2>
+          )}
 
-        <div className="row">
-          {game.id &&
-            user.id && (
-              <div className="col s8">
-                <OTSession
-                  apiKey={apiKey}
-                  sessionId={sessionId}
-                  token={token}
-                  onError={this.onSessionError}
-                  eventHandlers={this.sessionEventHandlers}
-                >
-                  <OTPublisher
-                    properties={{
-                      publishVideo,
-                      width: 150,
-                      height: 150,
-                      name: user.name
-                    }}
-                    onPublish={this.onPublish}
-                    onError={this.onPublishError}
-                    eventHandlers={this.publisherEventHandlers}
-                  />
-                  <OTStreams>
-                    <OTSubscriber
+          <div className="row">
+            {game.id &&
+              user.id && (
+                <div className="col s8">
+                  <OTSession
+                    apiKey={apiKey}
+                    sessionId={sessionId}
+                    token={token}
+                    onError={this.onSessionError}
+                    eventHandlers={this.sessionEventHandlers}
+                  >
+                    <OTPublisher
                       properties={{
-                        width: 200,
-                        height: 200,
-                        subscribeToAudio:
-                          time === "Night" &&
-                          user.role &&
-                          user.role !== "Mafia" &&
-                          user.role !== "Lead Mafia" &&
-                          user.role !== "Dead"
-                            ? false
-                            : true,
-                        subscribeToVideo:
-                          time === "Night" &&
-                          user.role &&
-                          user.role !== "Mafia" &&
-                          user.role !== "Lead Mafia" &&
-                          user.role !== "Dead"
-                            ? false
-                            : true
+                        publishVideo,
+                        width: 150,
+                        height: 150,
+                        name: user.name
                       }}
-                      onSubscribe={this.onSubscribe}
-                      onError={this.onSubscribeError}
-                      eventHandlers={this.subscriberEventHandlers}
+                      onPublish={this.onPublish}
+                      onError={this.onPublishError}
+                      eventHandlers={this.publisherEventHandlers}
                     />
-                  </OTStreams>
-                </OTSession>
-              </div>
-            )}
+                    <OTStreams>
+                      <OTSubscriber
+                        properties={{
+                          width: 200,
+                          height: 200,
+                          subscribeToAudio:
+                            time === "Night" &&
+                            user.role &&
+                            user.role !== "Mafia" &&
+                            user.role !== "Lead Mafia" &&
+                            user.role !== "Dead"
+                              ? false
+                              : true,
+                          subscribeToVideo:
+                            time === "Night" &&
+                            user.role &&
+                            user.role !== "Mafia" &&
+                            user.role !== "Lead Mafia" &&
+                            user.role !== "Dead"
+                              ? false
+                              : true
+                        }}
+                        onSubscribe={this.onSubscribe}
+                        onError={this.onSubscribeError}
+                        eventHandlers={this.subscriberEventHandlers}
+                      />
+                    </OTStreams>
+                  </OTSession>
+                </div>
+              )}
+          </div>
         </div>
       </div>
     );
