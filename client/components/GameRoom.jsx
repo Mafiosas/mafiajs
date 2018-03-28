@@ -39,8 +39,8 @@ class GameRoom extends Component {
       detective: "",
       winner: "",
       timerToggle: 0,
-      // playStatusNight: "STOPPED",
-      // playStatusDay: "STOPPED",
+      playStatusNight: "STOPPED",
+      playStatusDay: "STOPPED",
       died: {}
     };
 
@@ -135,7 +135,10 @@ class GameRoom extends Component {
       resultMessage: "",
       detective: "",
       winner: "",
-      timerToggle: 0
+      timerToggle: 0,
+      playStatusNight: "STOPPED",
+      playStatusDay: "STOPPED",
+      died: {}
     });
     socket.removeListener("getRoles");
     socket.removeListener("dark");
@@ -159,9 +162,9 @@ class GameRoom extends Component {
   daytime(payload) {
     this.setState({
       time: "Day",
-      detective: ""
-      // playStatusDay: "PLAYING",
-      // playStatusNight: "STOPPED"
+      detective: "",
+      playStatusDay: "PLAYING",
+      playStatusNight: "STOPPED"
     });
 
     if (payload.killed) {
@@ -224,9 +227,9 @@ class GameRoom extends Component {
   dark() {
     this.setState({
       time: "Night",
-      timerToggle: 30
-      // playStatusNight: "PLAYING",
-      // playStatusDay: "STOPPED"
+      timerToggle: 30,
+      playStatusNight: "PLAYING",
+      playStatusDay: "STOPPED"
     });
   }
 
@@ -345,7 +348,8 @@ class GameRoom extends Component {
 
     return (
       <div>
-        <img id="owl" src="/wideMoon.gif" />
+        <Sound url="owl.mp3" playStatus={playStatusNight} />
+        <Sound url="rooster.mp3" playStatus={playStatusDay} />
 
         <div className="container">
           {!winner ? (
@@ -382,6 +386,7 @@ class GameRoom extends Component {
                   )}
                 </div>
                 <br />
+                {time === "Night" && <img id="owl" src="/wideMoon.gif" />}
                 <div className="col s9">
                   {!user.role &&
                     user.creator &&
