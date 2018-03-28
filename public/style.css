@@ -8,6 +8,11 @@ body {
 #header {
   font-size: 20em;
   font-family: "Special Elite", cursive;
+  display: block;
+}
+
+#mobileHeader {
+  display: none;
 }
 
 #room-form {
@@ -93,9 +98,6 @@ select {
 }
 
 @media only screen and (min-width: 320px) and (max-width: 600px) {
-  .container {
-    width: 98%;
-  }
   .OT_widget-container {
     display: none;
   }
@@ -123,21 +125,17 @@ select {
     width: 100%;
     display: flex;
   }
-  .row .col.s3 > div > h6 {
-    width: 45%;
-    margin: 0.2em;
-    padding: 0px;
-    display: inline-block;
+  .row {
+    display: block;
   }
-  .row .col.s3 > div > h4 {
-    width: 45%;
+  .row .col.s3 {
+    display: block;
     margin: 0.2em;
     padding: 0px;
-    display: inline-block;
   }
   .countdown {
     width: 100%;
-    display: flex;
+    display: block;
   }
 
   .col.s9 > h3 {
@@ -172,7 +170,14 @@ select {
     width: 100%;
   }
   #header {
+    display: none;
+  }
+
+  #mobileHeader {
     font-size: 6em;
+    display: block;
+    font-family: "Special Elite", cursive;
+    text-align: center;
   }
   .center-align > h2 {
     font-size: 3em;
