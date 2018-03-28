@@ -8,7 +8,7 @@ import MafiaSelectForm from "./MafiaSelectForm.jsx";
 import DetectiveSelectForm from "./DetectiveSelectForm.jsx";
 import DoctorSelectForm from "./DoctorSelectForm.jsx";
 import DayTimeForm from "./DayTimeForm.jsx";
-import NightSound from "./sound.jsx";
+import sounds from "./sound.jsx";
 import Timer from "./Timer.jsx";
 import Sound from "react-sound";
 
@@ -39,12 +39,9 @@ class GameRoom extends Component {
       detective: "",
       winner: "",
       timerToggle: 0,
-<<<<<<< HEAD
-      playStatusNight: "STOPPED",
-      playStatusDay: "STOPPED"
-=======
+      // playStatusNight: "STOPPED",
+      // playStatusDay: "STOPPED",
       died: {}
->>>>>>> master
     };
 
     this.gameStart = this.gameStart.bind(this);
@@ -162,12 +159,10 @@ class GameRoom extends Component {
   daytime(payload) {
     this.setState({
       time: "Day",
-      detective: '',
-      playStatusDay: "PLAYING",
-      playStatusNight: "STOPPED"
-
+      detective: ""
+      // playStatusDay: "PLAYING",
+      // playStatusNight: "STOPPED"
     });
-
 
     if (payload.killed) {
       let died = this.props.players.find(player => {
@@ -229,9 +224,9 @@ class GameRoom extends Component {
   dark() {
     this.setState({
       time: "Night",
-      timerToggle: 30,
-      playStatusNight: "PLAYING",
-      playStatusDay: "STOPPED"
+      timerToggle: 30
+      // playStatusNight: "PLAYING",
+      // playStatusDay: "STOPPED"
     });
   }
 

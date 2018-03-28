@@ -1,7 +1,10 @@
 import React from "react";
+import Sound from "react-sound";
 
-const NightSound = () => {
-  return <div className="imageowl">owl</div>;
-};
+const sounds = () => {};
 
-export default NightSound;
+export default sounds;
+
+// <Sound url="rooster.mp3" playStatus={playSatusDay} />
+
+//   <Sound url="owl.mp3" playStatus={playStatusNight} />
