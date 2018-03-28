@@ -408,7 +408,7 @@ class GameRoom extends Component {
                   {user.role &&
                     time === "Night" &&
                     user.role !== "Dead" && (
-                      <h2 id="role">You're {user.role}</h2>
+                      <h2 id="role">You're the {user.role}</h2>
                     )}
                   {user.role &&
                     time === "Night" &&
