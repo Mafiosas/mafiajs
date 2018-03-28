@@ -57,6 +57,8 @@ class GameRoom extends Component {
     this.voteReset = this.voteReset.bind(this);
     this.gameOver = this.gameOver.bind(this);
     this.getRoles = this.getRoles.bind(this);
+    this.owl = this.owl.bind(this);
+    this.rooster = this.rooster.bind(this);
 
     this.sessionEventHandlers = {
       sessionConnected: () => {
@@ -124,6 +126,12 @@ class GameRoom extends Component {
     socket.on("gameOver", data => {
       this.gameOver(data);
     });
+    socket.on("owl", () => {
+      this.owl();
+    });
+    socket.on("rooster", () => {
+      this.rooster();
+    });
   }
 
   componentWillUnmount() {
@@ -150,6 +158,22 @@ class GameRoom extends Component {
     socket.removeListener("votesData");
     socket.removeListener("resetVotes");
     socket.removeListener("gameOver");
+    socket.removeListener("owl");
+    socket.removeListener("rooster");
+  }
+
+  owl() {
+    this.setState({ playStatusNight: "PLAYING" });
+    setTimeout(() => {
+      this.setState({ playStatusNight: "STOPPED" });
+    }, 2000);
+  }
+
+  rooster() {
+    this.setState({ playStatusDay: "PLAYING" });
+    setTimeout(() => {
+      this.setState({ playStatusDay: "STOPPED" });
+    }, 2000);
   }
   getRoles() {
     this.props.loadMe();
@@ -162,9 +186,7 @@ class GameRoom extends Component {
   daytime(payload) {
     this.setState({
       time: "Day",
-      detective: "",
-      playStatusDay: "PLAYING",
-      playStatusNight: "STOPPED"
+      detective: ""
     });
 
     let num;
@@ -236,9 +258,7 @@ class GameRoom extends Component {
   dark() {
     this.setState({
       time: "Night",
-      timerToggle: 30,
-      playStatusNight: "PLAYING",
-      playStatusDay: "STOPPED"
+      timerToggle: 30
     });
   }
 
@@ -357,8 +377,8 @@ class GameRoom extends Component {
 
     return (
       <div>
-        <Sound url="owl.mp3" playStatus={playStatusNight} />
-        <Sound url="rooster.mp3" playStatus={playStatusDay} />
+        <Sound url="/owl.mp3" loop={false} playStatus={playStatusNight} />
+        <Sound url="/rooster.mp3" loop={false} playStatus={playStatusDay} />
 
         <div className="container">
           {!winner ? (
