@@ -42,6 +42,7 @@ class Home extends Component {
           loop={true}
           playStatus={Sound.status.PLAYING}
         />
+
         <h1 id="mobileHeader">MAFIA</h1>
         <div className="row">
           <div className="col s2" id="sidebar">

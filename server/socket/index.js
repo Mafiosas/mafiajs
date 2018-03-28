@@ -31,6 +31,7 @@ module.exports = io => {
 
     function gameRun(gameId) {
       io.to(gameId).emit("dark");
+      io.to(gameId).emit("owl");
       setTimeout(() => {
         io.to(gameId).emit("darkOverForVillagers");
       }, 25000);
@@ -154,6 +155,7 @@ module.exports = io => {
               }).then(round => {
                 if (round) {
                   io.to(gameId).emit("daytime", person);
+                  io.to(gameId).emit("rooster");
                 }
               });
             }
