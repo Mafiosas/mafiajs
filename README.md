@@ -6,4 +6,4 @@ Built using Express and Sequelize for the backend and React/Redux for the fronte
 
 Checkout the deployed game at <https://mafiajs.herokuapp.com>
 
-![alt text](mafiajs/public/readme-demo.png)
+![](https://github.com/Mafiosas/mafiajs/blob/master/public/readme-demo.png)
