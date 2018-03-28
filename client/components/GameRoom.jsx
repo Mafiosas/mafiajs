@@ -209,6 +209,12 @@ class GameRoom extends Component {
         resultMessage: `Nobody died! ${saved.name} was saved by the Doctor`
       });
     }
+
+    if (!payload.killed & !payload.saved) {
+      this.setState({
+        resultMessage: `Nobody died! The Mafia need to get their act together because they ran out of time`
+      });
+    }
   }
 
   gameOver(data) {
