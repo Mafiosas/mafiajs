@@ -160,14 +160,12 @@ class GameRoom extends Component {
   }
 
   daytime(payload) {
-
     this.setState({
       time: "Day",
       detective: "",
       playStatusDay: "PLAYING",
       playStatusNight: "STOPPED"
     });
-
 
     let num;
 
@@ -352,7 +350,6 @@ class GameRoom extends Component {
       "Mafia, please make yourselves known to each other! You can see and hear everyone, they cannot see you. Discuss your plans freely...";
 
     return (
-
       <div>
         <Sound url="owl.mp3" playStatus={playStatusNight} />
         <Sound url="rooster.mp3" playStatus={playStatusDay} />
@@ -382,7 +379,6 @@ class GameRoom extends Component {
                     <div className="countdown">
                       <h5>Countdown: </h5>
                       <Timer timer={this.state.timerToggle} />
-
                     </div>
                   )}
                   {time === "Night" && (
@@ -412,7 +408,7 @@ class GameRoom extends Component {
                   {user.role &&
                     time === "Night" &&
                     user.role !== "Dead" && (
-                      <h2 id="role">You're a {user.role}</h2>
+                      <h2 id="role">You're {user.role}</h2>
                     )}
                   {user.role &&
                     time === "Night" &&
@@ -423,7 +419,6 @@ class GameRoom extends Component {
                     user.role === "Detective" &&
                     detective && <h3>Detective, you were {detective}</h3>}
                 </div>
-
               </div>
 
               <div className="row">
@@ -483,7 +478,10 @@ class GameRoom extends Component {
                       <div>
                         <h5>{messageToMafia}</h5>
                         <br />
-                        <h4>Lead Mafia cast your decided vote below</h4>
+                        <h4>
+                          Lead Mafia, cast your decided vote below...select from
+                          the dropdown before time runs out!
+                        </h4>
                         <MafiaSelectForm
                           players={this.props.players}
                           darkOverMafia={this.darkOverMafia}
