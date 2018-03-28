@@ -17,7 +17,7 @@ import {
   user,
   joinExistingGame,
   getMe,
-  getPlayersInGame,
+  getOnlyMe,
   fetchFacts,
   fetchDeaths,
   addVote,
@@ -25,9 +25,6 @@ import {
   updateUser,
   removePlayer
 } from "../store";
-
-const tokboxApiKey = "46085992";
-const tokboxSecret = "06b37a1f205fa56ddf7231f07889c585cbc1abb2";
 
 class GameRoom extends Component {
   constructor(props) {
@@ -42,8 +39,12 @@ class GameRoom extends Component {
       detective: "",
       winner: "",
       timerToggle: 0,
+<<<<<<< HEAD
       playStatusNight: "STOPPED",
       playStatusDay: "STOPPED"
+=======
+      died: {}
+>>>>>>> master
     };
 
     this.gameStart = this.gameStart.bind(this);
@@ -105,24 +106,19 @@ class GameRoom extends Component {
     socket.on("getRoles", this.getRoles);
     socket.on("dark", this.dark);
     socket.on("daytime", payload => {
-      this.props.loadData();
+      // this.props.loadData();
+      this.props.loadMe();
       this.daytime(payload);
     });
     socket.on("role", payload => this.assignRole(payload));
-    socket.on("DetectiveRight", () => {
-      this.detectiveAnswer("right");
-    });
-    socket.on("DetectiveWrong", () => {
-      this.detectiveAnswer("wrong");
+    socket.on("DetectiveChoice", choice => {
+      const answer = choice ? "right" : "wrong";
+      this.detectiveAnswer(answer);
     });
     socket.on("myVote", dataVal => {
       this.props.releaseVote(dataVal);
     });
     socket.on("votesData", (votedOut, wasMafia) => {
-      console.log(
-        "inside votesData socket on front end, person voted out:",
-        votedOut
-      );
       this.giveVotesData(votedOut, wasMafia);
     });
     socket.on("resetVotes", () => {
@@ -156,7 +152,7 @@ class GameRoom extends Component {
     socket.removeListener("gameOver");
   }
   getRoles() {
-    this.props.loadData();
+    this.props.loadMe();
   }
 
   detectiveAnswer(choice) {
@@ -166,16 +162,23 @@ class GameRoom extends Component {
   daytime(payload) {
     this.setState({
       time: "Day",
+      detective: '',
       playStatusDay: "PLAYING",
       playStatusNight: "STOPPED"
-    });
-    this.setState({ detective: "" });
 
-    if (+payload.killed === this.props.user.id) {
+    });
+
+
+    if (payload.killed) {
       let died = this.props.players.find(player => {
         return +payload.killed === player.id;
       });
-      let num = died.id % this.props.deaths.length;
+      let num = this.state.died.id % this.props.deaths.length;
+      this.setState({ died });
+      this.props.removePlayerFromStore(+payload.killed);
+    }
+
+    if (+payload.killed === this.props.user.id) {
       let death = this.props.deaths[num].storyForKilled;
       this.props.updateUser({
         role: "Dead",
@@ -189,16 +192,10 @@ class GameRoom extends Component {
     }
 
     if (payload.killed && +payload.killed !== this.props.user.id) {
-      let died = this.props.players.find(player => {
-        return +payload.killed === player.id;
-      });
-
-      let num = died.id % this.props.deaths.length;
       let death = this.props.deaths[num].storyForAll;
-
       this.setState({
         resultMessage: ` The Mafia struck again in the night! ${
-          died.name
+          this.state.died.name
         } ${death}`
       });
     }
@@ -227,7 +224,6 @@ class GameRoom extends Component {
 
   gameStart() {
     socket.emit("gameStart", this.props.game.id);
-    //only the creator will have access to this start button
   }
 
   dark() {
@@ -272,7 +268,8 @@ class GameRoom extends Component {
   }
 
   giveVotesData(name, wasMafia) {
-    this.props.removePlayerFromStore(name);
+    const player = this.props.players.find(el => el.name === name);
+    this.props.removePlayerFromStore(player.id);
     this.setState({ time: "day2", timerToggle: 30 });
     if (this.props.user.name === name && !wasMafia) {
       this.setState({
@@ -620,6 +617,10 @@ const mapDispatch = (dispatch, ownProps) => {
       dispatch(getMe(+ownProps.match.params.gameId));
     },
 
+    loadMe() {
+      dispatch(getOnlyMe());
+    },
+
     loadDeaths() {
       dispatch(fetchDeaths());
     },
@@ -650,6 +651,8 @@ export default withRouter(connect(mapState, mapDispatch)(GameRoom));
 GameRoom.propTypes = {
   user: PropTypes.object,
   game: PropTypes.object,
-  fetchGame: PropTypes.func,
-  getUser: PropTypes.func
+  players: PropTypes.array,
+  deaths: PropTypes.array,
+  facts: PropTypes.array,
+  votes: PropTypes.object
 };

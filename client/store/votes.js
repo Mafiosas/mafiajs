@@ -28,8 +28,3 @@ export default function(state = defaultVotes, action) {
       return state;
   }
 }
-
-// {
-//   whoVoted: 3,
-//   whoFor: 2
-// }

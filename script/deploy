@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 # Hello, welcome to a bash script.
 
@@ -33,7 +34,7 @@ trap cleanup_at_exit EXIT
 git checkout -b deploy
 
 # webpack will run in "production mode"
-npm run build-for-deploy
+webpack -p
 
 # "force" add the otherwise gitignored build files
 git add -f public/bundle.js public/bundle.js.map

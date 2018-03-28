@@ -26,8 +26,8 @@ router.get("/:gameId", (req, res, next) => {
 
 router.post("/new", (req, res, next) => {
   let opentok = new OpenTok(
-    "46085992",
-    "06b37a1f205fa56ddf7231f07889c585cbc1abb2"
+    process.env.opentokApiKey,
+    process.env.opentokSecret
   );
 
   opentok.createSession({ mediaMode: "routed" }, function(err, session) {
@@ -58,9 +58,3 @@ router.post("/new", (req, res, next) => {
       .catch(next);
   });
 });
-
-// router.post("/newRound/:gameId", (req, res, next) => {
-//   Round.create()
-//     .then(round => round.setGame(req.params.gameId))
-//     .then(currentRound => res.json(currentRound));
-// });

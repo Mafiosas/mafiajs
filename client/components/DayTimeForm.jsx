@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import socket from "../socket";
+import PropTypes from "prop-types";
 
 export default class DayTimeForm extends Component {
   constructor(props) {
@@ -13,7 +14,6 @@ export default class DayTimeForm extends Component {
 
   componentDidMount() {
     socket.on("getVotes", () => {
-      console.log("sending back our vote", this.state.selected);
       socket.emit("voteData", this.state.selected);
     });
   }
@@ -63,3 +63,8 @@ export default class DayTimeForm extends Component {
     );
   }
 }
+
+/* PROP TYPES */
+DayTimeForm.propTypes = {
+  players: PropTypes.array
+};

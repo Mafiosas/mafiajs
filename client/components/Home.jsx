@@ -45,40 +45,45 @@ class Home extends Component {
         <div className="row">
           <div className="col s2" id="sidebar">
             {games.length ? (
-              games.map(game => {
-                return (
-                  <div className="rooms" key={game.id}>
-                    <h3>{game.roomName}</h3>
-                    <form onSubmit={event => handleSubmit(event, game.id)}>
-                      <input
-                        type="text"
-                        onChange={this.handleNameChange}
-                        name="name"
-                        placeholder="enter your first name"
-                      />
-                      {game.password && (
+              <div>
+                <div id="roomTitle">Existing Rooms:</div>
+                {games.map(game => {
+                  return (
+                    <div className="rooms" key={game.id}>
+                      <div className="roomName">{game.roomName}</div>
+                      <form onSubmit={event => handleSubmit(event, game.id)}>
+                        <label id="front-page">Enter your first name:</label>
                         <input
                           type="text"
-                          onChange={this.handleChange}
-                          name="password"
-                          placeholder="enter password"
+                          onChange={this.handleNameChange}
+                          name="name"
                         />
-                      )}
-                      <button
-                        className="waves-effect waves-light btn"
-                        disabled={
-                          this.state.password !== game.password ||
-                          !this.state.name
-                        }
-                      >
-                        Join Game
-                      </button>
-                    </form>
-                  </div>
-                );
-              })
+                        {game.password && (
+                          <div>
+                            <label id="front-page">Enter the password:</label>
+                            <input
+                              type="text"
+                              onChange={this.handleChange}
+                              name="password"
+                            />
+                          </div>
+                        )}
+                        <button
+                          className="waves-effect waves-light btn"
+                          disabled={
+                            this.state.password !== game.password ||
+                            !this.state.name
+                          }
+                        >
+                          Join Game
+                        </button>
+                      </form>
+                    </div>
+                  );
+                })}{" "}
+              </div>
             ) : (
-              <div> No active games </div>
+              <div id="roomTitle"> No active games </div>
             )}
           </div>
 
@@ -132,7 +137,8 @@ class Home extends Component {
                   the group. The computer will then prompt everyone to vote for
                   who they think is the Mafia. Once all votes are in, you will
                   find out if you were correct or not and the person who
-                  received the most votes will be out of the game. <br />
+                  received the most votes will be out of the game. In the event
+                  of a tie, the all-knowing computer will break the tie. <br />
                   <br />The game ends when there are no Mafia left (Villagers
                   win) or when the mafia have killed off all other players
                   (Mafia win).
@@ -146,11 +152,7 @@ class Home extends Component {
   }
 }
 
-const mapState = (state, ownProps) => {
-  return {
-    games: state.games
-  };
-};
+const mapState = ({ games }) => ({ games });
 
 const mapDispatch = (dispatch, ownProps) => {
   return {
@@ -166,3 +168,10 @@ const mapDispatch = (dispatch, ownProps) => {
 };
 
 export default connect(mapState, mapDispatch)(Home);
+
+/* PROP TYPES */
+Home.propTypes = {
+  games: PropTypes.array,
+  getGames: PropTypes.func,
+  handleSubmit: PropTypes.func
+};

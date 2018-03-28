@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import socket from "../socket";
+import PropTypes from "prop-types";
 
 export default class DoctorSelectForm extends Component {
   constructor(props) {
@@ -11,10 +12,7 @@ export default class DoctorSelectForm extends Component {
   }
 
   componentDidMount() {
-    console.log("doctor component has mounted");
     socket.on("darkOverForVillagers", () => {
-      console.log("dark is over for doctor");
-
       this.props.darkOverDoctor(this.state.selected);
       this.setState({ selected: "" });
     });
@@ -29,10 +27,7 @@ export default class DoctorSelectForm extends Component {
   }
 
   render() {
-    const { darkOver, players } = this.props;
-    console.log("players inside form", players);
-    console.log("selected", this.state.selected);
-
+    const { players } = this.props;
     return (
       <div>
         <form>
@@ -56,3 +51,8 @@ export default class DoctorSelectForm extends Component {
     );
   }
 }
+
+/* PROP TYPES */
+DoctorSelectForm.propTypes = {
+  players: PropTypes.array
+};

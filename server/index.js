@@ -13,6 +13,8 @@ const routes = require("./api");
 const OpenTok = require("opentok");
 const Game = require("./db/models/game");
 
+if (process.env.NODE_ENV !== "production") require("../secrets");
+
 // logging middleware
 const createApp = () => {
   app.use(morgan("dev"));
@@ -29,11 +31,6 @@ const createApp = () => {
       saveUninitialized: false
     })
   );
-
-  // app.use(function(req, res, next) {
-  //   console.log("SESSION: ", req.session);
-  //   next();
-  // });
 
   // static file-serving middleware
   app.use(express.static(path.join(__dirname, "..", "public")));
@@ -89,7 +86,3 @@ if (require.main === module) {
 }
 
 module.exports = { app, startListening };
-// //to disconnect participant from OpenTok session
-// opentok.forceDisconnect(sessionId, connectionId, function(error) {
-//   if (error) return console.log("error:", error);
-// });

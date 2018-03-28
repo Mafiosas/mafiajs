@@ -12,10 +12,8 @@ const defaultPlayers = [];
 const getPlayers = players => ({ type: GET_PLAYERS, players });
 export const addPlayer = player => ({ type: ADD_PLAYER, player });
 export const removePlayer = player => ({ type: REMOVE_PLAYER, player });
-/* THUNK CREATORS */
-//export const removePlayer
-//write a function that removes a player from the state after they die
 
+/* THUNK CREATORS */
 export const getPlayersInGame = id => dispatch =>
   axios
     .get(`/api/players/${id}`) //queries the database for a list of the players
@@ -30,7 +28,7 @@ export default function(state = defaultPlayers, action) {
     case ADD_PLAYER:
       return [...state, action.player];
     case REMOVE_PLAYER:
-      return state.filter(el => el.name !== action.player);
+      return state.filter(el => el.id !== action.player);
     default:
       return state;
   }

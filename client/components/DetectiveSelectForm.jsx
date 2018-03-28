@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import socket from "../socket";
+import PropTypes from "prop-types";
 
 export default class DetectiveSelectForm extends Component {
   constructor(props) {
@@ -9,9 +10,7 @@ export default class DetectiveSelectForm extends Component {
   }
 
   componentDidMount() {
-    console.log("detective component has mounted");
     socket.on("darkOverForVillagers", () => {
-      console.log("dark is over for detective");
       this.props.darkOverDetective(this.state.selected);
       this.setState({ selected: "" });
     });
@@ -52,3 +51,8 @@ export default class DetectiveSelectForm extends Component {
     );
   }
 }
+
+/* PROP TYPES */
+DetectiveSelectForm.propTypes = {
+  players: PropTypes.array
+};

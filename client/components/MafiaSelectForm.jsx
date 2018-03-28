@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import socket from "../socket";
+import PropTypes from "prop-types";
 
 export default class MafiaSelectForm extends Component {
   constructor(props) {
@@ -9,9 +10,7 @@ export default class MafiaSelectForm extends Component {
   }
 
   componentDidMount() {
-    console.log("mafia component has mounted");
     socket.on("darkOverForMafia", () => {
-      console.log("dark is over for mafia");
       this.props.darkOverMafia(this.state.selected);
       this.setState({ selected: "" });
     });
@@ -29,9 +28,6 @@ export default class MafiaSelectForm extends Component {
 
   render() {
     const { players } = this.props;
-    console.log("players inside form", players);
-    console.log("selected", this.state.selected);
-
     return (
       <div>
         <form>
@@ -56,7 +52,7 @@ export default class MafiaSelectForm extends Component {
   }
 }
 
-// const mapState = ({ players }) => ({ players });
-// const mapDispatch = { getPlayers };
-
-// export default connect(mapState, mapDispatch)(SelectPlayerForm);
+/* PROP TYPES */
+MafiaSelectForm.propTypes = {
+  players: PropTypes.array
+};

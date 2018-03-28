@@ -31,13 +31,10 @@ module.exports = io => {
 
     function gameRun(gameId) {
       io.to(gameId).emit("dark");
-      console.log("we are running game run");
       setTimeout(() => {
-        console.log("dark timer over for villagers"); //this works!
         io.to(gameId).emit("darkOverForVillagers");
       }, 25000);
       setTimeout(() => {
-        console.log("dark timer over for mafia"); //this works!
         io.to(gameId).emit("darkOverForMafia");
       }, 30000);
     }
@@ -77,15 +74,10 @@ module.exports = io => {
 
     socket.on("villagerChoice", data => {
       const { gameId, saved, guess } = data;
-      console.log("who got saved on the back end socket?", data);
       if (guess) {
         Player.findById(guess)
           .then(foundPlayer => {
-            if (foundPlayer.isMafia()) {
-              io.to(socket.id).emit("DetectiveRight");
-            } else {
-              io.to(socket.id).emit("DetectiveWrong");
-            }
+            io.to(socket.id).emit("DetectiveChoice", foundPlayer.isMafia());
           })
           .catch(err => console.error(err));
       } else {
@@ -106,7 +98,7 @@ module.exports = io => {
 
     socket.on("darkData", darkData => {
       let { killed, gameId } = darkData;
-      console.log("who got killed on the back end socket?", darkData);
+
       Round.findOne({
         where: {
           gameId: gameId,
@@ -156,7 +148,6 @@ module.exports = io => {
             if (updatedGame.winner) {
               io.to(gameId).emit("gameOver", updatedGame.winner);
             } else {
-              console.log("creating a round right now!");
               return Round.create({
                 gameId: gameId,
                 isCurrent: true
@@ -176,7 +167,6 @@ module.exports = io => {
     });
 
     socket.on("daytimeVotes", votes => {
-      console.log("here is day time votes");
       let promsArray = [];
       io.to(game).emit("resetVotes");
       let countedVotes = {};
@@ -193,7 +183,7 @@ module.exports = io => {
       Player.findById(+votedOutId)
         .then(foundPlayer => {
           if (foundPlayer.role === "Lead Mafia") {
-            promsArray.push(Player.isLeadMafiaDead(foundPlayer.gameId));
+            promsArray.push(Player.changeLeadMafia(foundPlayer.gameId));
           }
           if (
             foundPlayer.role === "Mafia" ||
@@ -210,7 +200,6 @@ module.exports = io => {
             })
             .then(foundGame => {
               if (foundGame.winner) {
-                console.log("game ended for real");
                 io.to(foundGame.id).emit("gameOver", foundGame.winner);
               } else {
                 io
@@ -220,13 +209,10 @@ module.exports = io => {
                 setTimeout(() => {
                   gameRun(foundGame.id);
                 }, 30000);
-                console.log("here we go again");
               }
             });
         })
         .catch(err => console.error(err));
     });
-
-    //we need to have an on 'votesarein' that changes the front end rendering and lets everyone know who died and if they were mafia, gives a few seconds,then goes back to dark
   });
 };

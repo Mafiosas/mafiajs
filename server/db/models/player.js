@@ -32,17 +32,8 @@ Player.prototype.isMafia = function() {
   return this.role === "Mafia" || this.role === "Lead Mafia";
 };
 
-//change this to changeLeadMafia
-Player.isLeadMafiaDead = function(gameId) {
+Player.changeLeadMafia = function(gameId) {
   console.log("welcome to my database", gameId);
-  // Player.findAll({
-  //   where: {
-  //     role: "Lead Mafia",
-  //     gameId: game
-  //   }
-  // })
-  //   .then(leadMaf => {
-  // if (!leadMaf.length) {
   return Player.findAll({
     where: {
       role: "Mafia",
@@ -50,9 +41,7 @@ Player.isLeadMafiaDead = function(gameId) {
     }
   })
     .then(mafias => {
-      console.log("is anyone home in this if statements??", mafias.length);
       if (mafias.length) {
-        console.log("we have arrived for drinks", mafias[0]);
         return mafias[0].update({
           role: "Lead Mafia"
         });
@@ -85,11 +74,7 @@ Player.prototype.checkGameStatus = function() {
     })
     .then(players => {
       alivePlayers = players;
-      console.log(
-        "right before the if statement to check who won",
-        aliveMafias.length,
-        alivePlayers.length
-      );
+
       return db.models.game.findById(gameId);
     })
     .then(found => {
