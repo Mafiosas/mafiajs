@@ -105,7 +105,6 @@ class GameRoom extends Component {
     socket.on("getRoles", this.getRoles);
     socket.on("dark", this.dark);
     socket.on("daytime", payload => {
-      // this.props.loadData();
       this.props.loadMe();
       this.daytime(payload);
     });
@@ -357,7 +356,7 @@ class GameRoom extends Component {
 
     const token = user.token;
 
-    const apiKey = "46081452";
+    const apiKey = "46089672";
     const {
       detective,
       error,
