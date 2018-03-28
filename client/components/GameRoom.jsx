@@ -603,7 +603,8 @@ class GameRoom extends Component {
                             user.role &&
                             user.role !== "Mafia" &&
                             user.role !== "Lead Mafia" &&
-                            user.role !== "Dead"
+                            user.role !== "Dead" &&
+                            !winner
                               ? false
                               : true,
                           subscribeToVideo:
@@ -611,7 +612,8 @@ class GameRoom extends Component {
                             user.role &&
                             user.role !== "Mafia" &&
                             user.role !== "Lead Mafia" &&
-                            user.role !== "Dead"
+                            user.role !== "Dead" &&
+                            !winner
                               ? false
                               : true
                         }}
