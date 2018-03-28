@@ -70,6 +70,12 @@ select {
   color: black;
 }
 
+#owl {
+  height: 18%;
+  width: 18%;
+  border-radius: 50%;
+}
+
 #roomTitle {
   margin: 0.1em;
 }
