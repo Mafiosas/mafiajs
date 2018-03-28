@@ -1,6 +1,6 @@
 # MAFIA
 
-### An online multi-player game with integrated video-conferencing, based on the popular game Mafia.
+### A multi-player game with integrated video-conferencing, based on the popular game Mafia.
 
 On our multi-player web app, you can enjoy a game of Mafia with your friends, wherever they are in the world! The computer acts as the 'host', assigning roles, taking votes and delivering outcomes. With integrated video conferencing, players can interact throughout the game.
 
