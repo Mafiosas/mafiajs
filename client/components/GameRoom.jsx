@@ -160,6 +160,7 @@ class GameRoom extends Component {
   }
 
   daytime(payload) {
+
     this.setState({
       time: "Day",
       detective: "",
@@ -167,16 +168,19 @@ class GameRoom extends Component {
       playStatusNight: "STOPPED"
     });
 
+
+    let num;
+
     if (payload.killed) {
       let died = this.props.players.find(player => {
         return +payload.killed === player.id;
       });
-      let num = this.state.died.id % this.props.deaths.length;
       this.setState({ died });
       this.props.removePlayerFromStore(+payload.killed);
     }
 
     if (+payload.killed === this.props.user.id) {
+      num = this.state.died.id % this.props.deaths.length;
       let death = this.props.deaths[num].storyForKilled;
       this.props.updateUser({
         role: "Dead",
@@ -190,6 +194,7 @@ class GameRoom extends Component {
     }
 
     if (payload.killed && +payload.killed !== this.props.user.id) {
+      num = this.state.died.id % this.props.deaths.length;
       let death = this.props.deaths[num].storyForAll;
       this.setState({
         resultMessage: ` The Mafia struck again in the night! ${
@@ -347,6 +352,7 @@ class GameRoom extends Component {
       "Mafia, please make yourselves known to each other! You can see and hear everyone, they cannot see you. Discuss your plans freely...";
 
     return (
+
       <div>
         <Sound url="owl.mp3" playStatus={playStatusNight} />
         <Sound url="rooster.mp3" playStatus={playStatusDay} />
@@ -359,7 +365,7 @@ class GameRoom extends Component {
                   {time &&
                     time !== "day2" && (
                       <div>
-                        <h5>Time:</h5>
+                        <h4>Time:</h4>
                         <h6>{time}</h6>
                       </div>
                     )}
@@ -373,19 +379,21 @@ class GameRoom extends Component {
                     )}
                   <br />
                   {time === "day2" && (
-                    <div>
+                    <div className="countdown">
                       <h5>Countdown: </h5>
                       <Timer timer={this.state.timerToggle} />
+
                     </div>
                   )}
                   {time === "Night" && (
-                    <div>
+                    <div className="countdown">
                       <h5>Countdown: </h5>
                       <Timer timer={this.state.timerToggle} />
                     </div>
                   )}
                 </div>
                 <br />
+
                 {time === "Night" && <img id="owl" src="/wideMoon.gif" />}
                 <div className="col s9">
                   {!user.role &&
@@ -415,6 +423,7 @@ class GameRoom extends Component {
                     user.role === "Detective" &&
                     detective && <h3>Detective, you were {detective}</h3>}
                 </div>
+
               </div>
 
               <div className="row">
