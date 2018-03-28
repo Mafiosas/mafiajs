@@ -113,12 +113,12 @@ select {
   .OT_publisher {
     display: none;
   }
-  .row .col.s3 {
-    width: 100%;
-  }
 
-  row .col.s9 {
+  .row .col.s9 {
     width: 100%;
+    display: block;
+    margin: 0.2em;
+    padding: 0px;
   }
 
   .time {
@@ -130,6 +130,7 @@ select {
   }
   .row .col.s3 {
     display: block;
+    width: 100%;
     margin: 0.2em;
     padding: 0px;
   }
@@ -158,11 +159,6 @@ select {
     font-size: 2em;
   }
 
-  .row .col.s9 {
-    width: 60%;
-    margin: 0.2em;
-    padding: 0px;
-  }
   #sidebar {
     width: 100vw;
   }
@@ -212,6 +208,15 @@ select {
   }
   form {
     width: 100%;
+  }
+  .container {
+    width: 65%;
+  }
+  #top-row {
+    display: block;
+  }
+  .row .col.offset-s2 {
+    margin: 0px;
   }
 }
 @media only screen and (min-width: 600px) and (max-width: 1024px) {
