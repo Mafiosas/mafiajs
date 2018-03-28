@@ -26,8 +26,8 @@ router.get("/:gameId", (req, res, next) => {
 
 router.post("/new", (req, res, next) => {
   let opentok = new OpenTok(
-    process.env.opentokApiKey,
-    process.env.opentokSecret
+    process.env.OPENTOK_APIKEY,
+    process.env.OPENTOK_SECRET
   );
 
   opentok.createSession({ mediaMode: "routed" }, function(err, session) {

@@ -30,12 +30,12 @@ class RoomForm extends Component {
       <div className="container">
         <Sound
           url="ayasiikuuki.MP3"
-          loop="true"
+          loop={true}
           playStatus={Sound.status.PLAYING}
         />
         <Sound
           url="darkshadow.mp3"
-          loop="true"
+          loop={true}
           playStatus={Sound.status.PLAYING}
         />
         <h2>Let's Play A Game...</h2>

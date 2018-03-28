@@ -60,19 +60,24 @@ button {
 }
 
 label#create-room {
-  font-size: 1.2em;
+  font-size: 1.5em;
 }
 label#front-page {
-  font-size: 0.8em;
+  font-size: 1em;
 }
 
 select {
   color: black;
 }
 
+#owl {
+  height: 18%;
+  width: 18%;
+  border-radius: 50%;
+}
+
 #roomTitle {
   margin: 0.1em;
-  font-size: 1.2em;
 }
 
 .rooms {
@@ -81,15 +86,131 @@ select {
   border-style: solid;
   padding: 1em;
   margin: 0.2em;
-  display: flex;
-  flex-direction: column;
 }
 
 #sidebar {
   margin-top: 1em;
 }
 
-div.roomName {
-  font-size: 2em;
-  flex-shrink: 2;
+@media only screen and (min-width: 320px) and (max-width: 600px) {
+  .container {
+    width: 98%;
+  }
+  .OT_widget-container {
+    display: none;
+  }
+
+  .streams {
+    display: none;
+  }
+
+  .OT_subscriber {
+    display: none;
+  }
+
+  .OT_publisher {
+    display: none;
+  }
+  .row .col.s3 {
+    width: 100%;
+  }
+
+  row .col.s9 {
+    width: 100%;
+  }
+
+  .time {
+    width: 100%;
+    display: flex;
+  }
+  .row .col.s3 > div > h6 {
+    width: 45%;
+    margin: 0.2em;
+    padding: 0px;
+    display: inline-block;
+  }
+  .row .col.s3 > div > h4 {
+    width: 45%;
+    margin: 0.2em;
+    padding: 0px;
+    display: inline-block;
+  }
+  .countdown {
+    width: 100%;
+    display: flex;
+  }
+
+  .col.s9 > h3 {
+    font-size: 2em;
+  }
+
+  .col.s3 > h5 {
+    font-size: 1.3em;
+  }
+  .col.s3 > h6 {
+    font-size: 1em;
+  }
+
+  #role {
+    font-size: 2em;
+    display: block;
+  }
+
+  .col.s9 > div > h3 {
+    font-size: 2em;
+  }
+
+  .row .col.s9 {
+    width: 60%;
+    margin: 0.2em;
+    padding: 0px;
+  }
+  #sidebar {
+    width: 100vw;
+  }
+  .row .col.s10 {
+    width: 100%;
+  }
+  #header {
+    font-size: 6em;
+  }
+  .center-align > h2 {
+    font-size: 3em;
+  }
+
+  .container > h2 {
+    font-size: 3em;
+  }
+
+  #room-form {
+    width: 90%;
+  }
+  .join {
+    width: 50%;
+    padding: 0px;
+  }
+  body {
+    background-color: black;
+    color: white;
+    font-family: "PT Mono", monospace;
+  }
+  .rooms {
+    border: white;
+    border-width: 0.2em;
+    border-style: solid;
+    width: 80%;
+    padding: 1em;
+    margin: 0.2em;
+  }
+  .votedTable {
+    width: 100%;
+  }
+  form {
+    width: 100%;
+  }
+}
+@media only screen and (min-width: 600px) and (max-width: 1024px) {
+  .join {
+    padding: 0px;
+  }
 }

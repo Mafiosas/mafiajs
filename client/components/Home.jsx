@@ -69,7 +69,7 @@ class Home extends Component {
                           </div>
                         )}
                         <button
-                          className="waves-effect waves-light btn"
+                          className="waves-effect waves-light btn join"
                           disabled={
                             this.state.password !== game.password ||
                             !this.state.name
