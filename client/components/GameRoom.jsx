@@ -160,14 +160,12 @@ class GameRoom extends Component {
   }
 
   daytime(payload) {
-
     this.setState({
       time: "Day",
       detective: "",
       playStatusDay: "PLAYING",
       playStatusNight: "STOPPED"
     });
-
 
     let num;
 
@@ -333,7 +331,7 @@ class GameRoom extends Component {
 
     const token = user.token;
 
-    const apiKey = "46085992";
+    const apiKey = "46088972";
     const {
       detective,
       error,
@@ -352,7 +350,6 @@ class GameRoom extends Component {
       "Mafia, please make yourselves known to each other! You can see and hear everyone, they cannot see you. Discuss your plans freely...";
 
     return (
-
       <div>
         <Sound url="owl.mp3" playStatus={playStatusNight} />
         <Sound url="rooster.mp3" playStatus={playStatusDay} />
@@ -382,7 +379,6 @@ class GameRoom extends Component {
                     <div className="countdown">
                       <h5>Countdown: </h5>
                       <Timer timer={this.state.timerToggle} />
-
                     </div>
                   )}
                   {time === "Night" && (
@@ -423,7 +419,6 @@ class GameRoom extends Component {
                     user.role === "Detective" &&
                     detective && <h3>Detective, you were {detective}</h3>}
                 </div>
-
               </div>
 
               <div className="row">
