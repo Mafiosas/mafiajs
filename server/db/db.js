@@ -1,13 +1,3 @@
-// const Sequelize = require("sequelize");
-// const pkg = require("../../package.json");
-
-// const db = new Sequelize("postgres://localhost:5432/mafiajs", null, null, {
-//   host: "localhost",
-//   dialect: "postgres"
-// });
-
-// module.exports = db;
-
 const Sequelize = require("sequelize");
 const pkg = require("../../package.json");
 
