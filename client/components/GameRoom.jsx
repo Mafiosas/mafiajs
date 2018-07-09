@@ -187,6 +187,7 @@ class GameRoom extends Component {
 
     let num;
 
+    //if someone was killed
     if (payload.killed) {
       let died = this.props.players.find(player => {
         return +payload.killed === player.id;
@@ -195,9 +196,12 @@ class GameRoom extends Component {
       this.props.removePlayerFromStore(+payload.killed);
     }
 
+    //if you were killed
     if (+payload.killed === this.props.user.id) {
+      //get a random death
       num = this.state.died.id % this.props.deaths.length;
       let death = this.props.deaths[num].storyForKilled;
+      //updateUser on store (doesn't affect back-end)
       this.props.updateUser({
         role: 'Dead',
         isAlive: false

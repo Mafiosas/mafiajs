@@ -1,11 +1,11 @@
-const { expect } = require("chai");
-const db = require("../index");
-const { Death, Game, Player, Round } = require("./index");
-const { Op } = require("sequelize");
+const { expect } = require('chai');
+const db = require('../index');
+const { Death, Game, Player, Round } = require('./index');
+const { Op } = require('sequelize');
 
-describe("Player model", () => {
+describe('Player model', () => {
   let allUsers, currentGame;
-  describe("Player attributes", () => {
+  describe('Player attributes', () => {
     // beforeEach(() => {
     //   return db
     //     .sync({ force: true })
@@ -59,25 +59,25 @@ describe("Player model", () => {
     //         });
     //     });
     // });
-    xit("defaults to is Alive is true", () => {
+    it('defaults to is Alive is true', () => {
       expect(allUsers[0].isAlive).to.be.equal(true);
     });
 
-    xit("isMafia hook returns true when mafia", () => {
+    it('isMafia hook returns true when mafia', () => {
       expect(allUsers[0].isMafia()).to.be.equal(true);
     });
   });
-  describe("game defaults to in progress/not over", () => {
-    xit("Game hasEnded returns false by default", () => {
+  describe('game defaults to in progress/not over', () => {
+    it('Game hasEnded returns false by default', () => {
       expect(currentGame.hasEnded()).to.be.equal(false);
     });
-    describe("alive players method", () => {
-      xit("returns the accurate number of alive players", () => {
+    describe('alive players method', () => {
+      it('returns the accurate number of alive players', () => {
         expect(currentGame.alivePlayers()).to.be.equal(6);
       });
     });
   });
-  describe("simulating one round where Mafia loses", () => {
+  describe('simulating one round where Mafia loses', () => {
     beforeEach(() => {
       allUsers[0].update({
         isAlive: false
@@ -86,13 +86,13 @@ describe("Player model", () => {
         isAlive: false
       });
     });
-    xit("Ensures after update hook runs and ends game properly", () => {
+    it('Ensures after update hook runs and ends game properly', () => {
       expect(currentGame.hasEnded).to.be.equal(true);
     });
-    xit("Winner should be villagers", () => {
-      expect(currentGame.dataValues.winner).to.be.equal("Villagers");
+    it('Winner should be villagers', () => {
+      expect(currentGame.dataValues.winner).to.be.equal('Villagers');
     });
   });
 });
 
-describe("Game model", () => {});
+describe('Game model', () => {});
