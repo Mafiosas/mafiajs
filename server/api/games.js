@@ -1,12 +1,12 @@
-const router = require("express").Router();
-const { Game, Round, Player } = require("../db/models");
-const { Op } = require("sequelize");
-const { hasGameEnded, didMafiaWin, whoToSendBack } = require("../game.js");
-const OpenTok = require("opentok");
+const router = require('express').Router();
+const { Game, Round, Player } = require('../db/models');
+const { Op } = require('sequelize');
+const { hasGameEnded, didMafiaWin, whoToSendBack } = require('../game.js');
+const OpenTok = require('opentok');
 
 module.exports = router;
 
-router.get("/", (req, res, next) => {
+router.get('/', (req, res, next) => {
   Game.findAll({
     where: {
       inProgress: false
@@ -16,7 +16,7 @@ router.get("/", (req, res, next) => {
     .catch(next);
 });
 
-router.get("/:gameId", (req, res, next) => {
+router.get('/:gameId', (req, res, next) => {
   Game.findById(req.params.gameId)
     .then(game => {
       res.json(game);
@@ -24,16 +24,16 @@ router.get("/:gameId", (req, res, next) => {
     .catch(next);
 });
 
-router.post("/new", (req, res, next) => {
+router.post('/new', (req, res, next) => {
   let opentok = new OpenTok(
     process.env.OPENTOK_APIKEY,
     process.env.OPENTOK_SECRET
   );
-
-  opentok.createSession({ mediaMode: "routed" }, function(err, session) {
+  //create video session for the game
+  opentok.createSession({ mediaMode: 'routed' }, function(err, session) {
     if (err) {
       console.log(err);
-      res.status(500).send({ error: "createSession error: ", err });
+      res.status(500).send({ error: 'createSession error: ', err });
       return;
     }
 
